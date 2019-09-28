@@ -243,6 +243,11 @@ public final class Tuples {
         return value.flatMap(vv1 -> Either.success(of(vv1)));
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T1> Either<? extends BaseError, Tuple1<T1>> zip(final Tuple1<Either<? extends BaseError, T1>> value) {
+        return zip((Either<? extends BaseError, T1>) value.values[0]);
+    }
+
     /**
      * Transform input {@link Either}'s with failure or success into {@link Either} with which contains either failure
      * or tuple with success values. Any parameter with failure will result to result with failure. The value of the
@@ -260,6 +265,13 @@ public final class Tuples {
                                                                            final Either<? extends BaseError, T2> value2) {
         return value1.flatMap(vv1 ->
                 value2.flatMap(vv2 -> Either.success(of(vv1, vv2))));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T1, T2>  Either<? extends BaseError, Tuple2<T1, T2>> zip(final Tuple2<Either<? extends BaseError, T1>,
+                                                                                         Either<? extends BaseError, T2>> value) {
+        return zip((Either<? extends BaseError, T1>) value.values[0],
+                   (Either<? extends BaseError, T2>) value.values[1]);
     }
 
     /**
@@ -283,6 +295,15 @@ public final class Tuples {
         return value1.flatMap(vv1 ->
                 value2.flatMap(vv2 ->
                  value3.flatMap(vv3 -> Either.success(of(vv1, vv2, vv3)))));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T1, T2, T3>  Either<? extends BaseError, Tuple3<T1, T2, T3>> zip(final Tuple3<Either<? extends BaseError, T1>,
+                                                                                                 Either<? extends BaseError, T2>,
+                                                                                                 Either<? extends BaseError, T3>> value) {
+        return zip((Either<? extends BaseError, T1>) value.values[0],
+                   (Either<? extends BaseError, T2>) value.values[1],
+                   (Either<? extends BaseError, T3>) value.values[2]);
     }
 
     /**
@@ -310,6 +331,17 @@ public final class Tuples {
                 value2.flatMap(vv2 ->
                  value3.flatMap(vv3 ->
                   value4.flatMap(vv4 -> Either.success(of(vv1, vv2, vv3, vv4))))));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T1, T2, T3, T4>  Either<? extends BaseError, Tuple4<T1, T2, T3, T4>> zip(final Tuple4<Either<? extends BaseError, T1>,
+                                                                                                         Either<? extends BaseError, T2>,
+                                                                                                         Either<? extends BaseError, T3>,
+                                                                                                         Either<? extends BaseError, T4>> value) {
+        return zip((Either<? extends BaseError, T1>) value.values[0],
+                   (Either<? extends BaseError, T2>) value.values[1],
+                   (Either<? extends BaseError, T3>) value.values[2],
+                   (Either<? extends BaseError, T4>) value.values[3]);
     }
 
     /**
@@ -341,6 +373,19 @@ public final class Tuples {
                  value3.flatMap(vv3 ->
                   value4.flatMap(vv4 ->
                    value5.flatMap(vv5 -> Either.success(of(vv1, vv2, vv3, vv4, vv5)))))));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T1, T2, T3, T4, T5>  Either<? extends BaseError, Tuple5<T1, T2, T3, T4, T5>> zip(final Tuple5<Either<? extends BaseError, T1>,
+                                                                                                                 Either<? extends BaseError, T2>,
+                                                                                                                 Either<? extends BaseError, T3>,
+                                                                                                                 Either<? extends BaseError, T4>,
+                                                                                                                 Either<? extends BaseError, T5>> value) {
+        return zip((Either<? extends BaseError, T1>) value.values[0],
+                   (Either<? extends BaseError, T2>) value.values[1],
+                   (Either<? extends BaseError, T3>) value.values[2],
+                   (Either<? extends BaseError, T4>) value.values[3],
+                   (Either<? extends BaseError, T5>) value.values[4]);
     }
 
     /**
@@ -376,6 +421,21 @@ public final class Tuples {
                   value4.flatMap(vv4 ->
                    value5.flatMap(vv5 ->
                     value6.flatMap(vv6 -> Either.success(of(vv1, vv2, vv3, vv4, vv5, vv6))))))));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T1, T2, T3, T4, T5, T6>  Either<? extends BaseError, Tuple6<T1, T2, T3, T4, T5, T6>> zip(final Tuple6<Either<? extends BaseError, T1>,
+                                                                                                                         Either<? extends BaseError, T2>,
+                                                                                                                         Either<? extends BaseError, T3>,
+                                                                                                                         Either<? extends BaseError, T4>,
+                                                                                                                         Either<? extends BaseError, T5>,
+                                                                                                                         Either<? extends BaseError, T6>> value) {
+        return zip((Either<? extends BaseError, T1>) value.values[0],
+                   (Either<? extends BaseError, T2>) value.values[1],
+                   (Either<? extends BaseError, T3>) value.values[2],
+                   (Either<? extends BaseError, T4>) value.values[3],
+                   (Either<? extends BaseError, T5>) value.values[4],
+                   (Either<? extends BaseError, T6>) value.values[5]);
     }
 
     /**
@@ -415,6 +475,23 @@ public final class Tuples {
                    value5.flatMap(vv5 ->
                     value6.flatMap(vv6 ->
                      value7.flatMap(vv7 -> Either.success(of(vv1, vv2, vv3, vv4, vv5, vv6, vv7)))))))));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T1, T2, T3, T4, T5, T6, T7>  Either<? extends BaseError, Tuple7<T1, T2, T3, T4, T5, T6, T7>> zip(final Tuple7<Either<? extends BaseError, T1>,
+                                                                                                                                 Either<? extends BaseError, T2>,
+                                                                                                                                 Either<? extends BaseError, T3>,
+                                                                                                                                 Either<? extends BaseError, T4>,
+                                                                                                                                 Either<? extends BaseError, T5>,
+                                                                                                                                 Either<? extends BaseError, T6>,
+                                                                                                                                 Either<? extends BaseError, T7>> value) {
+        return zip((Either<? extends BaseError, T1>) value.values[0],
+                   (Either<? extends BaseError, T2>) value.values[1],
+                   (Either<? extends BaseError, T3>) value.values[2],
+                   (Either<? extends BaseError, T4>) value.values[3],
+                   (Either<? extends BaseError, T5>) value.values[4],
+                   (Either<? extends BaseError, T6>) value.values[5],
+                   (Either<? extends BaseError, T7>) value.values[6]);
     }
 
     /**
@@ -458,6 +535,25 @@ public final class Tuples {
                     value6.flatMap(vv6 ->
                      value7.flatMap(vv7 ->
                       value8.flatMap(vv8 -> Either.success(of(vv1, vv2, vv3, vv4, vv5, vv6, vv7, vv8))))))))));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T1, T2, T3, T4, T5, T6, T7, T8>  Either<? extends BaseError, Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> zip(final Tuple8<Either<? extends BaseError, T1>,
+                                                                                                                                         Either<? extends BaseError, T2>,
+                                                                                                                                         Either<? extends BaseError, T3>,
+                                                                                                                                         Either<? extends BaseError, T4>,
+                                                                                                                                         Either<? extends BaseError, T5>,
+                                                                                                                                         Either<? extends BaseError, T6>,
+                                                                                                                                         Either<? extends BaseError, T7>,
+                                                                                                                                         Either<? extends BaseError, T8>> value) {
+        return zip((Either<? extends BaseError, T1>) value.values[0],
+                   (Either<? extends BaseError, T2>) value.values[1],
+                   (Either<? extends BaseError, T3>) value.values[2],
+                   (Either<? extends BaseError, T4>) value.values[3],
+                   (Either<? extends BaseError, T5>) value.values[4],
+                   (Either<? extends BaseError, T6>) value.values[5],
+                   (Either<? extends BaseError, T7>) value.values[6],
+                   (Either<? extends BaseError, T8>) value.values[7]);
     }
 
     /**
@@ -505,6 +601,27 @@ public final class Tuples {
                      value7.flatMap(vv7 ->
                       value8.flatMap(vv8 ->
                        value9.flatMap(vv9 -> Either.success(of(vv1, vv2, vv3, vv4, vv5, vv6, vv7, vv8, vv9)))))))))));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9>  Either<? extends BaseError, Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> zip(final Tuple9<Either<? extends BaseError, T1>,
+                                                                                                                                                 Either<? extends BaseError, T2>,
+                                                                                                                                                 Either<? extends BaseError, T3>,
+                                                                                                                                                 Either<? extends BaseError, T4>,
+                                                                                                                                                 Either<? extends BaseError, T5>,
+                                                                                                                                                 Either<? extends BaseError, T6>,
+                                                                                                                                                 Either<? extends BaseError, T7>,
+                                                                                                                                                 Either<? extends BaseError, T8>,
+                                                                                                                                                 Either<? extends BaseError, T9>> value) {
+        return zip((Either<? extends BaseError, T1>) value.values[0],
+                   (Either<? extends BaseError, T2>) value.values[1],
+                   (Either<? extends BaseError, T3>) value.values[2],
+                   (Either<? extends BaseError, T4>) value.values[3],
+                   (Either<? extends BaseError, T5>) value.values[4],
+                   (Either<? extends BaseError, T6>) value.values[5],
+                   (Either<? extends BaseError, T7>) value.values[6],
+                   (Either<? extends BaseError, T8>) value.values[7],
+                   (Either<? extends BaseError, T9>) value.values[8]);
     }
 
     /**
@@ -587,6 +704,11 @@ public final class Tuples {
             return mapper.apply((T1) values[0]);
         }
 
+        public Tuple1<T1> then(final FN1<Void, T1> mapper) {
+            map(mapper);
+            return this;
+        }
+
         @SuppressWarnings("unchecked")
         public <T2> Tuple2<T1, T2> append(final T2 value) {
             return new Tuple2<>((T1) values[0], value);
@@ -609,6 +731,11 @@ public final class Tuples {
         @SuppressWarnings("unchecked")
         public <T> T map(final FN2<T, ? super T1, ? super T2> mapper) {
             return mapper.apply((T1) values[0], (T2) values[1]);
+        }
+
+        public Tuple2<T1, T2> then(final FN2<Void, ? super T1, ? super T2> mapper) {
+            map(mapper);
+            return this;
         }
 
         @SuppressWarnings("unchecked")
@@ -642,6 +769,11 @@ public final class Tuples {
             return mapper.apply((T1) values[0], (T2) values[1], (T3) values[2]);
         }
 
+        public Tuple3<T1, T2, T3> then(final FN3<Void, T1, T2, T3> mapper) {
+            map(mapper);
+            return this;
+        }
+
         @SuppressWarnings("unchecked")
         public <T4> Tuple4<T1, T2, T3, T4> append(final T4 value) {
             return new Tuple4<>((T1) values[0], (T2) values[1], (T3) values[2], value);
@@ -667,6 +799,11 @@ public final class Tuples {
         @SuppressWarnings("unchecked")
         public <T> T map(final FN4<T, T1, T2, T3, T4> mapper) {
             return mapper.apply((T1) values[0], (T2) values[1], (T3) values[2], (T4) values[3]);
+        }
+
+        public Tuple4<T1, T2, T3, T4> then(final FN4<Void, T1, T2, T3, T4> mapper) {
+            map(mapper);
+            return this;
         }
 
         @SuppressWarnings("unchecked")
@@ -695,6 +832,11 @@ public final class Tuples {
         @SuppressWarnings("unchecked")
         public <T> T map(final FN5<T, T1, T2, T3, T4, T5> mapper) {
             return mapper.apply((T1) values[0], (T2) values[1], (T3) values[2], (T4) values[3], (T5) values[4]);
+        }
+
+        public Tuple5<T1, T2, T3, T4, T5> then(final FN5<Void, T1, T2, T3, T4, T5> mapper) {
+            map(mapper);
+            return this;
         }
 
         @SuppressWarnings("unchecked")
@@ -728,6 +870,11 @@ public final class Tuples {
             return mapper.apply((T1) values[0], (T2) values[1], (T3) values[2], (T4) values[3], (T5) values[4], (T6) values[5]);
         }
 
+        public Tuple6<T1, T2, T3, T4, T5, T6> then(final FN6<Void, T1, T2, T3, T4, T5, T6> mapper) {
+            map(mapper);
+            return this;
+        }
+
         @SuppressWarnings("unchecked")
         public <T7> Tuple7<T1, T2, T3, T4, T5, T6, T7> append(final T7 value) {
             return new Tuple7<>((T1) values[0], (T2) values[1], (T3) values[2], (T4) values[3], (T5) values[4], (T6) values[5], value);
@@ -758,6 +905,11 @@ public final class Tuples {
         @SuppressWarnings("unchecked")
         public <T> T map(final FN7<T, T1, T2, T3, T4, T5, T6, T7> mapper) {
             return mapper.apply((T1) values[0], (T2) values[1], (T3) values[2], (T4) values[3], (T5) values[4], (T6) values[5], (T7) values[6]);
+        }
+
+        public Tuple7<T1, T2, T3, T4, T5, T6, T7> then(final FN7<Void, T1, T2, T3, T4, T5, T6, T7> mapper) {
+            map(mapper);
+            return this;
         }
 
         @SuppressWarnings("unchecked")
@@ -795,6 +947,11 @@ public final class Tuples {
                                 (T3) values[2], (T4) values[3], (T5) values[4], (T6) values[5], (T7) values[6], (T8) values[7]);
         }
 
+        public Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> then(final FN8<Void, T1, T2, T3, T4, T5, T6, T7, T8> mapper) {
+            map(mapper);
+            return this;
+        }
+
         @SuppressWarnings("unchecked")
         public <T9> Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9> append(final T9 value) {
             return new Tuple9<>((T1) values[0], (T2) values[1], (T3) values[2], (T4) values[3],
@@ -829,6 +986,11 @@ public final class Tuples {
         public <T> T map(final FN9<T, T1, T2, T3, T4, T5, T6, T7, T8, T9> mapper) {
             return mapper.apply((T1) values[0], (T2) values[1], (T3) values[2], (T4) values[3], (T5) values[4],
                                 (T6) values[5], (T7) values[6], (T8) values[7], (T9) values[8]);
+        }
+
+        public Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9> then(final FN9<Void, T1, T2, T3, T4, T5, T6, T7, T8, T9> mapper) {
+            map(mapper);
+            return this;
         }
 
         @SuppressWarnings("unchecked")

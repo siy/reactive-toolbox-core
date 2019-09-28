@@ -1,6 +1,8 @@
 package org.reactivetoolbox.core.async.impl;
 
 import org.reactivetoolbox.core.async.Promise;
+import org.reactivetoolbox.core.functional.Functions;
+import org.reactivetoolbox.core.functional.Functions.FN1;
 import org.reactivetoolbox.core.functional.Option;
 import org.reactivetoolbox.core.meta.AppMetaRepository;
 import org.reactivetoolbox.core.scheduler.TaskScheduler;
@@ -62,6 +64,13 @@ public final class PromiseImpl<T> implements Promise<T> {
             thenActions.offer(action);
         }
         return this;
+    }
+
+    @Override
+    public <R> Promise<R> map(final FN1<R, T> mapper) {
+        var result = new PromiseImpl<R>();
+        then(val -> result.resolve(mapper.apply(val)));
+        return result;
     }
 
     /**
