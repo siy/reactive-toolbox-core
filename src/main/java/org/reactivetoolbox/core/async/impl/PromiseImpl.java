@@ -48,7 +48,7 @@ public final class PromiseImpl<T> implements Promise<T> {
     @Override
     public Promise<T> resolve(final T result) {
         if (value.compareAndSet(null, result, false, true)) {
-            thenActions.forEach(action -> action.accept(value.getReference()));
+            thenActions.forEach(action -> TaskSchedulerHolder.instance().submit(() -> action.accept(value.getReference())));
         }
         return this;
     }
@@ -66,6 +66,9 @@ public final class PromiseImpl<T> implements Promise<T> {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <R> Promise<R> map(final FN1<R, T> mapper) {
         var result = new PromiseImpl<R>();

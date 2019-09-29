@@ -1,42 +1,38 @@
 package org.reactivetoolbox.core.examples.async;
 
 import org.junit.jupiter.api.Test;
-import org.reactivetoolbox.core.functional.Either;
 import org.reactivetoolbox.core.functional.Tuples;
 import org.reactivetoolbox.core.scheduler.Timeout;
 
-import java.util.UUID;
-
 import static org.reactivetoolbox.core.async.Promise.all;
-import static org.reactivetoolbox.core.async.Promise.either;
 import static org.reactivetoolbox.core.async.Promise.zipAll;
-import static org.reactivetoolbox.core.functional.Either.success;
 import static org.reactivetoolbox.core.functional.Tuples.zip;
 import static org.reactivetoolbox.core.scheduler.SchedulerError.TIMEOUT;
 
 public class PromiseAllExample_Test {
+    private final AsyncService service = new AsyncService();
+
     @Test
     void simpleAsyncTask() {
-        either(Integer.class)
-                .perform(promise -> promise.resolve(success(42)))
-                .then(result -> result.onSuccess(System.out::println))
-                .syncWait();
+        service.slowRetrieveInteger(42)
+               .then(result -> result.onSuccess(System.out::println))
+               .syncWait();
     }
 
     @Test
     void simpleAsyncTaskWithTimeout() {
-        either(Integer.class)
-                .with(Timeout.of(10).sec(), TIMEOUT.asFailure())
-                .perform(promise -> promise.resolve(success(42)))
-                .then(result -> result.onSuccess(System.out::println))
-                .syncWait();
+        service.slowRetrieveInteger(4242)
+               .with(Timeout.of(10).sec(), TIMEOUT.asFailure())
+               .then(result -> result.onSuccess(System.out::println))
+               .syncWait();
     }
 
     @Test
     void waitForAllResults1() {
-        all(either(Integer.class).perform(p1 -> p1.resolve(success(123))),
-            either(String.class).perform(p2 -> p2.resolve(success("text 1"))),
-            either(UUID.class).perform(p3 -> p3.resolve(success(UUID.randomUUID()))))
+        //Using Promise.map()
+        all(service.slowRetrieveInteger(123),
+            service.slowRetrieveString("text 1"),
+            service.slowRetrieveUuid())
                 .map(Tuples::zip)
                 .then(result -> result.onSuccess(System.out::println))
                 .syncWait();
@@ -44,18 +40,20 @@ public class PromiseAllExample_Test {
 
     @Test
     void waitForAllResults2() {
-        all(either(Integer.class).perform(p1 -> p1.resolve(success(321))),
-            either(String.class).perform(p2 -> p2.resolve(success("text 2"))),
-            either(UUID.class).perform(p3 -> p3.resolve(success(UUID.randomUUID()))))
+        //Using Tuples.zip()
+        all(service.slowRetrieveInteger(234),
+            service.slowRetrieveString("text 2"),
+            service.slowRetrieveUuid())
                 .then(result -> zip(result).onSuccess(System.out::println))
                 .syncWait();
     }
 
     @Test
     void waitForAllResults3() {
-        zipAll(either(Integer.class).perform(p1 -> p1.resolve(success(231))),
-            either(String.class).perform(p2 -> p2.resolve(success("text 3"))),
-            either(UUID.class).perform(p3 -> p3.resolve(success(UUID.randomUUID()))))
+        //Using Promise.zipAll
+        zipAll(service.slowRetrieveInteger(345),
+               service.slowRetrieveString("text 3"),
+               service.slowRetrieveUuid())
                 .then(result -> result.onSuccess(System.out::println))
                 .syncWait();
     }

@@ -27,6 +27,9 @@ import org.reactivetoolbox.core.functional.Tuples.Tuple7;
 import org.reactivetoolbox.core.functional.Tuples.Tuple8;
 import org.reactivetoolbox.core.functional.Tuples.Tuple9;
 
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 /**
  * Collection of basic functions which accept 0-9 parameters and return single result.
  * Note that these functions are not supposed to throw any exceptions

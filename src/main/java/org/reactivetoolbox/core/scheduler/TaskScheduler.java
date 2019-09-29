@@ -51,6 +51,17 @@ public interface TaskScheduler {
     TaskScheduler submit(final RunnablePredicate predicate);
 
     /**
+     * Submit task which will be executed exactly once and as soon as possible.
+     *
+     * @param runnable
+     *        Task to execute
+     * @return this instance for fluent call chaining.
+     */
+    default TaskScheduler submit(final Runnable runnable) {
+        return submit((nanoTime) -> { runnable.run(); return true;});
+    }
+
+    /**
      * Submit task which will be executed once specified timeout is expired. It is guaranteed that timeout will be at least as long
      * as specified.
      *
@@ -83,7 +94,7 @@ public interface TaskScheduler {
      * @return input promise for call chaining
      */
     default <T> Promise<T> submit(final Promise<T> promise, final Consumer<Promise<T>> task) {
-        submit((nanoTime) -> { task.accept(promise); return true;});
+        submit(() -> task.accept(promise));
         return promise;
     }
 
