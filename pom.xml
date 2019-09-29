@@ -28,7 +28,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.release>13</java.release>
+        <java.release>11</java.release>
 
         <!-- Dependencies versions -->
         <log4j.version>2.11.2</log4j.version>
@@ -125,12 +125,11 @@
                 <!-- version>3.0.0-M3</version -->
                 <configuration>
                     <argLine>
-                        --enable-preview
-                        --illegal-access=permit
-                        --add-opens org.reactivetoolbox.core/org.reactivetoolbox.core.async=ALL-UNNAMED
-                        --add-opens org.reactivetoolbox.core/org.reactivetoolbox.core.functional=ALL-UNNAMED
-                        --add-opens org.reactivetoolbox.core/org.reactivetoolbox.core.scheduler=ALL-UNNAMED
-                        --add-opens org.reactivetoolbox.core/org.reactivetoolbox.core.scheduler.impl=ALL-UNNAMED
+<!--                        &#45;&#45;illegal-access=permit-->
+<!--                        &#45;&#45;add-opens org.reactivetoolbox.core/org.reactivetoolbox.core.async=ALL-UNNAMED-->
+<!--                        &#45;&#45;add-opens org.reactivetoolbox.core/org.reactivetoolbox.core.functional=ALL-UNNAMED-->
+<!--                        &#45;&#45;add-opens org.reactivetoolbox.core/org.reactivetoolbox.core.scheduler=ALL-UNNAMED-->
+<!--                        &#45;&#45;add-opens org.reactivetoolbox.core/org.reactivetoolbox.core.scheduler.impl=ALL-UNNAMED-->
                         ${jaCoCoArgLine}
                         -Xmx1024m
                     </argLine>
@@ -154,18 +153,18 @@
                     <showDeprecation>true</showDeprecation>
                     <showWarnings>true</showWarnings>
                     <release>${java.release}</release>
-                    <compilerArgs>
-                        <arg>--enable-preview</arg>
-                    </compilerArgs>
+<!--                    <compilerArgs>-->
+<!--                        <arg>&#45;&#45;enable-preview</arg>-->
+<!--                    </compilerArgs>-->
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.22.1</version>
-    <configuration>
-        <argLine>--enable-preview</argLine>
-    </configuration>
+<!--                <configuration>-->
+<!--                    <argLine>&#45;&#45;enable-preview</argLine>-->
+<!--                </configuration>-->
             </plugin>
         </plugins>
     </build>
