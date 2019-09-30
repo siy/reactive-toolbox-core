@@ -19,8 +19,8 @@ import static org.reactivetoolbox.core.scheduler.SchedulerError.TIMEOUT;
 class TimeoutSchedulerTest {
     private final Random random = new Random();
 
-    private static final int N_ITEMS_PER_TASK = 1_000_000;
-    private static final int N_TASKS = 6;
+    private static final int N_ITEMS_PER_TASK = 100_000;
+    private static final int N_TASKS = 4;
     private static final int N_PROCESSING_THREADS = N_TASKS/2;
     private static final int SINGLE_TASK_DELAY_MAX = 95;
     private static final int SINGLE_TASK_DELAY_MIN = 5;
@@ -45,9 +45,9 @@ class TimeoutSchedulerTest {
                 }));
 
         executor.shutdown();
-        assertTrue(executor.awaitTermination(10, TimeUnit.SECONDS));
-        // Wait for 2 x max task timeout
-        Thread.sleep(200);
+        assertTrue(executor.awaitTermination(15, TimeUnit.SECONDS));
+
+        Thread.sleep(100);
 
         assertEquals(N_TASKS * N_ITEMS_PER_TASK, List.of(counters).stream().mapToLong(AtomicLong::get).sum());
     }

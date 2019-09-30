@@ -1,7 +1,6 @@
 package org.reactivetoolbox.core.async.impl;
 
 import org.reactivetoolbox.core.async.Promise;
-import org.reactivetoolbox.core.functional.Functions;
 import org.reactivetoolbox.core.functional.Functions.FN1;
 import org.reactivetoolbox.core.functional.Option;
 import org.reactivetoolbox.core.meta.AppMetaRepository;
@@ -48,6 +47,17 @@ public final class PromiseImpl<T> implements Promise<T> {
     @Override
     public Promise<T> resolve(final T result) {
         if (value.compareAndSet(null, result, false, true)) {
+            thenActions.forEach(action -> action.accept(value.getReference()));
+        }
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Promise<T> resolveAsync(final T result) {
+        if (value.compareAndSet(null, result, false, true)) {
             thenActions.forEach(action -> TaskSchedulerHolder.instance().submit(() -> action.accept(value.getReference())));
         }
         return this;
@@ -71,7 +81,7 @@ public final class PromiseImpl<T> implements Promise<T> {
      */
     @Override
     public <R> Promise<R> map(final FN1<R, T> mapper) {
-        var result = new PromiseImpl<R>();
+        final var result = new PromiseImpl<R>();
         then(val -> result.resolve(mapper.apply(val)));
         return result;
     }
