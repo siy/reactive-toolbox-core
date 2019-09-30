@@ -73,9 +73,9 @@ allprojects {
 ```
 Add dependency:
 ```groovy
-    dependencies {
-	        implementation 'com.github.siy:reactive-toolbox-core:reactive-toolbox-core-0.1.0'
-	}
+dependencies {
+    implementation 'com.github.siy:reactive-toolbox-core:reactive-toolbox-core-0.1.0'
+}
 ```
 
 #### Examples
