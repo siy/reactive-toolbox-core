@@ -15,6 +15,9 @@
 
     <scm>
         <url>https://github.com/siy/reactive-toolbox-core.git</url>
+        <connection>scm:git:ssh://git@github.com/siy/reactive-toolbox-core.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/siy/reactive-toolbox-core.git</developerConnection>
+        <tag>HEAD</tag>
     </scm>
 
     <licenses>
