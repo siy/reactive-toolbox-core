@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/siy/reactive-toolbox-core.svg?branch=master)](https://travis-ci.org/siy/reactive-toolbox-core)
+[![](https://jitpack.io/v/siy/reactive-toolbox-core.svg)](https://jitpack.io/#siy/reactive-toolbox-core)
+
 ## Reactive Toolbox Core
 
 This module contains core classes for writing asynchronous processing in (more or less) functional style.
