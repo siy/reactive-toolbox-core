@@ -1,9 +1,15 @@
 [![Build Status](https://travis-ci.org/siy/reactive-toolbox-core.svg?branch=master)](https://travis-ci.org/siy/reactive-toolbox-core)
-[![](https://jitpack.io/v/siy/reactive-toolbox-core.svg)](https://jitpack.io/#siy/reactive-toolbox-core)
+[![Latest Release](https://jitpack.io/v/siy/reactive-toolbox-core.svg)](https://jitpack.io/#siy/reactive-toolbox-core)
 
 ## Reactive Toolbox Core
 
 This module contains core classes for writing asynchronous processing in (more or less) functional style.
+
+### Motivation
+This library is an attempt to implement Promise-based asynchronous processing model. Being combined with FP-style error
+handling, built-in scheduler and timeout processing it provides simple, expressive and convenient tool to write 
+reactive services in Java.
+Main focus of this library is convenience and performance.
 
 ### Prerequisites
 Build is configured to use Java 11, although any version since Java 9 should suffice
@@ -36,5 +42,47 @@ and minimal reverences to imperative style (for example, `get` does not throw ex
 
 ### How to use
 #### Configure Maven Dependency
+
+Add repository:
+```xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+```
+Add dependency:
+```xml
+<dependency>
+    <groupId>com.github.siy</groupId>
+    <artifactId>reactive-toolbox-core</artifactId>
+    <version>reactive-toolbox-core-0.1.0</version>
+</dependency>
+```
 #### Configure Gradle Dependency
+
+Add repository:
+```groovy
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+Add dependency:
+```groovy
+    dependencies {
+	        implementation 'com.github.siy:reactive-toolbox-core:reactive-toolbox-core-0.1.0'
+	}
+```
+
 #### Examples
+
+Some examples are present in [Examples](https://github.com/siy/reactive-toolbox-core/tree/master/src/test/java/org/reactivetoolbox/core/examples).
+More examples will be added soon.
+
+### TODO
+ - More examples
+ - Guide
