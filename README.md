@@ -3,7 +3,7 @@
 
 ## Reactive Toolbox Core
 
-This module contains core classes for writing asynchronous processing in (more or less) functional style.
+This library contains core classes for writing asynchronous processing in (more or less) functional style.
 
 ### Motivation
 This library is an attempt to implement Promise-based asynchronous processing model. Being combined with FP-style error
