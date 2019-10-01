@@ -17,17 +17,13 @@ to build and run code in the module.
 
 ### Asynchronous Processing
 
-Asynchronous processing model implemented in this module is based on __Promise__-based
-asynchronous processing model. 
-The core class for this purpose is (obviously) `Promise`. Beside usual triggiring
-actions upon resolution, this implementation contains built-in asynchronous 
-task scheduler and timeout processor. Implementation is designed to be highly 
-scalable, although careful benchmarking is still pending.  
+Asynchronous processing model implemented in this module is based on __Promise__-based asynchronous processing model. 
+The core class for this purpose is (obviously) `Promise`. Beside usual triggering
+actions upon resolution, this implementation contains built-in asynchronous task scheduler and timeout processor. 
+Implementation is designed to be highly scalable, although careful benchmarking is still pending.  
 
-The implementation does
-not use (nor based on) Java `CompletableFuture`. Instead it provides very simple
-and lightweight implementation. Beside general __Promise__ functionality is has 
-built in timeout processing and asynchronous task pool. 
+The implementation does not use (nor based on) Java `CompletableFuture`. Instead it provides very simple
+and lightweight implementation. 
 
 ### Functional Code Style Support
 
@@ -84,5 +80,6 @@ Some examples are present in [Examples](https://github.com/siy/reactive-toolbox-
 More examples will be added soon.
 
 ### TODO
+ - Rework naming, refactoring and better structure
  - More examples
  - Guide

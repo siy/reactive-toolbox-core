@@ -17,6 +17,23 @@ package org.reactivetoolbox.core.functional;
  */
 
 import org.reactivetoolbox.core.functional.Functions.FN1;
+import org.reactivetoolbox.core.functional.Functions.FN2;
+import org.reactivetoolbox.core.functional.Functions.FN3;
+import org.reactivetoolbox.core.functional.Functions.FN4;
+import org.reactivetoolbox.core.functional.Functions.FN5;
+import org.reactivetoolbox.core.functional.Functions.FN6;
+import org.reactivetoolbox.core.functional.Functions.FN7;
+import org.reactivetoolbox.core.functional.Functions.FN8;
+import org.reactivetoolbox.core.functional.Functions.FN9;
+import org.reactivetoolbox.core.functional.Tuples.Tuple1;
+import org.reactivetoolbox.core.functional.Tuples.Tuple2;
+import org.reactivetoolbox.core.functional.Tuples.Tuple3;
+import org.reactivetoolbox.core.functional.Tuples.Tuple4;
+import org.reactivetoolbox.core.functional.Tuples.Tuple5;
+import org.reactivetoolbox.core.functional.Tuples.Tuple6;
+import org.reactivetoolbox.core.functional.Tuples.Tuple7;
+import org.reactivetoolbox.core.functional.Tuples.Tuple8;
+import org.reactivetoolbox.core.functional.Tuples.Tuple9;
 
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -207,6 +224,114 @@ public interface Either<F, S> {
         };
     }
 
+    /**
+     * Convenience method to transform instance of {@link Either} which holds {@link Tuple1}
+     * @param either
+     *        Input instance
+     * @param mapper
+     *        Mapping function
+     * @return transformed instance of {@link Either}
+     */
+    static <F, R, T1> Either<F, R> mapTuple(final Either<F, Tuple1<T1>> either, final FN1<R, T1> mapper) {
+        return either.mapSuccess(tuple -> tuple.map(mapper));
+    }
+
+    /**
+     * Convenience method to transform instance of {@link Either} which holds {@link Tuple2}
+     * @param either
+     *        Input instance
+     * @param mapper
+     *        Mapping function
+     * @return transformed instance of {@link Either}
+     */
+    static <F, R, T1, T2> Either<F, R> mapTuple(final Either<F, Tuple2<T1, T2>> either, final FN2<R, T1, T2> mapper) {
+        return either.mapSuccess(tuple -> tuple.map(mapper));
+    }
+
+    /**
+     * Convenience method to transform instance of {@link Either} which holds {@link Tuple3}
+     * @param either
+     *        Input instance
+     * @param mapper
+     *        Mapping function
+     * @return transformed instance of {@link Either}
+     */
+    static <F, R, T1, T2, T3> Either<F, R> mapTuple(final Either<F, Tuple3<T1, T2, T3>> either, final FN3<R, T1, T2, T3> mapper) {
+        return either.mapSuccess(tuple -> tuple.map(mapper));
+    }
+
+    /**
+     * Convenience method to transform instance of {@link Either} which holds {@link Tuple4}
+     * @param either
+     *        Input instance
+     * @param mapper
+     *        Mapping function
+     * @return transformed instance of {@link Either}
+     */
+    static <F, R, T1, T2, T3, T4> Either<F, R> mapTuple(final Either<F, Tuple4<T1, T2, T3, T4>> either, final FN4<R, T1, T2, T3, T4> mapper) {
+        return either.mapSuccess(tuple -> tuple.map(mapper));
+    }
+
+    /**
+     * Convenience method to transform instance of {@link Either} which holds {@link Tuple5}
+     * @param either
+     *        Input instance
+     * @param mapper
+     *        Mapping function
+     * @return transformed instance of {@link Either}
+     */
+    static <F, R, T1, T2, T3, T4, T5> Either<F, R> mapTuple(final Either<F, Tuple5<T1, T2, T3, T4, T5>> either, final FN5<R, T1, T2, T3, T4, T5> mapper) {
+        return either.mapSuccess(tuple -> tuple.map(mapper));
+    }
+
+    /**
+     * Convenience method to transform instance of {@link Either} which holds {@link Tuple6}
+     * @param either
+     *        Input instance
+     * @param mapper
+     *        Mapping function
+     * @return transformed instance of {@link Either}
+     */
+    static <F, R, T1, T2, T3, T4, T5, T6> Either<F, R> mapTuple(final Either<F, Tuple6<T1, T2, T3, T4, T5, T6>> either, final FN6<R, T1, T2, T3, T4, T5, T6> mapper) {
+        return either.mapSuccess(tuple -> tuple.map(mapper));
+    }
+
+    /**
+     * Convenience method to transform instance of {@link Either} which holds {@link Tuple7}
+     * @param either
+     *        Input instance
+     * @param mapper
+     *        Mapping function
+     * @return transformed instance of {@link Either}
+     */
+    static <F, R, T1, T2, T3, T4, T5, T6, T7> Either<F, R> mapTuple(final Either<F, Tuple7<T1, T2, T3, T4, T5, T6, T7>> either, final FN7<R, T1, T2, T3, T4, T5, T6, T7> mapper) {
+        return either.mapSuccess(tuple -> tuple.map(mapper));
+    }
+
+    /**
+     * Convenience method to transform instance of {@link Either} which holds {@link Tuple8}
+     * @param either
+     *        Input instance
+     * @param mapper
+     *        Mapping function
+     * @return transformed instance of {@link Either}
+     */
+    static <F, R, T1, T2, T3, T4, T5, T6, T7, T8> Either<F, R> mapTuple(final Either<F, Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> either, final FN8<R, T1, T2, T3, T4, T5, T6, T7, T8> mapper) {
+        return either.mapSuccess(tuple -> tuple.map(mapper));
+    }
+
+    /**
+     * Convenience method to transform instance of {@link Either} which holds {@link Tuple9}
+     * @param either
+     *        Input instance
+     * @param mapper
+     *        Mapping function
+     * @return transformed instance of {@link Either}
+     */
+    static <F, R, T1, T2, T3, T4, T5, T6, T7, T8, T9> Either<F, R> mapTuple(final Either<F, Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> either, final FN9<R, T1, T2, T3, T4, T5, T6, T7, T8, T9> mapper) {
+        return either.mapSuccess(tuple -> tuple.map(mapper));
+    }
+
     final class Success<F, S> implements Either<F, S> {
         private final S success;
 
@@ -324,7 +449,6 @@ public interface Either<F, S> {
         //Note that for failure we can't actually transform the value, so error types of both instances should be compatible
         //otherwise we'll get runtime class cast exception
         @Override
-        @SuppressWarnings("unchecked")
         public <NF, NS> Either<NF, NS> flatMap(final FN1<? extends Either<NF, NS>, ? super S> mapper) {
             return new Failure<>((NF) failure);
         }
