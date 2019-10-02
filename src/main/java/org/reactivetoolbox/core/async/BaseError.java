@@ -16,7 +16,7 @@ package org.reactivetoolbox.core.async;
  * limitations under the License.
  */
 
-import org.reactivetoolbox.core.functional.Either;
+import org.reactivetoolbox.core.functional.Result;
 
 /**
  * Marker interface for error types.
@@ -27,5 +27,5 @@ public interface BaseError {
     int code();
     String message();
 
-    <T> Either<? extends BaseError, T> asFailure();
+    <T> Result<T> asFailure();
 }

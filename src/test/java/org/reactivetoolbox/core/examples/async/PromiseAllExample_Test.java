@@ -15,7 +15,7 @@ public class PromiseAllExample_Test {
     @Test
     void simpleAsyncTask() {
         service.slowRetrieveInteger(42)
-               .then(result -> result.onSuccess(System.out::println))
+               .then(result -> result.ifSuccess(System.out::println))
                .syncWait();
     }
 
@@ -23,7 +23,7 @@ public class PromiseAllExample_Test {
     void simpleAsyncTaskWithTimeout() {
         service.slowRetrieveInteger(4242)
                .with(Timeout.of(10).sec(), TIMEOUT.asFailure())
-               .then(result -> result.onSuccess(System.out::println))
+               .then(result -> result.ifSuccess(System.out::println))
                .syncWait();
     }
 
@@ -34,7 +34,7 @@ public class PromiseAllExample_Test {
             service.slowRetrieveString("text 1"),
             service.slowRetrieveUuid())
                 .map(Tuples::zip)
-                .then(result -> result.onSuccess(System.out::println))
+                .then(result -> result.ifSuccess(System.out::println))
                 .syncWait();
     }
 
@@ -44,7 +44,7 @@ public class PromiseAllExample_Test {
         all(service.slowRetrieveInteger(234),
             service.slowRetrieveString("text 2"),
             service.slowRetrieveUuid())
-                .then(result -> zip(result).onSuccess(System.out::println))
+                .then(result -> zip(result).ifSuccess(System.out::println))
                 .syncWait();
     }
 
@@ -54,7 +54,7 @@ public class PromiseAllExample_Test {
         zipAll(service.slowRetrieveInteger(345),
                service.slowRetrieveString("text 3"),
                service.slowRetrieveUuid())
-                .then(result -> result.onSuccess(System.out::println))
+                .then(result -> result.ifSuccess(System.out::println))
                 .syncWait();
     }
 }

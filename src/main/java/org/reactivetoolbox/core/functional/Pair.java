@@ -153,7 +153,7 @@ public final class Pair<L, R> {
      * @return {@link Option} which contains left value
      */
     public Option<L> tryLeft() {
-        return Option.of(left);
+        return Option.with(left);
     }
 
     /**
@@ -162,7 +162,7 @@ public final class Pair<L, R> {
      * @return {@link Option} which contains right value
      */
     public Option<R> tryRight() {
-        return Option.of(right);
+        return Option.with(right);
     }
 
     @Override

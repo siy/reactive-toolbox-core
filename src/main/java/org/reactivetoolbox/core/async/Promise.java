@@ -1,9 +1,9 @@
 package org.reactivetoolbox.core.async;
 
 import org.reactivetoolbox.core.async.impl.PromiseImpl;
-import org.reactivetoolbox.core.functional.Either;
 import org.reactivetoolbox.core.functional.Functions.FN1;
 import org.reactivetoolbox.core.functional.Option;
+import org.reactivetoolbox.core.functional.Result;
 import org.reactivetoolbox.core.functional.Tuples;
 import org.reactivetoolbox.core.functional.Tuples.Tuple;
 import org.reactivetoolbox.core.functional.Tuples.Tuple1;
@@ -158,11 +158,11 @@ public interface Promise<T> {
         return new PromiseImpl<>();
     }
 
-    static <T> Promise<Either<? extends BaseError, T>> either() {
+    static <T> Promise<Result<T>> either() {
         return new PromiseImpl<>();
     }
 
-    static <T> Promise<Either<? extends BaseError, T>> either(final Class<T> clazz) {
+    static <T> Promise<Result<T>> either(final Class<T> clazz) {
         return new PromiseImpl<>();
     }
 
@@ -202,6 +202,7 @@ public interface Promise<T> {
      *        Input promise
      * @return Created promise
      */
+    @SuppressWarnings("unchecked")
     static <T1> Promise<Tuple1<T1>> all(final Promise<T1> promise) {
         return zipper(values -> of((T1) values[0]),
                       promise);
@@ -209,18 +210,19 @@ public interface Promise<T> {
 
     /**
      * Version of {@link #all(Promise)} which is intended for use with instances of {@link Promise} which hold
-     * values of type {@link Either}. This method transforms result using {@link Tuples#zip(Either)} so result
-     * is an {@link Either} which contains either error or tuple with results.<br>
+     * values of type {@link Result}. This method transforms result using {@link Tuples#zip(Result)} so result
+     * is an {@link Result} which contains either error or tuple with results.<br>
      * Note that this version is basically no-op comparing to {@link #all(Promise)} and provided only
      * for consistency and simplification of changes of code.
      *
      * @param promise
      *        Input promise
      * @return Created promise
-     * @see Tuples#zip(Either)
+     * @see Tuples#zip(Result)
      */
-    static <T1> Promise<Either<? extends BaseError, Tuple1<T1>>> zipAll(final Promise<Either<? extends BaseError, T1>> promise) {
-        return zipper(values -> zip((Either<? extends BaseError, T1>) values[0]), promise);
+    @SuppressWarnings("unchecked")
+    static <T1> Promise<Result<Tuple1<T1>>> zipAll(final Promise<Result<T1>> promise) {
+        return zipper(values -> zip((Result<T1>) values[0]), promise);
     }
 
     /**
@@ -233,6 +235,7 @@ public interface Promise<T> {
      *        Input promise #2
      * @return Created promise
      */
+    @SuppressWarnings("unchecked")
     static <T1, T2> Promise<Tuple2<T1, T2>> all(final Promise<T1> promise1,
                                                 final Promise<T2> promise2) {
         return zipper(values -> of((T1) values[0],
@@ -242,8 +245,8 @@ public interface Promise<T> {
 
     /**
      * Version of {@link #all(Promise, Promise)} which is intended for use with
-     * instances of {@link Promise} which hold values of type {@link Either}. This method transforms result using
-     * {@link Tuples#zip(Either, Either)} so result is an {@link Either} which contains
+     * instances of {@link Promise} which hold values of type {@link Result}. This method transforms result using
+     * {@link Tuples#zip(Result, Result)} so result is an {@link Result} which contains
      * either error or tuple with results.
      *
      * @param promise1
@@ -251,12 +254,13 @@ public interface Promise<T> {
      * @param promise2
      *        Input promise #2
      * @return Created promise
-     * @see Tuples#zip(Either, Either)
+     * @see Tuples#zip(Result, Result)
      */
-    static <T1, T2> Promise<Either<? extends BaseError, Tuple2<T1, T2>>> zipAll(final Promise<Either<? extends BaseError, T1>> promise1,
-                                                                                final Promise<Either<? extends BaseError, T2>> promise2) {
-        return zipper(values -> zip((Either<? extends BaseError, T1>) values[0],
-                                    (Either<? extends BaseError, T2>) values[1]),
+    @SuppressWarnings("unchecked")
+    static <T1, T2> Promise<Result<Tuple2<T1, T2>>> zipAll(final Promise<Result<T1>> promise1,
+                                                           final Promise<Result<T2>> promise2) {
+        return zipper(values -> zip((Result<T1>) values[0],
+                                    (Result<T2>) values[1]),
                       promise1, promise2);
     }
 
@@ -272,6 +276,7 @@ public interface Promise<T> {
      *        Input promise #3
      * @return Created promise
      */
+    @SuppressWarnings("unchecked")
     static <T1, T2, T3> Promise<Tuple3<T1, T2, T3>> all(final Promise<T1> promise1,
                                                         final Promise<T2> promise2,
                                                         final Promise<T3> promise3) {
@@ -282,8 +287,8 @@ public interface Promise<T> {
 
     /**
      * Version of {@link #all(Promise, Promise, Promise)} which is intended for use with
-     * instances of {@link Promise} which hold values of type {@link Either}. This method transforms result using
-     * {@link Tuples#zip(Either, Either, Either)} so result is an {@link Either} which contains
+     * instances of {@link Promise} which hold values of type {@link Result}. This method transforms result using
+     * {@link Tuples#zip(Result, Result, Result)} so result is an {@link Result} which contains
      * either error or tuple with results.
      *
      * @param promise1
@@ -293,14 +298,15 @@ public interface Promise<T> {
      * @param promise3
      *        Input promise #3
      * @return Created promise
-     * @see Tuples#zip(Either, Either, Either)
+     * @see Tuples#zip(Result, Result, Result)
      */
-    static <T1, T2, T3> Promise<Either<? extends BaseError, Tuple3<T1, T2, T3>>> zipAll(final Promise<Either<? extends BaseError, T1>> promise1,
-                                                                                        final Promise<Either<? extends BaseError, T2>> promise2,
-                                                                                        final Promise<Either<? extends BaseError, T3>> promise3) {
-        return zipper(values -> zip((Either<? extends BaseError, T1>) values[0],
-                                    (Either<? extends BaseError, T2>) values[1],
-                                    (Either<? extends BaseError, T3>) values[2]),
+    @SuppressWarnings("unchecked")
+    static <T1, T2, T3> Promise<Result<Tuple3<T1, T2, T3>>> zipAll(final Promise<Result<T1>> promise1,
+                                                                   final Promise<Result<T2>> promise2,
+                                                                   final Promise<Result<T3>> promise3) {
+        return zipper(values -> zip((Result<T1>) values[0],
+                                    (Result<T2>) values[1],
+                                    (Result<T3>) values[2]),
                       promise1, promise2, promise3);
     }
 
@@ -318,6 +324,7 @@ public interface Promise<T> {
      *        Input promise #4
      * @return Created promise
      */
+    @SuppressWarnings("unchecked")
     static <T1, T2, T3, T4> Promise<Tuple4<T1, T2, T3, T4>> all(final Promise<T1> promise1,
                                                                 final Promise<T2> promise2,
                                                                 final Promise<T3> promise3,
@@ -328,8 +335,8 @@ public interface Promise<T> {
 
     /**
      * Version of {@link #all(Promise, Promise, Promise, Promise)} which is intended for use with
-     * instances of {@link Promise} which hold values of type {@link Either}. This method transforms result using
-     * {@link Tuples#zip(Either, Either, Either, Either)} so result is an {@link Either} which contains
+     * instances of {@link Promise} which hold values of type {@link Result}. This method transforms result using
+     * {@link Tuples#zip(Result, Result, Result, Result)} so result is an {@link Result} which contains
      * either error or tuple with results.
      *
      * @param promise1
@@ -341,16 +348,17 @@ public interface Promise<T> {
      * @param promise4
      *        Input promise #4
      * @return Created promise
-     * @see Tuples#zip(Either, Either, Either, Either)
+     * @see Tuples#zip(Result, Result, Result, Result)
      */
-    static <T1, T2, T3, T4> Promise<Either<? extends BaseError, Tuple4<T1, T2, T3, T4>>> zipAll(final Promise<Either<? extends BaseError, T1>> promise1,
-                                                                                                final Promise<Either<? extends BaseError, T2>> promise2,
-                                                                                                final Promise<Either<? extends BaseError, T3>> promise3,
-                                                                                                final Promise<Either<? extends BaseError, T4>> promise4) {
-        return zipper(values -> zip((Either<? extends BaseError, T1>) values[0],
-                                    (Either<? extends BaseError, T2>) values[1],
-                                    (Either<? extends BaseError, T3>) values[2],
-                                    (Either<? extends BaseError, T4>) values[3]),
+    @SuppressWarnings("unchecked")
+    static <T1, T2, T3, T4> Promise<Result<Tuple4<T1, T2, T3, T4>>> zipAll(final Promise<Result<T1>> promise1,
+                                                                           final Promise<Result<T2>> promise2,
+                                                                           final Promise<Result<T3>> promise3,
+                                                                           final Promise<Result<T4>> promise4) {
+        return zipper(values -> zip((Result<T1>) values[0],
+                                    (Result<T2>) values[1],
+                                    (Result<T3>) values[2],
+                                    (Result<T4>) values[3]),
                       promise1, promise2, promise3, promise4);
     }
 
@@ -370,6 +378,7 @@ public interface Promise<T> {
      *        Input promise #5
      * @return Created promise
      */
+    @SuppressWarnings("unchecked")
     static <T1, T2, T3, T4, T5> Promise<Tuple5<T1, T2, T3, T4, T5>> all(final Promise<T1> promise1,
                                                                         final Promise<T2> promise2,
                                                                         final Promise<T3> promise3,
@@ -381,8 +390,8 @@ public interface Promise<T> {
 
     /**
      * Version of {@link #all(Promise, Promise, Promise, Promise, Promise)} which is intended for use with
-     * instances of {@link Promise} which hold values of type {@link Either}. This method transforms result using
-     * {@link Tuples#zip(Either, Either, Either, Either, Either)} so result is an {@link Either} which contains
+     * instances of {@link Promise} which hold values of type {@link Result}. This method transforms result using
+     * {@link Tuples#zip(Result, Result, Result, Result, Result)} so result is an {@link Result} which contains
      * either error or tuple with results.
      *
      * @param promise1
@@ -396,18 +405,19 @@ public interface Promise<T> {
      * @param promise5
      *        Input promise #5
      * @return Created promise
-     * @see Tuples#zip(Either, Either, Either, Either, Either)
+     * @see Tuples#zip(Result, Result, Result, Result, Result)
      */
-    static <T1, T2, T3, T4, T5> Promise<Either<? extends BaseError, Tuple5<T1, T2, T3, T4, T5>>> zipAll(final Promise<Either<? extends BaseError, T1>> promise1,
-                                                                                                        final Promise<Either<? extends BaseError, T2>> promise2,
-                                                                                                        final Promise<Either<? extends BaseError, T3>> promise3,
-                                                                                                        final Promise<Either<? extends BaseError, T4>> promise4,
-                                                                                                        final Promise<Either<? extends BaseError, T5>> promise5) {
-        return zipper(values -> zip((Either<? extends BaseError, T1>) values[0],
-                                    (Either<? extends BaseError, T2>) values[1],
-                                    (Either<? extends BaseError, T3>) values[2],
-                                    (Either<? extends BaseError, T4>) values[3],
-                                    (Either<? extends BaseError, T5>) values[4]),
+    @SuppressWarnings("unchecked")
+    static <T1, T2, T3, T4, T5> Promise<Result<Tuple5<T1, T2, T3, T4, T5>>> zipAll(final Promise<Result<T1>> promise1,
+                                                                                   final Promise<Result<T2>> promise2,
+                                                                                   final Promise<Result<T3>> promise3,
+                                                                                   final Promise<Result<T4>> promise4,
+                                                                                   final Promise<Result<T5>> promise5) {
+        return zipper(values -> zip((Result<T1>) values[0],
+                                    (Result<T2>) values[1],
+                                    (Result<T3>) values[2],
+                                    (Result<T4>) values[3],
+                                    (Result<T5>) values[4]),
                       promise1, promise2, promise3, promise4, promise5);
     }
 
@@ -429,6 +439,7 @@ public interface Promise<T> {
      *        Input promise #6
      * @return Created promise
      */
+    @SuppressWarnings("unchecked")
     static <T1, T2, T3, T4, T5, T6> Promise<Tuple6<T1, T2, T3, T4, T5, T6>> all(final Promise<T1> promise1,
                                                                                 final Promise<T2> promise2,
                                                                                 final Promise<T3> promise3,
@@ -442,8 +453,8 @@ public interface Promise<T> {
 
     /**
      * Version of {@link #all(Promise, Promise, Promise, Promise, Promise, Promise)} which is intended for use with
-     * instances of {@link Promise} which hold values of type {@link Either}. This method transforms result using
-     * {@link Tuples#zip(Either, Either, Either, Either, Either, Either)} so result is an {@link Either} which contains
+     * instances of {@link Promise} which hold values of type {@link Result}. This method transforms result using
+     * {@link Tuples#zip(Result, Result, Result, Result, Result, Result)} so result is an {@link Result} which contains
      * either error or tuple with results.
      *
      * @param promise1
@@ -459,20 +470,21 @@ public interface Promise<T> {
      * @param promise6
      *        Input promise #6
      * @return Created promise
-     * @see Tuples#zip(Either, Either, Either, Either, Either, Either)
+     * @see Tuples#zip(Result, Result, Result, Result, Result, Result)
      */
-    static <T1, T2, T3, T4, T5, T6> Promise<Either<? extends BaseError, Tuple6<T1, T2, T3, T4, T5, T6>>> zipAll(final Promise<Either<? extends BaseError, T1>> promise1,
-                                                                                                                final Promise<Either<? extends BaseError, T2>> promise2,
-                                                                                                                final Promise<Either<? extends BaseError, T3>> promise3,
-                                                                                                                final Promise<Either<? extends BaseError, T4>> promise4,
-                                                                                                                final Promise<Either<? extends BaseError, T5>> promise5,
-                                                                                                                final Promise<Either<? extends BaseError, T6>> promise6) {
-        return zipper(values -> zip((Either<? extends BaseError, T1>) values[0],
-                                    (Either<? extends BaseError, T2>) values[1],
-                                    (Either<? extends BaseError, T3>) values[2],
-                                    (Either<? extends BaseError, T4>) values[3],
-                                    (Either<? extends BaseError, T5>) values[4],
-                                    (Either<? extends BaseError, T6>) values[5]),
+    @SuppressWarnings("unchecked")
+    static <T1, T2, T3, T4, T5, T6> Promise<Result<Tuple6<T1, T2, T3, T4, T5, T6>>> zipAll(final Promise<Result<T1>> promise1,
+                                                                                           final Promise<Result<T2>> promise2,
+                                                                                           final Promise<Result<T3>> promise3,
+                                                                                           final Promise<Result<T4>> promise4,
+                                                                                           final Promise<Result<T5>> promise5,
+                                                                                           final Promise<Result<T6>> promise6) {
+        return zipper(values -> zip((Result<T1>) values[0],
+                                    (Result<T2>) values[1],
+                                    (Result<T3>) values[2],
+                                    (Result<T4>) values[3],
+                                    (Result<T5>) values[4],
+                                    (Result<T6>) values[5]),
                       promise1, promise2, promise3, promise4, promise5, promise6);
     }
 
@@ -496,6 +508,7 @@ public interface Promise<T> {
      *        Input promise #7
      * @return Created promise
      */
+    @SuppressWarnings("unchecked")
     static <T1, T2, T3, T4, T5, T6, T7> Promise<Tuple7<T1, T2, T3, T4, T5, T6, T7>> all(final Promise<T1> promise1,
                                                                                         final Promise<T2> promise2,
                                                                                         final Promise<T3> promise3,
@@ -510,8 +523,8 @@ public interface Promise<T> {
 
     /**
      * Version of {@link #all(Promise, Promise, Promise, Promise, Promise, Promise, Promise)} which is intended for use with
-     * instances of {@link Promise} which hold values of type {@link Either}. This method transforms result using
-     * {@link Tuples#zip(Either, Either, Either, Either, Either, Either, Either)} so result is an {@link Either} which contains
+     * instances of {@link Promise} which hold values of type {@link Result}. This method transforms result using
+     * {@link Tuples#zip(Result, Result, Result, Result, Result, Result, Result)} so result is an {@link Result} which contains
      * either error or tuple with results.
      *
      * @param promise1
@@ -529,22 +542,23 @@ public interface Promise<T> {
      * @param promise7
      *        Input promise #7
      * @return Created promise
-     * @see Tuples#zip(Either, Either, Either, Either, Either, Either, Either)
+     * @see Tuples#zip(Result, Result, Result, Result, Result, Result, Result)
      */
-    static <T1, T2, T3, T4, T5, T6, T7> Promise<Either<? extends BaseError, Tuple7<T1, T2, T3, T4, T5, T6, T7>>> zipAll(final Promise<Either<? extends BaseError, T1>> promise1,
-                                                                                                                        final Promise<Either<? extends BaseError, T2>> promise2,
-                                                                                                                        final Promise<Either<? extends BaseError, T3>> promise3,
-                                                                                                                        final Promise<Either<? extends BaseError, T4>> promise4,
-                                                                                                                        final Promise<Either<? extends BaseError, T5>> promise5,
-                                                                                                                        final Promise<Either<? extends BaseError, T6>> promise6,
-                                                                                                                        final Promise<Either<? extends BaseError, T7>> promise7) {
-        return zipper(values -> zip((Either<? extends BaseError, T1>) values[0],
-                                    (Either<? extends BaseError, T2>) values[1],
-                                    (Either<? extends BaseError, T3>) values[2],
-                                    (Either<? extends BaseError, T4>) values[3],
-                                    (Either<? extends BaseError, T5>) values[4],
-                                    (Either<? extends BaseError, T6>) values[5],
-                                    (Either<? extends BaseError, T7>) values[6]),
+    @SuppressWarnings("unchecked")
+    static <T1, T2, T3, T4, T5, T6, T7> Promise<Result<Tuple7<T1, T2, T3, T4, T5, T6, T7>>> zipAll(final Promise<Result<T1>> promise1,
+                                                                                                   final Promise<Result<T2>> promise2,
+                                                                                                   final Promise<Result<T3>> promise3,
+                                                                                                   final Promise<Result<T4>> promise4,
+                                                                                                   final Promise<Result<T5>> promise5,
+                                                                                                   final Promise<Result<T6>> promise6,
+                                                                                                   final Promise<Result<T7>> promise7) {
+        return zipper(values -> zip((Result<T1>) values[0],
+                                    (Result<T2>) values[1],
+                                    (Result<T3>) values[2],
+                                    (Result<T4>) values[3],
+                                    (Result<T5>) values[4],
+                                    (Result<T6>) values[5],
+                                    (Result<T7>) values[6]),
                       promise1, promise2, promise3, promise4, promise5, promise6, promise7);
     }
 
@@ -570,6 +584,7 @@ public interface Promise<T> {
      *        Input promise #8
      * @return Created promise
      */
+    @SuppressWarnings("unchecked")
     static <T1, T2, T3, T4, T5, T6, T7, T8> Promise<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> all(final Promise<T1> promise1,
                                                                                                 final Promise<T2> promise2,
                                                                                                 final Promise<T3> promise3,
@@ -585,8 +600,8 @@ public interface Promise<T> {
 
     /**
      * Version of {@link #all(Promise, Promise, Promise, Promise, Promise, Promise, Promise, Promise)} which is intended for use with
-     * instances of {@link Promise} which hold values of type {@link Either}. This method transforms result using
-     * {@link Tuples#zip(Either, Either, Either, Either, Either, Either, Either, Either)} so result is an {@link Either} which contains
+     * instances of {@link Promise} which hold values of type {@link Result}. This method transforms result using
+     * {@link Tuples#zip(Result, Result, Result, Result, Result, Result, Result, Result)} so result is an {@link Result} which contains
      * either error or tuple with results.
      *
      * @param promise1
@@ -606,24 +621,25 @@ public interface Promise<T> {
      * @param promise8
      *        Input promise #8
      * @return Created promise
-     * @see Tuples#zip(Either, Either, Either, Either, Either, Either, Either, Either)
+     * @see Tuples#zip(Result, Result, Result, Result, Result, Result, Result, Result)
      */
-    static <T1, T2, T3, T4, T5, T6, T7, T8> Promise<Either<? extends BaseError, Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>>> zipAll(final Promise<Either<? extends BaseError, T1>> promise1,
-                                                                                                                                final Promise<Either<? extends BaseError, T2>> promise2,
-                                                                                                                                final Promise<Either<? extends BaseError, T3>> promise3,
-                                                                                                                                final Promise<Either<? extends BaseError, T4>> promise4,
-                                                                                                                                final Promise<Either<? extends BaseError, T5>> promise5,
-                                                                                                                                final Promise<Either<? extends BaseError, T6>> promise6,
-                                                                                                                                final Promise<Either<? extends BaseError, T7>> promise7,
-                                                                                                                                final Promise<Either<? extends BaseError, T8>> promise8) {
-        return zipper(values -> zip((Either<? extends BaseError, T1>) values[0],
-                                    (Either<? extends BaseError, T2>) values[1],
-                                    (Either<? extends BaseError, T3>) values[2],
-                                    (Either<? extends BaseError, T4>) values[3],
-                                    (Either<? extends BaseError, T5>) values[4],
-                                    (Either<? extends BaseError, T6>) values[5],
-                                    (Either<? extends BaseError, T7>) values[6],
-                                    (Either<? extends BaseError, T8>) values[7]),
+    @SuppressWarnings("unchecked")
+    static <T1, T2, T3, T4, T5, T6, T7, T8> Promise<Result<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>>> zipAll(final Promise<Result<T1>> promise1,
+                                                                                                           final Promise<Result<T2>> promise2,
+                                                                                                           final Promise<Result<T3>> promise3,
+                                                                                                           final Promise<Result<T4>> promise4,
+                                                                                                           final Promise<Result<T5>> promise5,
+                                                                                                           final Promise<Result<T6>> promise6,
+                                                                                                           final Promise<Result<T7>> promise7,
+                                                                                                           final Promise<Result<T8>> promise8) {
+        return zipper(values -> zip((Result<T1>) values[0],
+                                    (Result<T2>) values[1],
+                                    (Result<T3>) values[2],
+                                    (Result<T4>) values[3],
+                                    (Result<T5>) values[4],
+                                    (Result<T6>) values[5],
+                                    (Result<T7>) values[6],
+                                    (Result<T8>) values[7]),
                       promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8);
     }
 
@@ -651,6 +667,7 @@ public interface Promise<T> {
      *        Input promise #9
      * @return Created promise
      */
+    @SuppressWarnings("unchecked")
     static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Promise<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> all(final Promise<T1> promise1,
                                                                                                         final Promise<T2> promise2,
                                                                                                         final Promise<T3> promise3,
@@ -668,8 +685,8 @@ public interface Promise<T> {
 
     /**
      * Version of {@link #all(Promise, Promise, Promise, Promise, Promise, Promise, Promise, Promise, Promise)} which is intended for use with
-     * instances of {@link Promise} which hold values of type {@link Either}. This method transforms result using
-     * {@link Tuples#zip(Either, Either, Either, Either, Either, Either, Either, Either, Either)} so result is an {@link Either} which contains
+     * instances of {@link Promise} which hold values of type {@link Result}. This method transforms result using
+     * {@link Tuples#zip(Result, Result, Result, Result, Result, Result, Result, Result, Result)} so result is an {@link Result} which contains
      * either error or tuple with results.
      *
      * @param promise1
@@ -691,26 +708,27 @@ public interface Promise<T> {
      * @param promise9
      *        Input promise #9
      * @return Created promise
-     * @see Tuples#zip(Either, Either, Either, Either, Either, Either, Either, Either, Either)
+     * @see Tuples#zip(Result, Result, Result, Result, Result, Result, Result, Result, Result)
      */
-    static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Promise<Either<? extends BaseError, Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>>> zipAll(final Promise<Either<? extends BaseError, T1>> promise1,
-                                                                                                                                        final Promise<Either<? extends BaseError, T2>> promise2,
-                                                                                                                                        final Promise<Either<? extends BaseError, T3>> promise3,
-                                                                                                                                        final Promise<Either<? extends BaseError, T4>> promise4,
-                                                                                                                                        final Promise<Either<? extends BaseError, T5>> promise5,
-                                                                                                                                        final Promise<Either<? extends BaseError, T6>> promise6,
-                                                                                                                                        final Promise<Either<? extends BaseError, T7>> promise7,
-                                                                                                                                        final Promise<Either<? extends BaseError, T8>> promise8,
-                                                                                                                                        final Promise<Either<? extends BaseError, T9>> promise9) {
-        return zipper(values -> zip((Either<? extends BaseError, T1>) values[0],
-                                    (Either<? extends BaseError, T2>) values[1],
-                                    (Either<? extends BaseError, T3>) values[2],
-                                    (Either<? extends BaseError, T4>) values[3],
-                                    (Either<? extends BaseError, T5>) values[4],
-                                    (Either<? extends BaseError, T6>) values[5],
-                                    (Either<? extends BaseError, T7>) values[6],
-                                    (Either<? extends BaseError, T8>) values[7],
-                                    (Either<? extends BaseError, T9>) values[8]),
+    @SuppressWarnings("unchecked")
+    static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Promise<Result<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>>> zipAll(final Promise<Result<T1>> promise1,
+                                                                                                                   final Promise<Result<T2>> promise2,
+                                                                                                                   final Promise<Result<T3>> promise3,
+                                                                                                                   final Promise<Result<T4>> promise4,
+                                                                                                                   final Promise<Result<T5>> promise5,
+                                                                                                                   final Promise<Result<T6>> promise6,
+                                                                                                                   final Promise<Result<T7>> promise7,
+                                                                                                                   final Promise<Result<T8>> promise8,
+                                                                                                                   final Promise<Result<T9>> promise9) {
+        return zipper(values -> zip((Result<T1>) values[0],
+                                    (Result<T2>) values[1],
+                                    (Result<T3>) values[2],
+                                    (Result<T4>) values[3],
+                                    (Result<T5>) values[4],
+                                    (Result<T6>) values[5],
+                                    (Result<T7>) values[6],
+                                    (Result<T8>) values[7],
+                                    (Result<T9>) values[8]),
                       promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8, promise9);
     }
 
@@ -724,8 +742,7 @@ public interface Promise<T> {
      *        Promises whose values created promise will be waiting for
      * @return created promise
      */
-    private static <T> Promise<T> zipper(final FN1<T, Object[]> valueTransformer,
-                                         final Promise<?>... promises) {
+    private static <T> Promise<T> zipper(final FN1<T, Object[]> valueTransformer, final Promise<?>... promises) {
         final var values = new Object[promises.length];
         final var result = Promise.<T>give();
         final var thresholdAction = ActionableThreshold.of(promises.length,

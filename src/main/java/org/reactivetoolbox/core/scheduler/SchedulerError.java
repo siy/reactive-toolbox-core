@@ -16,7 +16,7 @@ package org.reactivetoolbox.core.scheduler;
  */
 
 import org.reactivetoolbox.core.async.BaseError;
-import org.reactivetoolbox.core.functional.Either;
+import org.reactivetoolbox.core.functional.Result;
 
 //TODO: JavaDoc
 public enum SchedulerError implements BaseError {
@@ -42,7 +42,7 @@ public enum SchedulerError implements BaseError {
     }
 
     @Override
-    public <T> Either<SchedulerError, T> asFailure() {
-        return Either.failure(this);
+    public <T> Result<T> asFailure() {
+        return Result.failure(this);
     }
 }

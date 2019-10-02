@@ -52,7 +52,7 @@ public class Option<T> {
      *        Value to be stored in the created instance
      * @return Created instance
      */
-    public static <R> Option<R> of(final R value) {
+    public static <R> Option<R> with(final R value) {
         return new Option<>(value);
     }
 
@@ -116,7 +116,7 @@ public class Option<T> {
      * @return transformed instance
      */
     public <U> Option<U> map(final FN1<U, ? super T> mapper) {
-        return isEmpty() ? empty() : Option.of(mapper.apply(value));
+        return isEmpty() ? empty() : Option.with(mapper.apply(value));
     }
 
     /**

@@ -30,7 +30,7 @@ public final class PromiseImpl<T> implements Promise<T> {
      */
     @Override
     public Option<T> value() {
-        return Option.of(value.getReference());
+        return Option.with(value.getReference());
     }
 
     /**

@@ -18,12 +18,12 @@ class OptionTest {
 
     @Test
     void optionWithDataCanBeCreated() {
-        assertEquals("not empty", Option.of("not empty").get());
+        assertEquals("not empty", Option.with("not empty").get());
     }
 
     @Test
     void nonEmptyOptionCanBeMappedToOtherOption() {
-        final var originalOption = Option.of(123);
+        final var originalOption = Option.with(123);
 
         assertEquals(123, originalOption.get());
         assertEquals("123", originalOption.map(Object::toString).get());
@@ -36,20 +36,20 @@ class OptionTest {
 
     @Test
     void emptyOptionIsNotPresent() {
-        assertFalse(Option.of(null).isPresent());
+        assertFalse(Option.with(null).isPresent());
         assertFalse(Option.empty().isPresent());
-        assertTrue(Option.of(null).isEmpty());
+        assertTrue(Option.with(null).isEmpty());
         assertTrue(Option.empty().isEmpty());
     }
 
     @Test
     void nonEmptyOptionIsPresent() {
-        assertTrue(Option.of(1).isPresent());
+        assertTrue(Option.with(1).isPresent());
     }
 
     @Test
     void nonEmptyOptionCanBeConsumed() {
-        Option.of(321L)
+        Option.with(321L)
               .consume(val -> assertEquals(321L, val));
     }
 
@@ -61,18 +61,18 @@ class OptionTest {
 
     @Test
     void nonEmptyOptionCanBeFlatMappedIntoOtherOption() {
-        assertEquals(347 , Option.of(345).flatMap(val -> Option.of(val + 2)).get());
+        assertEquals(347 , Option.with(345).flatMap(val -> Option.with(val + 2)).get());
     }
 
     @Test
     void emptyOptionRemainsEmptyAndNotFlatMapped() {
-        assertTrue(Option.empty().flatMap(val -> Option.of(Objects.toString(val))).isEmpty());
+        assertTrue(Option.empty().flatMap(val -> Option.with(Objects.toString(val))).isEmpty());
     }
 
     @Test
     void logicalOrChoosesFirsNonEmptyOption1() {
-        final var firstNonEmpty = Option.of("1");
-        final var secondNonEmpty = Option.of("2");
+        final var firstNonEmpty = Option.with("1");
+        final var secondNonEmpty = Option.with("2");
         final var firstEmpty = Option.<String>empty();
         final var secondEmpty = Option.<String>empty();
 
@@ -84,8 +84,8 @@ class OptionTest {
 
     @Test
     void logicalOrChoosesFirsNonEmptyOption2() {
-        final var firstNonEmpty = Option.of("1");
-        final var secondNonEmpty = Option.of("2");
+        final var firstNonEmpty = Option.with("1");
+        final var secondNonEmpty = Option.with("2");
         final var firstEmpty = Option.<String>empty();
         final var secondEmpty = Option.<String>empty();
 
@@ -105,12 +105,12 @@ class OptionTest {
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     void optionCanBeStreamed() {
         assertTrue(Option.empty().stream().findFirst().isEmpty());
-        assertEquals(123, Option.of(123).stream().findFirst().get());
+        assertEquals(123, Option.with(123).stream().findFirst().get());
     }
 
     @Test
     void nonEmptyInstanceCanBeFiltered() {
-        assertEquals(123, Option.of(123).filter(val -> val > 1).get());
+        assertEquals(123, Option.with(123).filter(val -> val > 1).get());
     }
 
     @Test

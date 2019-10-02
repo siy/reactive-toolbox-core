@@ -16,9 +16,8 @@ package org.reactivetoolbox.core.scheduler;
  * limitations under the License.
  */
 
-import org.reactivetoolbox.core.async.BaseError;
 import org.reactivetoolbox.core.async.Promise;
-import org.reactivetoolbox.core.functional.Either;
+import org.reactivetoolbox.core.functional.Result;
 import org.reactivetoolbox.core.scheduler.impl.DoubleQueueTaskScheduler;
 
 import java.util.function.Consumer;
@@ -109,7 +108,7 @@ public interface TaskScheduler {
      *        Task to execute.
      * @return created instance of {@link Promise}
      */
-    default <T> Promise<Either<? extends BaseError, T>> submit(final Consumer<Promise<Either<? extends BaseError, T>>> task) {
+    default <T> Promise<Result<T>> submit(final Consumer<Promise<Result<T>>> task) {
         return submit(defaultTimeout(), TIMEOUT::asFailure, task);
     }
 

@@ -122,7 +122,7 @@ class PromiseTest {
         promise.syncWait();
 
         assertTrue(promise.ready());
-        assertEquals(Option.of(123), promise.value());
+        assertEquals(Option.with(123), promise.value());
     }
 
     @Test
@@ -132,7 +132,7 @@ class PromiseTest {
         assertFalse(promise.ready());
 
         assertTrue(promise.syncWait().ready());
-        assertEquals(Option.of(123), promise.value());
+        assertEquals(Option.with(123), promise.value());
     }
 
     @Test
@@ -145,7 +145,7 @@ class PromiseTest {
                .then(val -> assertEquals(345, val));
 
         assertTrue(promise.syncWait().ready());
-        assertEquals(Option.of(345), promise.value());
+        assertEquals(Option.with(345), promise.value());
     }
 
     @Test
