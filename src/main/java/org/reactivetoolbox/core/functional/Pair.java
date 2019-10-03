@@ -52,7 +52,7 @@ public final class Pair<L, R> {
      *        type of right value
      * @return created instance
      */
-    public static <L, R> Pair<L, R> of(final L left, final R right) {
+    public static <L, R> Pair<L, R> with(final L left, final R right) {
         return new Pair<>(left, right);
     }
 
@@ -106,7 +106,7 @@ public final class Pair<L, R> {
      * @return Transformed pair
      */
     public <L1, R1> Pair<L1, R1> map(final FN1<L1, L> leftMapper, final FN1<R1, R> rightMapper) {
-        return of(leftMapper.apply(left), rightMapper.apply(right));
+        return with(leftMapper.apply(left), rightMapper.apply(right));
     }
 
     /**
@@ -144,7 +144,7 @@ public final class Pair<L, R> {
      * @return Transformed pair
      */
     public Pair<R, L> swap() {
-        return of(right, left);
+        return with(right, left);
     }
 
     /**
@@ -184,7 +184,7 @@ public final class Pair<L, R> {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", "<", ">")
+        return new StringJoiner(", ", "Pair(", ")")
                 .add(Objects.toString(left))
                 .add(Objects.toString(right))
                 .toString();

@@ -29,20 +29,19 @@ import java.util.stream.Stream;
  * @param <T>
  *        Type of contained value
  */
-public class Option<T> {
-    private final T value;
-
-    private Option(final T value) {
-        this.value = value;
-    }
-
+public abstract class Option<T> implements Either<Void, T>{
     /**
      * Create empty instance.
      *
      * @return Created instance
      */
     public static <R> Option<R> empty() {
-        return new Option<>(null);
+        return new Option<>() {
+            @Override
+            public <T> T map(final FN1<? extends T, ? super Void> leftMapper, final FN1<? extends T, ? super R> rightMapper) {
+                return leftMapper.apply(null);
+            }
+        };
     }
 
     /**
@@ -53,34 +52,12 @@ public class Option<T> {
      * @return Created instance
      */
     public static <R> Option<R> with(final R value) {
-        return new Option<>(value);
-    }
-
-    /**
-     * Get contained value without any checks or throwing exceptions.
-     *
-     * @return contained value, either <code>null</code> or <code>non-null</code>
-     */
-    public T get() {
-        return value;
-    }
-
-    /**
-     * Check if instance contains value.
-     *
-     * @return <code>true</code> if instance contains value and <code>false</code> otherwise
-     */
-    public boolean isPresent() {
-        return value != null;
-    }
-
-    /**
-     * Check if instance is empty
-     *
-     * @return <code>true</code> if instance is empty (does not contain value) and <code>false</code> otherwise
-     */
-    public boolean isEmpty() {
-        return value == null;
+        return new Option<>() {
+            @Override
+            public <T> T map(final FN1<? extends T, ? super Void> leftMapper, final FN1<? extends T, ? super R> rightMapper) {
+                return rightMapper.apply(value);
+            }
+        };
     }
 
     /**
@@ -95,7 +72,7 @@ public class Option<T> {
      * @return current instance if it is not empty and predicate returns <code>true</code> and empty instance otherwise
      */
     public Option<T> filter(final Predicate<? super T> predicate) {
-        return isEmpty() ? this : predicate.test(value) ? this : empty();
+        return flatMap(v -> predicate.test(v) ? this : empty());
     }
 
     /**
@@ -115,8 +92,8 @@ public class Option<T> {
      *        Type of new value
      * @return transformed instance
      */
-    public <U> Option<U> map(final FN1<U, ? super T> mapper) {
-        return isEmpty() ? empty() : Option.with(mapper.apply(value));
+    public  <U> Option<U> map(final FN1<U, ? super T> mapper) {
+        return flatMap(t -> with(mapper.apply(t)));
     }
 
     /**
@@ -130,9 +107,7 @@ public class Option<T> {
      * @return this instance for fluent call chaining
      */
     public Option<T> consume(final Consumer<? super T> consumer) {
-        if (isPresent()) {
-            consumer.accept(value);
-        }
+        map(t -> {consumer.accept(t); return null;});
         return this;
     }
 
@@ -147,9 +122,8 @@ public class Option<T> {
      *        New type
      * @return Instance of new type
      */
-    @SuppressWarnings("unchecked")
-    public <U> Option<U> flatMap(final FN1<? extends Option<? extends U>, ? super T> mapper) {
-        return isEmpty() ? empty() : (Option<U>)mapper.apply(value);
+    public <U> Option<U> flatMap(final FN1<Option<U>, ? super T> mapper) {
+        return map(v -> empty(), mapper);
     }
 
     /**
@@ -160,9 +134,8 @@ public class Option<T> {
      *        Supplier which provides new instance in case if current instance is empty
      * @return first non-empty instance, either current one or one returned by provided supplier
      */
-    @SuppressWarnings("unchecked")
-    public Option<T> or(final Supplier<? extends Option<? extends T>> supplier) {
-        return isPresent() ? this : (Option<T>) supplier.get();
+    public Option<T> or(final Supplier<Option<T>> supplier) {
+        return map(v -> supplier.get(), v -> this);
     }
 
     /**
@@ -173,9 +146,8 @@ public class Option<T> {
      *        Replacement instance which is returned in case if current instance is empty
      * @return first non-empty instance, either current one or one returned by provided supplier
      */
-    @SuppressWarnings("unchecked")
-    public Option<T> or(final Option<? extends T> replacement) {
-        return isPresent() ? this : (Option<T>) replacement;
+    public Option<T> or(final Option<T> replacement) {
+        return map(v -> replacement, v -> this);
     }
 
     /**
@@ -188,7 +160,7 @@ public class Option<T> {
      * @return either value stored in current instance or provided replacement value if current instance is empty
      */
     public T otherwise(final T replacement) {
-        return isPresent() ? value : replacement;
+        return map(v -> replacement, v -> v);
     }
 
     /**
@@ -203,7 +175,7 @@ public class Option<T> {
      * is empty
      */
     public T otherwiseGet(final Supplier<T> supplier) {
-        return isPresent() ? value : supplier.get();
+        return map(v -> supplier.get(), v -> v);
     }
 
     /**
@@ -213,39 +185,7 @@ public class Option<T> {
      * @return created stream
      */
     public Stream<T> stream() {
-        return isEmpty() ? Stream.empty() : Stream.of(value);
-    }
-
-    /**
-     * Returns current value if instance is not empty and throws exception if instance is empty.
-     *
-     * @deprecated
-     * @return value stored in this instance
-     * @throws IllegalStateException if instance is empty
-     */
-    @Deprecated
-    public T otherwiseThrow() {
-        if (isPresent()) {
-            return value;
-        }
-
-        throw new IllegalStateException("No value present");
-    }
-
-    /**
-     * Returns current value if instance is not empty and throws exception if instance is empty.
-     *
-     * @deprecated
-     * @return value stored in this instance if instance is not empty or throws exception returned from provided
-     * supplier if instance is empty
-     */
-    @Deprecated
-    public <X extends Throwable> T otherwiseThrow(final Supplier<? extends X> exceptionSupplier) throws X {
-        if (isPresent()) {
-            return value;
-        }
-
-        throw exceptionSupplier.get();
+        return map(v -> Stream.empty(), Stream::of);
     }
 
     @Override
@@ -258,21 +198,17 @@ public class Option<T> {
             return false;
         }
         final Option<?> option = (Option<?>) o;
-        return Objects.equals(value, option.value);
+        return map(v -> option.map(vo -> true, vo -> false),
+                   v -> option.map(vo -> false, vo -> Objects.equals(v, vo)));
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return map(v -> 0, Objects::hash);
     }
 
     @Override
     public String toString() {
-        return isPresent() ? new StringBuilder(Option.class.getSimpleName())
-                .append('<').append(value.getClass().getSimpleName()).append('>')
-                .append('(').append(value.toString()).append(')').toString()
-                : EMPTY_TO_STRING;
+        return map(v -> "Option()", v -> "Option(" + v.toString() + ")");
     }
-
-    private static final String EMPTY_TO_STRING = Option.class.getSimpleName() + ".empty";
 }

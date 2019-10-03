@@ -16,19 +16,16 @@ package org.reactivetoolbox.core.functional;
  * limitations under the License.
  */
 
-import org.reactivetoolbox.core.functional.Tuples.Tuple0;
-import org.reactivetoolbox.core.functional.Tuples.Tuple1;
-import org.reactivetoolbox.core.functional.Tuples.Tuple2;
-import org.reactivetoolbox.core.functional.Tuples.Tuple3;
-import org.reactivetoolbox.core.functional.Tuples.Tuple4;
-import org.reactivetoolbox.core.functional.Tuples.Tuple5;
-import org.reactivetoolbox.core.functional.Tuples.Tuple6;
-import org.reactivetoolbox.core.functional.Tuples.Tuple7;
-import org.reactivetoolbox.core.functional.Tuples.Tuple8;
-import org.reactivetoolbox.core.functional.Tuples.Tuple9;
-
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import org.reactivetoolbox.core.functional.Tuple.Tuple0;
+import org.reactivetoolbox.core.functional.Tuple.Tuple1;
+import org.reactivetoolbox.core.functional.Tuple.Tuple2;
+import org.reactivetoolbox.core.functional.Tuple.Tuple3;
+import org.reactivetoolbox.core.functional.Tuple.Tuple4;
+import org.reactivetoolbox.core.functional.Tuple.Tuple5;
+import org.reactivetoolbox.core.functional.Tuple.Tuple6;
+import org.reactivetoolbox.core.functional.Tuple.Tuple7;
+import org.reactivetoolbox.core.functional.Tuple.Tuple8;
+import org.reactivetoolbox.core.functional.Tuple.Tuple9;
 
 /**
  * Collection of basic functions which accept 0-9 parameters and return single result.

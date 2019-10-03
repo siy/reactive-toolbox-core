@@ -40,7 +40,7 @@ public class AsyncService {
     }
 
     private static <T> Promise<Result<T>> slowRetrieve(final Class<T> clazz, final Timeout delay, final T value) {
-        final var result = Promise.either(clazz);
+        final var result = Promise.result(clazz);
         TaskSchedulerHolder.instance().submit(delay, () -> result.resolve(Result.success(value)));
         return result;
     }

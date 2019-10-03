@@ -30,7 +30,7 @@ public final class PromiseImpl<T> implements Promise<T> {
      */
     @Override
     public Option<T> value() {
-        return Option.with(value.getReference());
+        return value.getReference() == null ? Option.empty() : Option.with(value.getReference());
     }
 
     /**
@@ -38,7 +38,7 @@ public final class PromiseImpl<T> implements Promise<T> {
      */
     @Override
     public boolean ready() {
-        return value().isPresent();
+        return value.isMarked();
     }
 
     /**
@@ -55,6 +55,7 @@ public final class PromiseImpl<T> implements Promise<T> {
     /**
      * {@inheritDoc}
      */
+    //TODO: perhaps run all actions in single async task?
     @Override
     public Promise<T> resolveAsync(final T result) {
         if (value.compareAndSet(null, result, false, true)) {
@@ -79,6 +80,7 @@ public final class PromiseImpl<T> implements Promise<T> {
     /**
      * {@inheritDoc}
      */
+    //TODO: another implementation of map?
     @Override
     public <R> Promise<R> map(final FN1<R, T> mapper) {
         final var result = new PromiseImpl<R>();
@@ -142,7 +144,7 @@ public final class PromiseImpl<T> implements Promise<T> {
      * {@inheritDoc}
      */
     @Override
-    public Promise<T> perform(final Consumer<Promise<T>> task) {
+    public Promise<T> async(final Consumer<Promise<T>> task) {
         return TaskSchedulerHolder.instance().submit(this, task);
     }
 

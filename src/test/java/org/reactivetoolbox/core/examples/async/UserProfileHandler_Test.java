@@ -10,7 +10,7 @@ import org.reactivetoolbox.core.functional.Result;
 
 import java.util.UUID;
 
-import static org.reactivetoolbox.core.async.Promise.zipAll;
+import static org.reactivetoolbox.core.async.Promise.allOf;
 
 public class UserProfileHandler_Test {
     private UserService userService;
@@ -18,10 +18,10 @@ public class UserProfileHandler_Test {
     private CommentService commentService;
 
     public Promise<Result<UserDashboard>> userProfileHandler(final UUID userId) {
-        return zipAll(userService.userProfile(userId),
-                      userService.followers(userId),
-                      articleService.articlesByUser(userId, Order.DESC),
-                      commentService.commentsByUser(userId, Order.DESC))
-                .map(result -> Result.map(result, UserDashboard::with));
+        return allOf(userService.userProfile(userId),
+                     userService.followers(userId),
+                     articleService.articlesByUser(userId, Order.DESC),
+                     commentService.commentsByUser(userId, Order.DESC))
+                .map(result -> result.thenMap(UserDashboard::with));
     }
 }

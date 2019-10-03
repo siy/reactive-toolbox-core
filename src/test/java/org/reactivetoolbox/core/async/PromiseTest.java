@@ -2,7 +2,7 @@ package org.reactivetoolbox.core.async;
 
 import org.junit.jupiter.api.Test;
 import org.reactivetoolbox.core.functional.Option;
-import org.reactivetoolbox.core.functional.Tuples;
+import org.reactivetoolbox.core.functional.Tuple;
 import org.reactivetoolbox.core.scheduler.Timeout;
 
 import java.util.concurrent.Executor;
@@ -27,7 +27,7 @@ class PromiseTest {
         promise.resolve(4);
 
         assertTrue(promise.ready());
-        assertEquals(1, promise.value().get());
+        assertEquals(1, promise.value().otherwise(0));
     }
 
     @Test
@@ -69,7 +69,7 @@ class PromiseTest {
 
         assertTrue(promise.ready());
 
-        assertEquals(1, promise.value().get());
+        assertEquals(1, promise.value().otherwise(0));
     }
 
     @Test
@@ -84,7 +84,7 @@ class PromiseTest {
 
         assertTrue(promise.ready());
 
-        assertEquals(1, promise.value().get());
+        assertEquals(1, promise.value().otherwise(0));
     }
 
     @Test
@@ -99,7 +99,7 @@ class PromiseTest {
 
         assertTrue(promise.ready());
 
-        assertEquals(1, promise.value().get());
+        assertEquals(1, promise.value().otherwise(0));
     }
 
     @Test
@@ -141,7 +141,7 @@ class PromiseTest {
 
         assertFalse(promise.ready());
 
-        promise.perform((p) -> p.resolve(345))
+        promise.async((p) -> p.resolve(345))
                .then(val -> assertEquals(345, val));
 
         assertTrue(promise.syncWait().ready());
@@ -159,7 +159,7 @@ class PromiseTest {
         promise1.resolve(1);
 
         assertTrue(anyPromise.ready());
-        assertEquals(1, anyPromise.value().get());
+        assertEquals(1, anyPromise.value().otherwise(0));
     }
 
     @Test
@@ -173,7 +173,7 @@ class PromiseTest {
         promise2.resolve(1);
 
         assertTrue(anyPromise.ready());
-        assertEquals(1, anyPromise.value().get());
+        assertEquals(1, anyPromise.value().otherwise(0));
     }
 
     @Test
@@ -186,7 +186,7 @@ class PromiseTest {
         promise1.resolve(1);
 
         assertTrue(allPromise.ready());
-        assertEquals(Tuples.of(1), allPromise.value().get());
+        assertEquals(Tuple.with(1), allPromise.value().otherwise(Tuple.with(0)));
     }
 
     @Test
@@ -204,7 +204,7 @@ class PromiseTest {
         promise2.resolve(2);
 
         assertTrue(allPromise.ready());
-        assertEquals(Tuples.of(1, 2), allPromise.value().get());
+        assertEquals(Tuple.with(1, 2), allPromise.value().otherwise(Tuple.with(0, 0)));
     }
 
     @Test
@@ -228,7 +228,7 @@ class PromiseTest {
 
         assertTrue(allPromise.ready());
 
-        assertEquals(Tuples.of(1, 2, 3), allPromise.value().get());
+        assertEquals(Tuple.with(1, 2, 3), allPromise.value().otherwise(Tuple.with(0, 0, 0)));
     }
 
     @Test
@@ -257,7 +257,7 @@ class PromiseTest {
 
         assertTrue(allPromise.ready());
 
-        assertEquals(Tuples.of(1, 2, 3, 4), allPromise.value().get());
+        assertEquals(Tuple.with(1, 2, 3, 4), allPromise.value().otherwise(Tuple.with(0, 0, 0, 0)));
     }
 
     @Test
@@ -291,7 +291,7 @@ class PromiseTest {
 
         assertTrue(allPromise.ready());
 
-        assertEquals(Tuples.of(1, 2, 3, 4, 5), allPromise.value().get());
+        assertEquals(Tuple.with(1, 2, 3, 4, 5), allPromise.value().otherwise(Tuple.with(0, 0, 0, 0, 0)));
     }
 
     @Test
@@ -330,7 +330,7 @@ class PromiseTest {
 
         assertTrue(allPromise.ready());
 
-        assertEquals(Tuples.of(1, 2, 3, 4, 5, 6), allPromise.value().get());
+        assertEquals(Tuple.with(1, 2, 3, 4, 5, 6), allPromise.value().otherwise(Tuple.with(0, 0, 0, 0, 0, 0)));
     }
 
     @Test
@@ -374,7 +374,7 @@ class PromiseTest {
 
         assertTrue(allPromise.ready());
 
-        assertEquals(Tuples.of(1, 2, 3, 4, 5, 6, 7), allPromise.value().get());
+        assertEquals(Tuple.with(1, 2, 3, 4, 5, 6, 7), allPromise.value().otherwise(Tuple.with(0, 0, 0, 0, 0, 0, 0)));
     }
 
     @Test
@@ -423,7 +423,7 @@ class PromiseTest {
 
         assertTrue(allPromise.ready());
 
-        assertEquals(Tuples.of(1, 2, 3, 4, 5, 6, 7, 8), allPromise.value().get());
+        assertEquals(Tuple.with(1, 2, 3, 4, 5, 6, 7, 8), allPromise.value().otherwise(Tuple.with(0, 0, 0, 0, 0, 0, 0, 0)));
     }
 
     @Test
@@ -437,7 +437,12 @@ class PromiseTest {
         final var promise7 = Promise.<Integer>give();
         final var promise8 = Promise.<Integer>give();
         final var promise9 = Promise.<Integer>give();
-        final var  allPromise = Promise.all(promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8, promise9);
+        final var  allPromise =
+                Promise.zipper(values -> Tuple.with((Integer) values[0], (Integer) values[1], (Integer) values[2], (Integer) values[3],
+                                                    (Integer) values[4], (Integer) values[5], (Integer) values[6], (Integer) values[7],
+                                                    (Integer) values[8]),
+                               t -> t,
+                               promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8, promise9);
 
         assertFalse(allPromise.ready());
 
@@ -477,7 +482,7 @@ class PromiseTest {
 
         assertTrue(allPromise.ready());
 
-        assertEquals(Tuples.of(1, 2, 3, 4, 5, 6, 7, 8, 9), allPromise.value().get());
+        assertEquals(Tuple.with(1, 2, 3, 4, 5, 6, 7, 8, 9), allPromise.value().otherwise(Tuple.with(0, 0, 0, 0, 0, 0, 0, 0, 0)));
     }
 
     @Test
@@ -496,7 +501,7 @@ class PromiseTest {
         promise1.resolve(3);
         promise2.resolve(4);
 
-        assertEquals(Tuples.of(1, 2), allPromise.value().get());
+        assertEquals(Tuple.with(1, 2), allPromise.value().otherwise(Tuple.with(0, 0)));
     }
 
     private static void safeSleep(final long delay) {
