@@ -31,13 +31,13 @@ import org.reactivetoolbox.core.functional.Tuple.Tuple9;
 import static org.reactivetoolbox.core.functional.Result.success;
 import static org.reactivetoolbox.core.functional.Tuple.with;
 
-public interface TupleResult {
+public interface ResultTuple {
     interface Zipable<T> {
         T zip();
     }
 
-    static <T1> TupleResult1<T1> of(final Result<T1> param1) {
-        return new TupleResult1<T1>() {
+    static <T1> ResultTuple1<T1> of(final Result<T1> param1) {
+        return new ResultTuple1<T1>() {
             @Override
             public <T> T map(final FN1<T, Result<T1>> mapper) {
                 return mapper.apply(param1);
@@ -45,8 +45,8 @@ public interface TupleResult {
         };
     }
 
-    static <T1, T2> TupleResult2<T1, T2> of(final Result<T1> param1, final Result<T2> param2) {
-        return new TupleResult2<T1, T2>() {
+    static <T1, T2> ResultTuple2<T1, T2> of(final Result<T1> param1, final Result<T2> param2) {
+        return new ResultTuple2<T1, T2>() {
             @Override
             public <T> T map(final FN2<T, Result<T1>, Result<T2>> mapper) {
                 return mapper.apply(param1, param2);
@@ -54,8 +54,8 @@ public interface TupleResult {
         };
     }
 
-    static <T1, T2, T3> TupleResult3<T1, T2, T3> of(final Result<T1> param1, final Result<T2> param2, final Result<T3> param3) {
-        return new TupleResult3<T1, T2, T3>() {
+    static <T1, T2, T3> ResultTuple3<T1, T2, T3> of(final Result<T1> param1, final Result<T2> param2, final Result<T3> param3) {
+        return new ResultTuple3<T1, T2, T3>() {
             @Override
             public <T> T map(final FN3<T, Result<T1>, Result<T2>, Result<T3>> mapper) {
                 return mapper.apply(param1, param2, param3);
@@ -63,9 +63,9 @@ public interface TupleResult {
         };
     }
 
-    static <T1, T2, T3, T4> TupleResult4<T1, T2, T3, T4> of(final Result<T1> param1, final Result<T2> param2, final Result<T3> param3,
+    static <T1, T2, T3, T4> ResultTuple4<T1, T2, T3, T4> of(final Result<T1> param1, final Result<T2> param2, final Result<T3> param3,
                                                             final Result<T4> param4) {
-        return new TupleResult4<T1, T2, T3, T4>() {
+        return new ResultTuple4<T1, T2, T3, T4>() {
             @Override
             public <T> T map(final FN4<T, Result<T1>, Result<T2>, Result<T3>, Result<T4>> mapper) {
                 return mapper.apply(param1, param2, param3, param4);
@@ -73,9 +73,9 @@ public interface TupleResult {
         };
     }
 
-    static <T1, T2, T3, T4, T5> TupleResult5<T1, T2, T3, T4, T5> of(final Result<T1> param1, final Result<T2> param2, final Result<T3> param3,
+    static <T1, T2, T3, T4, T5> ResultTuple5<T1, T2, T3, T4, T5> of(final Result<T1> param1, final Result<T2> param2, final Result<T3> param3,
                                                                     final Result<T4> param4, final Result<T5> param5) {
-        return new TupleResult5<T1, T2, T3, T4, T5>() {
+        return new ResultTuple5<T1, T2, T3, T4, T5>() {
             @Override
             public <T> T map(final FN5<T, Result<T1>, Result<T2>, Result<T3>, Result<T4>, Result<T5>> mapper) {
                 return mapper.apply(param1, param2, param3, param4, param5);
@@ -83,9 +83,9 @@ public interface TupleResult {
         };
     }
 
-    static <T1, T2, T3, T4, T5, T6> TupleResult6<T1, T2, T3, T4, T5, T6> of(final Result<T1> param1, final Result<T2> param2, final Result<T3> param3,
+    static <T1, T2, T3, T4, T5, T6> ResultTuple6<T1, T2, T3, T4, T5, T6> of(final Result<T1> param1, final Result<T2> param2, final Result<T3> param3,
                                                                             final Result<T4> param4, final Result<T5> param5, final Result<T6> param6) {
-        return new TupleResult6<T1, T2, T3, T4, T5, T6>() {
+        return new ResultTuple6<T1, T2, T3, T4, T5, T6>() {
             @Override
             public <T> T map(final FN6<T, Result<T1>, Result<T2>, Result<T3>, Result<T4>, Result<T5>, Result<T6>> mapper) {
                 return mapper.apply(param1, param2, param3, param4, param5, param6);
@@ -93,10 +93,10 @@ public interface TupleResult {
         };
     }
 
-    static <T1, T2, T3, T4, T5, T6, T7> TupleResult7<T1, T2, T3, T4, T5, T6, T7> of(final Result<T1> param1, final Result<T2> param2, final Result<T3> param3,
+    static <T1, T2, T3, T4, T5, T6, T7> ResultTuple7<T1, T2, T3, T4, T5, T6, T7> of(final Result<T1> param1, final Result<T2> param2, final Result<T3> param3,
                                                                                     final Result<T4> param4, final Result<T5> param5, final Result<T6> param6,
                                                                                     final Result<T7> param7) {
-        return new TupleResult7<T1, T2, T3, T4, T5, T6, T7>() {
+        return new ResultTuple7<T1, T2, T3, T4, T5, T6, T7>() {
             @Override
             public <T> T map(final FN7<T, Result<T1>, Result<T2>, Result<T3>, Result<T4>, Result<T5>, Result<T6>, Result<T7>> mapper) {
                 return mapper.apply(param1, param2, param3, param4, param5, param6, param7);
@@ -104,10 +104,10 @@ public interface TupleResult {
         };
     }
 
-    static <T1, T2, T3, T4, T5, T6, T7, T8> TupleResult8<T1, T2, T3, T4, T5, T6, T7, T8> of(final Result<T1> param1, final Result<T2> param2, final Result<T3> param3,
+    static <T1, T2, T3, T4, T5, T6, T7, T8> ResultTuple8<T1, T2, T3, T4, T5, T6, T7, T8> of(final Result<T1> param1, final Result<T2> param2, final Result<T3> param3,
                                                                                             final Result<T4> param4, final Result<T5> param5, final Result<T6> param6,
                                                                                             final Result<T7> param7, final Result<T8> param8) {
-        return new TupleResult8<T1, T2, T3, T4, T5, T6, T7, T8>() {
+        return new ResultTuple8<T1, T2, T3, T4, T5, T6, T7, T8>() {
             @Override
             public <T> T map(final FN8<T, Result<T1>, Result<T2>, Result<T3>, Result<T4>, Result<T5>, Result<T6>, Result<T7>, Result<T8>> mapper) {
                 return mapper.apply(param1, param2, param3, param4, param5, param6, param7, param8);
@@ -115,10 +115,10 @@ public interface TupleResult {
         };
     }
 
-    static <T1, T2, T3, T4, T5, T6, T7, T8, T9> TupleResult9<T1, T2, T3, T4, T5, T6, T7, T8, T9> of(final Result<T1> param1, final Result<T2> param2, final Result<T3> param3,
+    static <T1, T2, T3, T4, T5, T6, T7, T8, T9> ResultTuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9> of(final Result<T1> param1, final Result<T2> param2, final Result<T3> param3,
                                                                                                     final Result<T4> param4, final Result<T5> param5, final Result<T6> param6,
                                                                                                     final Result<T7> param7, final Result<T8> param8, final Result<T9> param9) {
-        return new TupleResult9<T1, T2, T3, T4, T5, T6, T7, T8, T9>() {
+        return new ResultTuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>() {
             @Override
             public <T> T map(final FN9<T, Result<T1>, Result<T2>, Result<T3>, Result<T4>, Result<T5>, Result<T6>, Result<T7>, Result<T8>, Result<T9>> mapper) {
                 return mapper.apply(param1, param2, param3, param4, param5, param6, param7, param8, param9);
@@ -126,51 +126,51 @@ public interface TupleResult {
         };
     }
 
-    static <T1> TupleResult1<T1> of(final Tuple1<Result<T1>> value) {
-        return value.map(TupleResult::of);
+    static <T1> ResultTuple1<T1> of(final Tuple1<Result<T1>> value) {
+        return value.map(ResultTuple::of);
     }
 
-    static <T1, T2> TupleResult2<T1, T2> of(final Tuple2<Result<T1>, Result<T2>> value) {
-        return value.map(TupleResult::of);
+    static <T1, T2> ResultTuple2<T1, T2> of(final Tuple2<Result<T1>, Result<T2>> value) {
+        return value.map(ResultTuple::of);
     }
 
-    static <T1, T2, T3> TupleResult3<T1, T2, T3> of(final Tuple3<Result<T1>, Result<T2>, Result<T3>> value) {
-        return value.map(TupleResult::of);
+    static <T1, T2, T3> ResultTuple3<T1, T2, T3> of(final Tuple3<Result<T1>, Result<T2>, Result<T3>> value) {
+        return value.map(ResultTuple::of);
     }
 
-    static <T1, T2, T3, T4> TupleResult4<T1, T2, T3, T4> of(final Tuple4<Result<T1>, Result<T2>, Result<T3>, Result<T4>> value) {
-        return value.map(TupleResult::of);
+    static <T1, T2, T3, T4> ResultTuple4<T1, T2, T3, T4> of(final Tuple4<Result<T1>, Result<T2>, Result<T3>, Result<T4>> value) {
+        return value.map(ResultTuple::of);
     }
 
-    static <T1, T2, T3, T4, T5> TupleResult5<T1, T2, T3, T4, T5> of(final Tuple5<Result<T1>, Result<T2>, Result<T3>,
+    static <T1, T2, T3, T4, T5> ResultTuple5<T1, T2, T3, T4, T5> of(final Tuple5<Result<T1>, Result<T2>, Result<T3>,
                                                                                  Result<T4>, Result<T5>> value) {
-        return value.map(TupleResult::of);
+        return value.map(ResultTuple::of);
     }
 
-    static <T1, T2, T3, T4, T5, T6> TupleResult6<T1, T2, T3, T4, T5, T6> of(final Tuple6<Result<T1>, Result<T2>, Result<T3>,
+    static <T1, T2, T3, T4, T5, T6> ResultTuple6<T1, T2, T3, T4, T5, T6> of(final Tuple6<Result<T1>, Result<T2>, Result<T3>,
                                                                                          Result<T4>, Result<T5>, Result<T6>> value) {
-        return value.map(TupleResult::of);
+        return value.map(ResultTuple::of);
     }
 
-    static <T1, T2, T3, T4, T5, T6, T7> TupleResult7<T1, T2, T3, T4, T5, T6, T7> of(final Tuple7<Result<T1>, Result<T2>, Result<T3>,
+    static <T1, T2, T3, T4, T5, T6, T7> ResultTuple7<T1, T2, T3, T4, T5, T6, T7> of(final Tuple7<Result<T1>, Result<T2>, Result<T3>,
                                                                                                  Result<T4>, Result<T5>, Result<T6>,
                                                                                                  Result<T7>> value) {
-        return value.map(TupleResult::of);
+        return value.map(ResultTuple::of);
     }
 
-    static <T1, T2, T3, T4, T5, T6, T7, T8> TupleResult8<T1, T2, T3, T4, T5, T6, T7, T8> of(final Tuple8<Result<T1>, Result<T2>, Result<T3>,
+    static <T1, T2, T3, T4, T5, T6, T7, T8> ResultTuple8<T1, T2, T3, T4, T5, T6, T7, T8> of(final Tuple8<Result<T1>, Result<T2>, Result<T3>,
                                                                                                          Result<T4>, Result<T5>, Result<T6>,
                                                                                                          Result<T7>, Result<T8>> value) {
-        return value.map(TupleResult::of);
+        return value.map(ResultTuple::of);
     }
 
-    static <T1, T2, T3, T4, T5, T6, T7, T8, T9> TupleResult9<T1, T2, T3, T4, T5, T6, T7, T8, T9> of(final Tuple9<Result<T1>, Result<T2>, Result<T3>,
+    static <T1, T2, T3, T4, T5, T6, T7, T8, T9> ResultTuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9> of(final Tuple9<Result<T1>, Result<T2>, Result<T3>,
                                                                                                                  Result<T4>, Result<T5>, Result<T6>,
                                                                                                                  Result<T7>, Result<T8>, Result<T9>> value) {
-        return value.map(TupleResult::of);
+        return value.map(ResultTuple::of);
     }
 
-    interface TupleResult1<T1> extends Tuple1<Result<T1>>,
+    interface ResultTuple1<T1> extends Tuple1<Result<T1>>,
                                        Zipable<Result1<T1>> {
         @Override
         default Result1<T1> zip() {
@@ -178,7 +178,7 @@ public interface TupleResult {
         }
     }
 
-    interface TupleResult2<T1, T2> extends Tuple2<Result<T1>, Result<T2>>,
+    interface ResultTuple2<T1, T2> extends Tuple2<Result<T1>, Result<T2>>,
                                            Zipable<Result2<T1, T2>> {
         @Override
         default Result2<T1, T2> zip() {
@@ -188,7 +188,7 @@ public interface TupleResult {
         }
     }
 
-    interface TupleResult3<T1, T2, T3> extends Tuple3<Result<T1>, Result<T2>, Result<T3>>,
+    interface ResultTuple3<T1, T2, T3> extends Tuple3<Result<T1>, Result<T2>, Result<T3>>,
                                                Zipable<Result3<T1, T2, T3>> {
         @Override
         default Result3<T1, T2, T3> zip() {
@@ -199,7 +199,7 @@ public interface TupleResult {
         }
     }
 
-    interface TupleResult4<T1, T2, T3, T4> extends Tuple4<Result<T1>, Result<T2>, Result<T3>, Result<T4>>,
+    interface ResultTuple4<T1, T2, T3, T4> extends Tuple4<Result<T1>, Result<T2>, Result<T3>, Result<T4>>,
                                                    Zipable<Result4<T1, T2, T3, T4>> {
         @Override
         default Result4<T1, T2, T3, T4> zip() {
@@ -211,7 +211,7 @@ public interface TupleResult {
         }
     }
 
-    interface TupleResult5<T1, T2, T3, T4, T5> extends Tuple5<Result<T1>, Result<T2>, Result<T3>, Result<T4>, Result<T5>>,
+    interface ResultTuple5<T1, T2, T3, T4, T5> extends Tuple5<Result<T1>, Result<T2>, Result<T3>, Result<T4>, Result<T5>>,
                                                        Zipable<Result5<T1, T2, T3, T4, T5>> {
         @Override
         default Result5<T1, T2, T3, T4, T5> zip() {
@@ -224,7 +224,7 @@ public interface TupleResult {
         }
     }
 
-    interface TupleResult6<T1, T2, T3, T4, T5, T6> extends Tuple6<Result<T1>, Result<T2>, Result<T3>, Result<T4>, Result<T5>, Result<T6>>,
+    interface ResultTuple6<T1, T2, T3, T4, T5, T6> extends Tuple6<Result<T1>, Result<T2>, Result<T3>, Result<T4>, Result<T5>, Result<T6>>,
                                                            Zipable<Result6<T1, T2, T3, T4, T5, T6>> {
         @Override
         default Result6<T1, T2, T3, T4, T5, T6> zip() {
@@ -238,7 +238,7 @@ public interface TupleResult {
         }
     }
 
-    interface TupleResult7<T1, T2, T3, T4, T5, T6, T7> extends Tuple7<Result<T1>, Result<T2>, Result<T3>, Result<T4>, Result<T5>, Result<T6>, Result<T7>>,
+    interface ResultTuple7<T1, T2, T3, T4, T5, T6, T7> extends Tuple7<Result<T1>, Result<T2>, Result<T3>, Result<T4>, Result<T5>, Result<T6>, Result<T7>>,
                                                                Zipable<Result7<T1, T2, T3, T4, T5, T6, T7>> {
         @Override
         default Result7<T1, T2, T3, T4, T5, T6, T7> zip() {
@@ -253,7 +253,7 @@ public interface TupleResult {
         }
     }
 
-    interface TupleResult8<T1, T2, T3, T4, T5, T6, T7, T8> extends Tuple8<Result<T1>, Result<T2>, Result<T3>, Result<T4>, Result<T5>, Result<T6>, Result<T7>, Result<T8>>,
+    interface ResultTuple8<T1, T2, T3, T4, T5, T6, T7, T8> extends Tuple8<Result<T1>, Result<T2>, Result<T3>, Result<T4>, Result<T5>, Result<T6>, Result<T7>, Result<T8>>,
                                                                    Zipable<Result8<T1, T2, T3, T4, T5, T6, T7, T8>> {
         @Override
         default Result8<T1, T2, T3, T4, T5, T6, T7, T8> zip() {
@@ -269,7 +269,7 @@ public interface TupleResult {
         }
     }
 
-    interface TupleResult9<T1, T2, T3, T4, T5, T6, T7, T8, T9> extends Tuple9<Result<T1>, Result<T2>, Result<T3>, Result<T4>, Result<T5>, Result<T6>, Result<T7>, Result<T8>, Result<T9>>,
+    interface ResultTuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9> extends Tuple9<Result<T1>, Result<T2>, Result<T3>, Result<T4>, Result<T5>, Result<T6>, Result<T7>, Result<T8>, Result<T9>>,
                                                                        Zipable<Result9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> {
         @Override
         default Result9<T1, T2, T3, T4, T5, T6, T7, T8, T9> zip() {

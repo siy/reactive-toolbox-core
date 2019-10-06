@@ -1,6 +1,5 @@
 package org.reactivetoolbox.core.functional;
 
-import org.reactivetoolbox.core.async.BaseError;
 import org.reactivetoolbox.core.functional.Functions.FN0;
 import org.reactivetoolbox.core.functional.Functions.FN1;
 import org.reactivetoolbox.core.functional.Functions.FN2;
@@ -20,6 +19,7 @@ import org.reactivetoolbox.core.functional.Tuple.Tuple6;
 import org.reactivetoolbox.core.functional.Tuple.Tuple7;
 import org.reactivetoolbox.core.functional.Tuple.Tuple8;
 import org.reactivetoolbox.core.functional.Tuple.Tuple9;
+import org.reactivetoolbox.core.type.Error;
 
 import java.util.function.Consumer;
 
@@ -31,7 +31,7 @@ import java.util.function.Consumer;
  * @param <T>
  *     Type of value in case of successful result.
  */
-public interface Result<T> extends Either<BaseError, T> {
+public interface Result<T> extends Either<Error, T> {
     /**
      * Transform operation result into another operation result. In case if current
      * instance (this) is an error, transformation function is not invoked
@@ -61,7 +61,7 @@ public interface Result<T> extends Either<BaseError, T> {
         return map(l -> (Result<R>) this, r -> success(mapper.apply(r)));
     }
 
-    default Result<T> visit(final Consumer<? super BaseError> failureConsumer, final Consumer<? super T> successConsumer) {
+    default Result<T> visit(final Consumer<? super Error> failureConsumer, final Consumer<? super T> successConsumer) {
         return map(t -> {failureConsumer.accept(t); return this;}, t -> {successConsumer.accept(t); return this;});
     }
 
@@ -109,7 +109,7 @@ public interface Result<T> extends Either<BaseError, T> {
      *        Consumer to pass value to
      * @return current instance for fluent call chaining
      */
-    default Result<T> ifFailure(final Consumer<? super BaseError> consumer) {
+    default Result<T> ifFailure(final Consumer<? super Error> consumer) {
         return map(t1 -> { consumer.accept(t1); return this; }, t1 -> this);
     }
 
@@ -123,7 +123,7 @@ public interface Result<T> extends Either<BaseError, T> {
     static <R> Result<R> success(final R value) {
         return new Result<>() {
             @Override
-            public <T> T map(final FN1<? extends T, ? super BaseError> leftMapper,
+            public <T> T map(final FN1<? extends T, ? super Error> leftMapper,
                              final FN1<? extends T, ? super R> rightMapper) {
                 return rightMapper.apply(value);
             }
@@ -136,10 +136,10 @@ public interface Result<T> extends Either<BaseError, T> {
      *        Operation error value
      * @return created instance
      */
-    static <R> Result<R> failure(final BaseError value) {
+    static <R> Result<R> failure(final Error value) {
         return new Result<>() {
             @Override
-            public <T> T map(final FN1<? extends T, ? super BaseError> leftMapper,
+            public <T> T map(final FN1<? extends T, ? super Error> leftMapper,
                              final FN1<? extends T, ? super R> rightMapper) {
                 return leftMapper.apply(value);
             }
@@ -154,7 +154,7 @@ public interface Result<T> extends Either<BaseError, T> {
         static <T1> Result1<T1> from(final Result<Tuple1<T1>> value) {
             return new Result1<T1>() {
                 @Override
-                public <T> T map(final FN1<? extends T, ? super BaseError> leftMapper, final FN1<? extends T, ? super Tuple1<T1>> rightMapper) {
+                public <T> T map(final FN1<? extends T, ? super Error> leftMapper, final FN1<? extends T, ? super Tuple1<T1>> rightMapper) {
                     return value.map(leftMapper, rightMapper);
                 }
             };
@@ -169,7 +169,7 @@ public interface Result<T> extends Either<BaseError, T> {
         static <T1, T2> Result2<T1, T2> from(final Result<Tuple2<T1, T2>> value) {
             return new Result2<T1, T2>() {
                 @Override
-                public <T> T map(final FN1<? extends T, ? super BaseError> leftMapper, final FN1<? extends T, ? super Tuple2<T1, T2>> rightMapper) {
+                public <T> T map(final FN1<? extends T, ? super Error> leftMapper, final FN1<? extends T, ? super Tuple2<T1, T2>> rightMapper) {
                     return value.map(leftMapper, rightMapper);
                 }
             };
@@ -184,7 +184,7 @@ public interface Result<T> extends Either<BaseError, T> {
         static <T1, T2, T3> Result3<T1, T2, T3> from(final Result<Tuple3<T1, T2, T3>> value) {
             return new Result3<T1, T2, T3>() {
                 @Override
-                public <T> T map(final FN1<? extends T, ? super BaseError> leftMapper, final FN1<? extends T, ? super Tuple3<T1, T2, T3>> rightMapper) {
+                public <T> T map(final FN1<? extends T, ? super Error> leftMapper, final FN1<? extends T, ? super Tuple3<T1, T2, T3>> rightMapper) {
                     return value.map(leftMapper, rightMapper);
                 }
             };
@@ -199,7 +199,7 @@ public interface Result<T> extends Either<BaseError, T> {
         static <T1, T2, T3, T4> Result4<T1, T2, T3, T4> from(final Result<Tuple4<T1, T2, T3, T4>> value) {
             return new Result4<T1, T2, T3, T4>() {
                 @Override
-                public <T> T map(final FN1<? extends T, ? super BaseError> leftMapper, final FN1<? extends T, ? super Tuple4<T1, T2, T3, T4>> rightMapper) {
+                public <T> T map(final FN1<? extends T, ? super Error> leftMapper, final FN1<? extends T, ? super Tuple4<T1, T2, T3, T4>> rightMapper) {
                     return value.map(leftMapper, rightMapper);
                 }
             };
@@ -214,7 +214,7 @@ public interface Result<T> extends Either<BaseError, T> {
         static <T1, T2, T3, T4, T5> Result5<T1, T2, T3, T4, T5> from(final Result<Tuple5<T1, T2, T3, T4, T5>> value) {
             return new Result5<T1, T2, T3, T4, T5>() {
                 @Override
-                public <T> T map(final FN1<? extends T, ? super BaseError> leftMapper, final FN1<? extends T, ? super Tuple5<T1, T2, T3, T4, T5>> rightMapper) {
+                public <T> T map(final FN1<? extends T, ? super Error> leftMapper, final FN1<? extends T, ? super Tuple5<T1, T2, T3, T4, T5>> rightMapper) {
                     return value.map(leftMapper, rightMapper);
                 }
             };
@@ -229,7 +229,7 @@ public interface Result<T> extends Either<BaseError, T> {
         static <T1, T2, T3, T4, T5, T6> Result6<T1, T2, T3, T4, T5, T6> from(final Result<Tuple6<T1, T2, T3, T4, T5, T6>> value) {
             return new Result6<T1, T2, T3, T4, T5, T6>() {
                 @Override
-                public <T> T map(final FN1<? extends T, ? super BaseError> leftMapper, final FN1<? extends T, ? super Tuple6<T1, T2, T3, T4, T5, T6>> rightMapper) {
+                public <T> T map(final FN1<? extends T, ? super Error> leftMapper, final FN1<? extends T, ? super Tuple6<T1, T2, T3, T4, T5, T6>> rightMapper) {
                     return value.map(leftMapper, rightMapper);
                 }
             };
@@ -244,7 +244,7 @@ public interface Result<T> extends Either<BaseError, T> {
         static <T1, T2, T3, T4, T5, T6, T7> Result7<T1, T2, T3, T4, T5, T6, T7> from(final Result<Tuple7<T1, T2, T3, T4, T5, T6, T7>> value) {
             return new Result7<T1, T2, T3, T4, T5, T6, T7>() {
                 @Override
-                public <T> T map(final FN1<? extends T, ? super BaseError> leftMapper, final FN1<? extends T, ? super Tuple7<T1, T2, T3, T4, T5, T6, T7>> rightMapper) {
+                public <T> T map(final FN1<? extends T, ? super Error> leftMapper, final FN1<? extends T, ? super Tuple7<T1, T2, T3, T4, T5, T6, T7>> rightMapper) {
                     return value.map(leftMapper, rightMapper);
                 }
             };
@@ -259,7 +259,7 @@ public interface Result<T> extends Either<BaseError, T> {
         static <T1, T2, T3, T4, T5, T6, T7, T8> Result8<T1, T2, T3, T4, T5, T6, T7, T8> from(final Result<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> value) {
             return new Result8<T1, T2, T3, T4, T5, T6, T7, T8>() {
                 @Override
-                public <T> T map(final FN1<? extends T, ? super BaseError> leftMapper, final FN1<? extends T, ? super Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> rightMapper) {
+                public <T> T map(final FN1<? extends T, ? super Error> leftMapper, final FN1<? extends T, ? super Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> rightMapper) {
                     return value.map(leftMapper, rightMapper);
                 }
             };
@@ -274,7 +274,7 @@ public interface Result<T> extends Either<BaseError, T> {
         static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Result9<T1, T2, T3, T4, T5, T6, T7, T8, T9> from(final Result<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> value) {
             return new Result9<T1, T2, T3, T4, T5, T6, T7, T8, T9>() {
                 @Override
-                public <T> T map(final FN1<? extends T, ? super BaseError> leftMapper, final FN1<? extends T, ? super Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> rightMapper) {
+                public <T> T map(final FN1<? extends T, ? super Error> leftMapper, final FN1<? extends T, ? super Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> rightMapper) {
                     return value.map(leftMapper, rightMapper);
                 }
             };

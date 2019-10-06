@@ -24,12 +24,29 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
- * Implementation of basic immutable container for value which may or may not be present
+ * Implementation of basic immutable container for value which may or may not be present.
+ * Note that unlike {@link java.util.Optional} this implementation does not treat {@code null}
+ * as {@code empty} value. The {@code null} value is a completely valid content of non-empty
+ * instance. The {@code empty} instance actually does not contain anything.
+ * For convenience there is a static factory method {@link #nullAsEmpty(Object)} which creates
+ * empty instance for {@code null} values and non-empty instance for other values.
  *
  * @param <T>
  *        Type of contained value
  */
 public abstract class Option<T> implements Either<Void, T>{
+    /**
+     * Convert nullable value into instance of {@link Option}. This method converts
+     * {@code null} to empty instance and any other value into non-empty instance.
+     *
+     * @param value
+     *        Value to convert.
+     * @return created instance.
+     */
+    public static <T> Option<T> nullAsEmpty(final T value) {
+         return value == null ? Option.empty() : Option.with(value);
+    }
+
     /**
      * Create empty instance.
      *

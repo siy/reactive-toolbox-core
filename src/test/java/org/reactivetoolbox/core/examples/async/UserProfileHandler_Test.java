@@ -10,7 +10,7 @@ import org.reactivetoolbox.core.functional.Result;
 
 import java.util.UUID;
 
-import static org.reactivetoolbox.core.async.Promise.allOf;
+import static org.reactivetoolbox.core.async.PromiseResult.resultOf;
 
 public class UserProfileHandler_Test {
     private UserService userService;
@@ -18,7 +18,7 @@ public class UserProfileHandler_Test {
     private CommentService commentService;
 
     public Promise<Result<UserDashboard>> userProfileHandler(final UUID userId) {
-        return allOf(userService.userProfile(userId),
+        return resultOf(userService.userProfile(userId),
                      userService.followers(userId),
                      articleService.articlesByUser(userId, Order.DESC),
                      commentService.commentsByUser(userId, Order.DESC))

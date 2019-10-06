@@ -27,48 +27,90 @@ import org.reactivetoolbox.core.functional.Functions.FN7;
 import org.reactivetoolbox.core.functional.Functions.FN8;
 import org.reactivetoolbox.core.functional.Functions.FN9;
 
+import java.util.Objects;
+
 /**
  * Tuples with various size and convenient static factories for tuple creation.<br/>
  */
-public interface Tuple {
-    interface Tuple0 {
+public interface Tuple<S extends Tuple> {
+    interface Tuple0 extends Tuple<Tuple0> {
         <T> T map(FN0<T> mapper);
+
+        static int size() {
+            return 0;
+        }
     }
 
-    interface Tuple1<T1> {
+    interface Tuple1<T1> extends Tuple<Tuple1<T1>> {
         <T> T map(FN1<T, T1> mapper);
+
+        static int size() {
+            return 1;
+        }
     }
 
-    interface Tuple2<T1, T2> {
+    interface Tuple2<T1, T2> extends Tuple {
         <T> T map(FN2<T, T1, T2> mapper);
+
+        static int size() {
+            return 2;
+        }
     }
 
-    interface Tuple3<T1, T2, T3> {
+    interface Tuple3<T1, T2, T3> extends Tuple {
         <T> T map(FN3<T, T1, T2, T3> mapper);
+
+        static int size() {
+            return 3;
+        }
     }
 
-    interface Tuple4<T1, T2, T3, T4> {
+    interface Tuple4<T1, T2, T3, T4> extends Tuple {
         <T> T map(FN4<T, T1, T2, T3, T4> mapper);
+
+        static int size() {
+            return 4;
+        }
     }
 
-    interface Tuple5<T1, T2, T3, T4, T5> {
+    interface Tuple5<T1, T2, T3, T4, T5> extends Tuple {
         <T> T map(FN5<T, T1, T2, T3, T4, T5> mapper);
+
+        static int size() {
+            return 5;
+        }
     }
 
-    interface Tuple6<T1, T2, T3, T4, T5, T6> {
+    interface Tuple6<T1, T2, T3, T4, T5, T6> extends Tuple {
         <T> T map(FN6<T, T1, T2, T3, T4, T5, T6> mapper);
+
+        static int size() {
+            return 6;
+        }
     }
 
-    interface Tuple7<T1, T2, T3, T4, T5, T6, T7> {
+    interface Tuple7<T1, T2, T3, T4, T5, T6, T7> extends Tuple {
         <T> T map(FN7<T, T1, T2, T3, T4, T5, T6, T7> mapper);
+
+        static int size() {
+            return 7;
+        }
     }
 
-    interface Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> {
+    interface Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> extends Tuple {
         <T> T map(FN8<T, T1, T2, T3, T4, T5, T6, T7, T8> mapper);
+
+        static int size() {
+            return 8;
+        }
     }
 
-    interface Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9> {
+    interface Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9> extends Tuple {
         <T> T map(FN9<T, T1, T2, T3, T4, T5, T6, T7, T8, T9> mapper);
+
+        static int size() {
+            return 9;
+        }
     }
 
     static Tuple0 with() {
@@ -76,6 +118,16 @@ public interface Tuple {
             @Override
             public <T> T map(final FN0<T> mapper) {
                 return mapper.apply();
+            }
+
+            @Override
+            public boolean equals(final Object obj) {
+                return this == obj || obj instanceof Tuple0;
+            }
+
+            @Override
+            public int hashCode() {
+                return super.hashCode();
             }
         };
     }
@@ -86,6 +138,20 @@ public interface Tuple {
             public <T> T map(final FN1<T, T1> mapper) {
                 return mapper.apply(param1);
             }
+
+            @Override
+            public boolean equals(final Object obj) {
+                if (this == obj) {
+                    return true;
+                }
+
+                return (obj instanceof Tuple1) ? ((Tuple1<?>) obj).map(v1 -> Objects.equals(v1, param1)) : false;
+            }
+
+            @Override
+            public int hashCode() {
+                return param1.hashCode();
+            }
         };
     }
 
@@ -95,6 +161,22 @@ public interface Tuple {
             public <T> T map(final FN2<T, T1, T2> mapper) {
                 return mapper.apply(param1, param2);
             }
+
+            @Override
+            public boolean equals(final Object obj) {
+                if (this == obj) {
+                    return true;
+                }
+
+                return (obj instanceof Tuple2) ? ((Tuple2<?, ?>) obj).map((v1, v2) ->
+                                                                                  Objects.equals(v1, param1) &&
+                                                                                  Objects.equals(v2, param2)) : false;
+            }
+
+            @Override
+            public int hashCode() {
+                return param1.hashCode() + param2.hashCode();
+            }
         };
     }
 
@@ -103,6 +185,23 @@ public interface Tuple {
             @Override
             public <T> T map(final FN3<T, T1, T2, T3> mapper) {
                 return mapper.apply(param1, param2, param3);
+            }
+
+            @Override
+            public boolean equals(final Object obj) {
+                if (this == obj) {
+                    return true;
+                }
+
+                return (obj instanceof Tuple3) ? ((Tuple3<?, ?, ?>) obj).map((v1, v2, v3) ->
+                                                                                     Objects.equals(v1, param1) &&
+                                                                                     Objects.equals(v2, param2) &&
+                                                                                     Objects.equals(v3, param3)) : false;
+            }
+
+            @Override
+            public int hashCode() {
+                return param1.hashCode() + param2.hashCode() + param3.hashCode();
             }
         };
     }
@@ -114,6 +213,24 @@ public interface Tuple {
             public <T> T map(final FN4<T, T1, T2, T3, T4> mapper) {
                 return mapper.apply(param1, param2, param3, param4);
             }
+
+            @Override
+            public boolean equals(final Object obj) {
+                if (this == obj) {
+                    return true;
+                }
+
+                return (obj instanceof Tuple4) ? ((Tuple4<?, ?, ?, ?>) obj).map((v1, v2, v3, v4) ->
+                                                                                              Objects.equals(v1, param1) &&
+                                                                                              Objects.equals(v2, param2) &&
+                                                                                              Objects.equals(v3, param3) &&
+                                                                                              Objects.equals(v4, param4)) : false;
+            }
+
+            @Override
+            public int hashCode() {
+                return param1.hashCode() + param2.hashCode() + param3.hashCode() + param4.hashCode();
+            }
         };
     }
 
@@ -124,6 +241,26 @@ public interface Tuple {
             public <T> T map(final FN5<T, T1, T2, T3, T4, T5> mapper) {
                 return mapper.apply(param1, param2, param3, param4, param5);
             }
+
+            @Override
+            public boolean equals(final Object obj) {
+                if (this == obj) {
+                    return true;
+                }
+
+                return (obj instanceof Tuple5) ? ((Tuple5<?, ?, ?, ?, ?>) obj).map((v1, v2, v3, v4, v5) ->
+                                                                                              Objects.equals(v1, param1) &&
+                                                                                              Objects.equals(v2, param2) &&
+                                                                                              Objects.equals(v3, param3) &&
+                                                                                              Objects.equals(v4, param4) &&
+                                                                                              Objects.equals(v5, param5)) : false;
+            }
+
+            @Override
+            public int hashCode() {
+                return param1.hashCode() + param2.hashCode() + param3.hashCode() +
+                       param4.hashCode() + param5.hashCode();
+            }
         };
     }
 
@@ -133,6 +270,27 @@ public interface Tuple {
             @Override
             public <T> T map(final FN6<T, T1, T2, T3, T4, T5, T6> mapper) {
                 return mapper.apply(param1, param2, param3, param4, param5, param6);
+            }
+
+            @Override
+            public boolean equals(final Object obj) {
+                if (this == obj) {
+                    return true;
+                }
+
+                return (obj instanceof Tuple6) ? ((Tuple6<?, ?, ?, ?, ?, ?>) obj).map((v1, v2, v3, v4, v5, v6) ->
+                                                                                                 Objects.equals(v1, param1) &&
+                                                                                                 Objects.equals(v2, param2) &&
+                                                                                                 Objects.equals(v3, param3) &&
+                                                                                                 Objects.equals(v4, param4) &&
+                                                                                                 Objects.equals(v5, param5) &&
+                                                                                                 Objects.equals(v6, param6)) : false;
+            }
+
+            @Override
+            public int hashCode() {
+                return param1.hashCode() + param2.hashCode() + param3.hashCode() +
+                       param4.hashCode() + param5.hashCode() + param6.hashCode();
             }
         };
     }
@@ -145,6 +303,28 @@ public interface Tuple {
             public <T> T map(final FN7<T, T1, T2, T3, T4, T5, T6, T7> mapper) {
                 return mapper.apply(param1, param2, param3, param4, param5, param6, param7);
             }
+
+            @Override
+            public boolean equals(final Object obj) {
+                if (this == obj) {
+                    return true;
+                }
+
+                return (obj instanceof Tuple7) ? ((Tuple7<?, ?, ?, ?, ?, ?, ?>) obj).map((v1, v2, v3, v4, v5, v6, v7) ->
+                                                                                                    Objects.equals(v1, param1) &&
+                                                                                                    Objects.equals(v2, param2) &&
+                                                                                                    Objects.equals(v3, param3) &&
+                                                                                                    Objects.equals(v4, param4) &&
+                                                                                                    Objects.equals(v5, param5) &&
+                                                                                                    Objects.equals(v6, param6) &&
+                                                                                                    Objects.equals(v7, param7)) : false;
+            }
+
+            @Override
+            public int hashCode() {
+                return param1.hashCode() + param2.hashCode() + param3.hashCode() + param4.hashCode() +
+                       param5.hashCode() + param6.hashCode() + param7.hashCode();
+            }
         };
     }
 
@@ -156,6 +336,29 @@ public interface Tuple {
             public <T> T map(final FN8<T, T1, T2, T3, T4, T5, T6, T7, T8> mapper) {
                 return mapper.apply(param1, param2, param3, param4, param5, param6, param7, param8);
             }
+
+            @Override
+            public boolean equals(final Object obj) {
+                if (this == obj) {
+                    return true;
+                }
+
+                return (obj instanceof Tuple8) ? ((Tuple8<?, ?, ?, ?, ?, ?, ?, ?>) obj).map((v1, v2, v3, v4, v5, v6, v7, v8) ->
+                                                                                                       Objects.equals(v1, param1) &&
+                                                                                                       Objects.equals(v2, param2) &&
+                                                                                                       Objects.equals(v3, param3) &&
+                                                                                                       Objects.equals(v4, param4) &&
+                                                                                                       Objects.equals(v5, param5) &&
+                                                                                                       Objects.equals(v6, param6) &&
+                                                                                                       Objects.equals(v7, param7) &&
+                                                                                                       Objects.equals(v8, param8)) : false;
+            }
+
+            @Override
+            public int hashCode() {
+                return param1.hashCode() + param2.hashCode() + param3.hashCode() + param4.hashCode() +
+                       param5.hashCode() + param6.hashCode() + param7.hashCode() + param8.hashCode();
+            }
         };
     }
 
@@ -166,6 +369,31 @@ public interface Tuple {
             @Override
             public <T> T map(final FN9<T, T1, T2, T3, T4, T5, T6, T7, T8, T9> mapper) {
                 return mapper.apply(param1, param2, param3, param4, param5, param6, param7, param8, param9);
+            }
+
+            @Override
+            public boolean equals(final Object obj) {
+                if (this == obj) {
+                    return true;
+                }
+
+                return (obj instanceof Tuple9) ? ((Tuple9<?, ?, ?, ?, ?, ?, ?, ?, ?>) obj).map((v1, v2, v3, v4, v5, v6, v7, v8, v9) ->
+                                                                                     Objects.equals(v1, param1) &&
+                                                                                     Objects.equals(v2, param2) &&
+                                                                                     Objects.equals(v3, param3) &&
+                                                                                     Objects.equals(v4, param4) &&
+                                                                                     Objects.equals(v5, param5) &&
+                                                                                     Objects.equals(v6, param6) &&
+                                                                                     Objects.equals(v7, param7) &&
+                                                                                     Objects.equals(v8, param8) &&
+                                                                                     Objects.equals(v9, param9)) : false;
+            }
+
+            @Override
+            public int hashCode() {
+                return param1.hashCode() + param2.hashCode() + param3.hashCode() +
+                       param4.hashCode() + param5.hashCode() + param6.hashCode() +
+                       param7.hashCode() + param8.hashCode() + param9.hashCode();
             }
         };
     }

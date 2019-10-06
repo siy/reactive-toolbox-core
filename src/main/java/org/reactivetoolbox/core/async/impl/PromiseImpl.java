@@ -1,7 +1,6 @@
 package org.reactivetoolbox.core.async.impl;
 
 import org.reactivetoolbox.core.async.Promise;
-import org.reactivetoolbox.core.functional.Functions.FN1;
 import org.reactivetoolbox.core.functional.Option;
 import org.reactivetoolbox.core.meta.AppMetaRepository;
 import org.reactivetoolbox.core.scheduler.TaskScheduler;
@@ -18,7 +17,7 @@ import java.util.function.Supplier;
 /**
  * Implementation of {@link Promise}
  */
-public final class PromiseImpl<T> implements Promise<T> {
+public class PromiseImpl<T> implements Promise<T> {
     private final AtomicMarkableReference<T> value = new AtomicMarkableReference<>(null, false);
     private final BlockingQueue<Consumer<T>> thenActions = new LinkedBlockingQueue<>();
 
@@ -30,7 +29,7 @@ public final class PromiseImpl<T> implements Promise<T> {
      */
     @Override
     public Option<T> value() {
-        return value.getReference() == null ? Option.empty() : Option.with(value.getReference());
+        return Option.nullAsEmpty(value.getReference());
     }
 
     /**
@@ -80,17 +79,6 @@ public final class PromiseImpl<T> implements Promise<T> {
     /**
      * {@inheritDoc}
      */
-    //TODO: another implementation of map?
-    @Override
-    public <R> Promise<R> map(final FN1<R, T> mapper) {
-        final var result = new PromiseImpl<R>();
-        then(val -> result.resolve(mapper.apply(val)));
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Promise<T> syncWait() {
         final var latch = new CountDownLatch(1);
@@ -125,9 +113,7 @@ public final class PromiseImpl<T> implements Promise<T> {
      */
     @Override
     public Promise<T> with(final Timeout timeout, final T timeoutResult) {
-        TaskSchedulerHolder.instance().submit(timeout, () -> resolve(timeoutResult));
-
-        return this;
+        return apply(promise -> TaskSchedulerHolder.instance().submit(timeout, () -> promise.resolve(timeoutResult)));
     }
 
     /**
@@ -135,9 +121,7 @@ public final class PromiseImpl<T> implements Promise<T> {
      */
     @Override
     public Promise<T> with(final Timeout timeout, final Supplier<T> timeoutResultSupplier) {
-        TaskSchedulerHolder.instance().submit(timeout, () -> resolve(timeoutResultSupplier.get()));
-
-        return this;
+        return apply(promise -> TaskSchedulerHolder.instance().submit(timeout, () -> promise.resolve(timeoutResultSupplier.get())));
     }
 
     /**

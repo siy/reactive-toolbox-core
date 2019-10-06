@@ -1,11 +1,11 @@
 package org.reactivetoolbox.core.examples.async;
 
 import org.junit.jupiter.api.Test;
-import org.reactivetoolbox.core.functional.TupleResult;
+import org.reactivetoolbox.core.functional.ResultTuple;
 import org.reactivetoolbox.core.scheduler.Timeout;
 
-import static org.reactivetoolbox.core.async.Promise.all;
-import static org.reactivetoolbox.core.async.Promise.allOf;
+import static org.reactivetoolbox.core.async.PromiseAll.allOf;
+import static org.reactivetoolbox.core.async.PromiseResult.resultOf;
 import static org.reactivetoolbox.core.scheduler.SchedulerError.TIMEOUT;
 
 public class PromiseAllExample_Test {
@@ -29,20 +29,20 @@ public class PromiseAllExample_Test {
     @Test
     void waitForAllResults1() {
         //Using Promise.map()
-        all(service.slowRetrieveInteger(123),
-            service.slowRetrieveString("text 1"),
-            service.slowRetrieveUuid())
-                .map(tuple -> TupleResult.of(tuple).zip())
+        allOf(service.slowRetrieveInteger(123),
+              service.slowRetrieveString("text 1"),
+              service.slowRetrieveUuid())
+                .map(tuple -> ResultTuple.of(tuple).zip())
                 .then(result -> result.ifSuccess(System.out::println))
                 .syncWait();
     }
 
     @Test
     void waitForAllResults3() {
-        //Using Promise.zipAll
-        allOf(service.slowRetrieveInteger(345),
-               service.slowRetrieveString("text 3"),
-               service.slowRetrieveUuid())
+        //Using PromiseResult.resultOf
+        resultOf(service.slowRetrieveInteger(345),
+                 service.slowRetrieveString("text 3"),
+                 service.slowRetrieveUuid())
                 .then(result -> result.ifSuccess(System.out::println))
                 .syncWait();
     }

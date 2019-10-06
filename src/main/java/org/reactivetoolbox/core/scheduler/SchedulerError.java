@@ -15,34 +15,12 @@ package org.reactivetoolbox.core.scheduler;
  * limitations under the License.
  */
 
-import org.reactivetoolbox.core.async.BaseError;
-import org.reactivetoolbox.core.functional.Result;
+import org.reactivetoolbox.core.type.Error;
+import org.reactivetoolbox.core.type.WebErrorTypes;
 
-//TODO: JavaDoc
-public enum SchedulerError implements BaseError {
-    NO_FREE_SLOTS(500, "Internal error, no free slots in timeout scheduler"),
-    TIMEOUT(408, "Processing timeout error");
-
-    private final int code;
-    private final String message;
-
-    SchedulerError(final int code, final String message) {
-        this.code = code;
-        this.message = message;
-    }
-
-    @Override
-    public int code() {
-        return code;
-    }
-
-    @Override
-    public String message() {
-        return message;
-    }
-
-    @Override
-    public <T> Result<T> asFailure() {
-        return Result.failure(this);
-    }
+/**
+ * Scheduler errors
+ */
+public interface SchedulerError {
+    Error TIMEOUT = Error.of(WebErrorTypes.REQUEST_TIMEOUT, "Processing timeout error");
 }

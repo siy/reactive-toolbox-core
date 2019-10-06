@@ -4,37 +4,20 @@ import org.reactivetoolbox.core.async.impl.PromiseImpl;
 import org.reactivetoolbox.core.functional.Functions.FN1;
 import org.reactivetoolbox.core.functional.Option;
 import org.reactivetoolbox.core.functional.Result;
-import org.reactivetoolbox.core.functional.Result.Result1;
-import org.reactivetoolbox.core.functional.Result.Result2;
-import org.reactivetoolbox.core.functional.Result.Result3;
-import org.reactivetoolbox.core.functional.Result.Result4;
-import org.reactivetoolbox.core.functional.Result.Result5;
-import org.reactivetoolbox.core.functional.Result.Result6;
-import org.reactivetoolbox.core.functional.Result.Result7;
-import org.reactivetoolbox.core.functional.Result.Result8;
-import org.reactivetoolbox.core.functional.Result.Result9;
-import org.reactivetoolbox.core.functional.Tuple;
-import org.reactivetoolbox.core.functional.Tuple.Tuple1;
-import org.reactivetoolbox.core.functional.Tuple.Tuple2;
-import org.reactivetoolbox.core.functional.Tuple.Tuple3;
-import org.reactivetoolbox.core.functional.Tuple.Tuple4;
-import org.reactivetoolbox.core.functional.Tuple.Tuple5;
-import org.reactivetoolbox.core.functional.Tuple.Tuple6;
-import org.reactivetoolbox.core.functional.Tuple.Tuple7;
-import org.reactivetoolbox.core.functional.Tuple.Tuple8;
-import org.reactivetoolbox.core.functional.Tuple.Tuple9;
-import org.reactivetoolbox.core.functional.TupleResult;
 import org.reactivetoolbox.core.scheduler.Timeout;
+import org.reactivetoolbox.core.type.TypeToken;
 
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * Simple and lightweight Promise
+ * Simple and lightweight Promise implementation
  *
  * @param <T>
  *        Type of contained value
+ * @see PromiseAll - for Promise's which depend on several Promises
+ * @see PromiseResult - for Promise's which depend on several Promises containing {@link Result}
  */
 public interface Promise<T> {
     /**
@@ -50,6 +33,19 @@ public interface Promise<T> {
      * @return <code>true</code> if instance is resolved and <code>false</code> if not
      */
     boolean ready();
+
+    /**
+     * Convenience method for performing some actions with current promise instance. Useful for cases
+     * when there is (quite typical) sequence: create unresolved promise -> setup -> return created promise.
+     *
+     * @param consumer
+     *        Action to perform on current instance.
+     * @return Current instance
+     */
+    default Promise<T> apply(final Consumer<Promise<T>> consumer) {
+        consumer.accept(this);
+        return this;
+    }
 
     /**
      * Resolve the promise by passing non-null value to it. All actions already
@@ -92,7 +88,9 @@ public interface Promise<T> {
      *        Function to apply to current instance value upon resolution
      * @return created instance
      */
-    <R> Promise<R> map(FN1<R, T> mapper);
+    default <R> Promise<R> map(final FN1<R, T> mapper) {
+        return Promise.<R>give().apply(promise -> then(val -> promise.resolve(mapper.apply(val))));
+    }
 
     /**
      * Synchronously wait for this instance resolution.
@@ -164,48 +162,23 @@ public interface Promise<T> {
         return new PromiseImpl<>();
     }
 
+    static <T> Promise<T> me(final Class<T> $) {
+        return new PromiseImpl<>();
+    }
+
+    static <T> Promise<T> me(final TypeToken<T> $) {
+        return new PromiseImpl<>();
+    }
+
     static <T> Promise<Result<T>> result() {
         return new PromiseImpl<>();
     }
 
-    //TODO: add Class and TypeToken versions
-    static <T1> Promise<Result1<T1>> result1() {
+    static <T> Promise<Result<T>> result(final Class<T> $) {
         return new PromiseImpl<>();
     }
 
-    static <T1, T2> Promise<Result2<T1, T2>> result2() {
-        return new PromiseImpl<>();
-    }
-
-    static <T1, T2, T3> Promise<Result3<T1, T2, T3>> result3() {
-        return new PromiseImpl<>();
-    }
-
-    static <T1, T2, T3, T4> Promise<Result4<T1, T2, T3, T4>> result4() {
-        return new PromiseImpl<>();
-    }
-
-    static <T1, T2, T3, T4, T5> Promise<Result5<T1, T2, T3, T4, T5>> result5() {
-        return new PromiseImpl<>();
-    }
-
-    static <T1, T2, T3, T4, T5, T6> Promise<Result6<T1, T2, T3, T4, T5, T6>> result6() {
-        return new PromiseImpl<>();
-    }
-
-    static <T1, T2, T3, T4, T5, T6, T7> Promise<Result7<T1, T2, T3, T4, T5, T6, T7>> result7() {
-        return new PromiseImpl<>();
-    }
-
-    static <T1, T2, T3, T4, T5, T6, T7, T8> Promise<Result8<T1, T2, T3, T4, T5, T6, T7, T8>> result8() {
-        return new PromiseImpl<>();
-    }
-
-    static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Promise<Result9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> result9() {
-        return new PromiseImpl<>();
-    }
-
-    static <T> Promise<Result<T>> result(final Class<T> clazz) {
+    static <T> Promise<Result<T>> result(final TypeToken<T> $) {
         return new PromiseImpl<>();
     }
 
@@ -231,393 +204,7 @@ public interface Promise<T> {
      */
     @SafeVarargs
     static <T> Promise<T> any(final Promise<T>... promises) {
-        final var result = Promise.<T>give();
-        List.of(promises)
-            .forEach(promise -> promise.then(result::resolve));
-        return result;
-    }
-
-    /**
-     * Create a promise which will be resolved when all promises provided as a parameters will be resolved.
-     * Upon resolution returned promised will contain {@link Tuple} with all values from input promises.
-     *
-     * @param promise
-     *        Input promise
-     * @return Created promise
-     */
-    @SuppressWarnings("unchecked")
-    static <T1> Promise<Tuple1<T1>> all(final Promise<T1> promise) {
-        return zipper(values -> Tuple.with((T1) values[0]),
-                      t -> t,
-                      promise);
-    }
-
-    /**
-     * Create a promise which will be resolved when all promises provided as a parameters will be resolved.
-     * Upon resolution returned promised will contain {@link Tuple} with all values from input promises.
-     *
-     * @param promise1
-     *        Input promise #1
-     * @param promise2
-     *        Input promise #2
-     * @return Created promise
-     */
-    @SuppressWarnings("unchecked")
-    static <T1, T2> Promise<Tuple2<T1, T2>> all(final Promise<T1> promise1,
-                                                final Promise<T2> promise2) {
-        return zipper(values -> Tuple.with((T1) values[0],
-                                           (T2) values[1]),
-                      t -> t,
-                      promise1, promise2);
-    }
-
-    /**
-     * Create a promise which will be resolved when all promises provided as a parameters will be resolved.
-     * Upon resolution returned promised will contain {@link Tuple} with all values from input promises.
-     *
-     * @param promise1
-     *        Input promise #1
-     * @param promise2
-     *        Input promise #2
-     * @param promise3
-     *        Input promise #3
-     * @return Created promise
-     */
-    @SuppressWarnings("unchecked")
-    static <T1, T2, T3> Promise<Tuple3<T1, T2, T3>> all(final Promise<T1> promise1,
-                                                        final Promise<T2> promise2,
-                                                        final Promise<T3> promise3) {
-        return zipper(values -> Tuple.with((T1) values[0], (T2) values[1], (T3) values[2]),
-                      t -> t,
-                      promise1, promise2, promise3);
-    }
-
-    /**
-     * Create a promise which will be resolved when all promises provided as a parameters will be resolved.
-     * Upon resolution returned promised will contain {@link Tuple} with all values from input promises.
-     *
-     * @param promise1
-     *        Input promise #1
-     * @param promise2
-     *        Input promise #2
-     * @param promise3
-     *        Input promise #3
-     * @param promise4
-     *        Input promise #4
-     * @return Created promise
-     */
-    @SuppressWarnings("unchecked")
-    static <T1, T2, T3, T4> Promise<Tuple4<T1, T2, T3, T4>> all(final Promise<T1> promise1,
-                                                                final Promise<T2> promise2,
-                                                                final Promise<T3> promise3,
-                                                                final Promise<T4> promise4) {
-        return zipper(values -> Tuple.with((T1) values[0], (T2) values[1], (T3) values[2], (T4) values[3]),
-                      t -> t,
-                      promise1, promise2, promise3, promise4);
-    }
-
-    /**
-     * Create a promise which will be resolved when all promises provided as a parameters will be resolved.
-     * Upon resolution returned promised will contain {@link Tuple} with all values from input promises.
-     *
-     * @param promise1
-     *        Input promise #1
-     * @param promise2
-     *        Input promise #2
-     * @param promise3
-     *        Input promise #3
-     * @param promise4
-     *        Input promise #4
-     * @param promise5
-     *        Input promise #5
-     * @return Created promise
-     */
-    @SuppressWarnings("unchecked")
-    static <T1, T2, T3, T4, T5> Promise<Tuple5<T1, T2, T3, T4, T5>> all(final Promise<T1> promise1,
-                                                                        final Promise<T2> promise2,
-                                                                        final Promise<T3> promise3,
-                                                                        final Promise<T4> promise4,
-                                                                        final Promise<T5> promise5) {
-        return zipper(values -> Tuple.with((T1) values[0], (T2) values[1], (T3) values[2], (T4) values[3], (T5) values[4]),
-                      t -> t,
-                      promise1, promise2, promise3, promise4, promise5);
-    }
-
-    /**
-     * Create a promise which will be resolved when all promises provided as a parameters will be resolved.
-     * Upon resolution returned promised will contain {@link Tuple} with all values from input promises.
-     *
-     * @param promise1
-     *        Input promise #1
-     * @param promise2
-     *        Input promise #2
-     * @param promise3
-     *        Input promise #3
-     * @param promise4
-     *        Input promise #4
-     * @param promise5
-     *        Input promise #5
-     * @param promise6
-     *        Input promise #6
-     * @return Created promise
-     */
-    @SuppressWarnings("unchecked")
-    static <T1, T2, T3, T4, T5, T6> Promise<Tuple6<T1, T2, T3, T4, T5, T6>> all(final Promise<T1> promise1,
-                                                                                final Promise<T2> promise2,
-                                                                                final Promise<T3> promise3,
-                                                                                final Promise<T4> promise4,
-                                                                                final Promise<T5> promise5,
-                                                                                final Promise<T6> promise6) {
-        return zipper(values -> Tuple.with((T1) values[0], (T2) values[1], (T3) values[2], (T4) values[3],
-                                           (T5) values[4], (T6) values[5]),
-                      t -> t,
-                      promise1, promise2, promise3, promise4, promise5, promise6);
-    }
-
-    /**
-     * Create a promise which will be resolved when all promises provided as a parameters will be resolved.
-     * Upon resolution returned promised will contain {@link Tuple} with all values from input promises.
-     *
-     * @param promise1
-     *        Input promise #1
-     * @param promise2
-     *        Input promise #2
-     * @param promise3
-     *        Input promise #3
-     * @param promise4
-     *        Input promise #4
-     * @param promise5
-     *        Input promise #5
-     * @param promise6
-     *        Input promise #6
-     * @param promise7
-     *        Input promise #7
-     * @return Created promise
-     */
-    @SuppressWarnings("unchecked")
-    static <T1, T2, T3, T4, T5, T6, T7> Promise<Tuple7<T1, T2, T3, T4, T5, T6, T7>> all(final Promise<T1> promise1,
-                                                                                        final Promise<T2> promise2,
-                                                                                        final Promise<T3> promise3,
-                                                                                        final Promise<T4> promise4,
-                                                                                        final Promise<T5> promise5,
-                                                                                        final Promise<T6> promise6,
-                                                                                        final Promise<T7> promise7) {
-        return zipper(values -> Tuple.with((T1) values[0], (T2) values[1], (T3) values[2], (T4) values[3],
-                                           (T5) values[4], (T6) values[5], (T7) values[6]),
-                      t -> t,
-                      promise1, promise2, promise3, promise4, promise5, promise6, promise7);
-    }
-
-    /**
-     * Create a promise which will be resolved when all promises provided as a parameters will be resolved.
-     * Upon resolution returned promised will contain {@link Tuple} with all values from input promises.
-     *
-     * @param promise1
-     *        Input promise #1
-     * @param promise2
-     *        Input promise #2
-     * @param promise3
-     *        Input promise #3
-     * @param promise4
-     *        Input promise #4
-     * @param promise5
-     *        Input promise #5
-     * @param promise6
-     *        Input promise #6
-     * @param promise7
-     *        Input promise #7
-     * @param promise8
-     *        Input promise #8
-     * @return Created promise
-     */
-    @SuppressWarnings("unchecked")
-    static <T1, T2, T3, T4, T5, T6, T7, T8> Promise<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> all(final Promise<T1> promise1,
-                                                                                                final Promise<T2> promise2,
-                                                                                                final Promise<T3> promise3,
-                                                                                                final Promise<T4> promise4,
-                                                                                                final Promise<T5> promise5,
-                                                                                                final Promise<T6> promise6,
-                                                                                                final Promise<T7> promise7,
-                                                                                                final Promise<T8> promise8) {
-        return zipper(values -> Tuple.with((T1) values[0], (T2) values[1], (T3) values[2], (T4) values[3],
-                                           (T5) values[4], (T6) values[5], (T7) values[6], (T8) values[7]),
-                      t -> t,
-                      promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8);
-    }
-
-    /**
-     * Create a promise which will be resolved when all promises provided as a parameters will be resolved.
-     * Upon resolution returned promised will contain {@link Tuple} with all values from input promises.
-     *
-     * @param promise1
-     *        Input promise #1
-     * @param promise2
-     *        Input promise #2
-     * @param promise3
-     *        Input promise #3
-     * @param promise4
-     *        Input promise #4
-     * @param promise5
-     *        Input promise #5
-     * @param promise6
-     *        Input promise #6
-     * @param promise7
-     *        Input promise #7
-     * @param promise8
-     *        Input promise #8
-     * @param promise9
-     *        Input promise #9
-     * @return Created promise
-     */
-    @SuppressWarnings("unchecked")
-    static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Promise<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> all(final Promise<T1> promise1,
-                                                                                                        final Promise<T2> promise2,
-                                                                                                        final Promise<T3> promise3,
-                                                                                                        final Promise<T4> promise4,
-                                                                                                        final Promise<T5> promise5,
-                                                                                                        final Promise<T6> promise6,
-                                                                                                        final Promise<T7> promise7,
-                                                                                                        final Promise<T8> promise8,
-                                                                                                        final Promise<T9> promise9) {
-        return zipper(values -> Tuple.with((T1) values[0], (T2) values[1], (T3) values[2], (T4) values[3],
-                                           (T5) values[4], (T6) values[5], (T7) values[6], (T8) values[7],
-                                           (T9) values[8]),
-                      t -> t,
-                      promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8, promise9);
-    }
-
-    @SuppressWarnings("unchecked")
-    static <T1> Promise<Result1<T1>> allOf(final Promise<Result<T1>> promise1) {
-        return zipper(values -> Tuple.with((Result<T1>) values[0]),
-                      tuple -> TupleResult.of(tuple).zip(),
-                      promise1);
-    }
-
-    @SuppressWarnings("unchecked")
-    static <T1, T2> Promise<Result2<T1, T2>> allOf(final Promise<Result<T1>> promise1,
-                                                   final Promise<Result<T2>> promise2) {
-        return zipper(values -> Tuple.with((Result<T1>) values[0], (Result<T2>) values[1]),
-                      tuple -> TupleResult.of(tuple).zip(),
-                      promise1, promise2);
-    }
-
-    @SuppressWarnings("unchecked")
-    static <T1, T2, T3> Promise<Result3<T1, T2, T3>> allOf(final Promise<Result<T1>> promise1,
-                                                           final Promise<Result<T2>> promise2,
-                                                           final Promise<Result<T3>> promise3) {
-        return zipper(values -> Tuple.with((Result<T1>) values[0], (Result<T2>) values[1], (Result<T3>) values[2]),
-                      tuple -> TupleResult.of(tuple).zip(),
-                      promise1, promise2, promise3);
-    }
-
-    @SuppressWarnings("unchecked")
-    static <T1, T2, T3, T4> Promise<Result4<T1, T2, T3, T4>> allOf(final Promise<Result<T1>> promise1,
-                                                                   final Promise<Result<T2>> promise2,
-                                                                   final Promise<Result<T3>> promise3,
-                                                                   final Promise<Result<T4>> promise4) {
-        return zipper(values -> Tuple.with((Result<T1>) values[0], (Result<T2>) values[1], (Result<T3>) values[2], (Result<T4>) values[3]),
-                      tuple -> TupleResult.of(tuple).zip(),
-                      promise1, promise2, promise3, promise4);
-    }
-
-    @SuppressWarnings("unchecked")
-    static <T1, T2, T3, T4, T5> Promise<Result5<T1, T2, T3, T4, T5>> allOf(final Promise<Result<T1>> promise1,
-                                                                           final Promise<Result<T2>> promise2,
-                                                                           final Promise<Result<T3>> promise3,
-                                                                           final Promise<Result<T4>> promise4,
-                                                                           final Promise<Result<T5>> promise5) {
-        return zipper(values -> Tuple.with((Result<T1>) values[0], (Result<T2>) values[1], (Result<T3>) values[2], (Result<T4>) values[3],
-                                           (Result<T5>) values[4]),
-                      tuple -> TupleResult.of(tuple).zip(),
-                      promise1, promise2, promise3, promise4, promise5);
-    }
-
-    @SuppressWarnings("unchecked")
-    static <T1, T2, T3, T4, T5, T6> Promise<Result6<T1, T2, T3, T4, T5, T6>> allOf(final Promise<Result<T1>> promise1,
-                                                                                   final Promise<Result<T2>> promise2,
-                                                                                   final Promise<Result<T3>> promise3,
-                                                                                   final Promise<Result<T4>> promise4,
-                                                                                   final Promise<Result<T5>> promise5,
-                                                                                   final Promise<Result<T6>> promise6) {
-        return zipper(values -> Tuple.with((Result<T1>) values[0], (Result<T2>) values[1], (Result<T3>) values[2], (Result<T4>) values[3],
-                                           (Result<T5>) values[4], (Result<T6>) values[5]),
-                      tuple -> TupleResult.of(tuple).zip(),
-                      promise1, promise2, promise3, promise4, promise5, promise6);
-    }
-
-    @SuppressWarnings("unchecked")
-    static <T1, T2, T3, T4, T5, T6, T7> Promise<Result7<T1, T2, T3, T4, T5, T6, T7>> allOf(final Promise<Result<T1>> promise1,
-                                                                                           final Promise<Result<T2>> promise2,
-                                                                                           final Promise<Result<T3>> promise3,
-                                                                                           final Promise<Result<T4>> promise4,
-                                                                                           final Promise<Result<T5>> promise5,
-                                                                                           final Promise<Result<T6>> promise6,
-                                                                                           final Promise<Result<T7>> promise7) {
-        return zipper(values -> Tuple.with((Result<T1>) values[0], (Result<T2>) values[1], (Result<T3>) values[2], (Result<T4>) values[3],
-                                           (Result<T5>) values[4], (Result<T6>) values[5], (Result<T7>) values[6]),
-                      tuple -> TupleResult.of(tuple).zip(),
-                      promise1, promise2, promise3, promise4, promise5, promise6, promise7);
-    }
-
-    @SuppressWarnings("unchecked")
-    static <T1, T2, T3, T4, T5, T6, T7, T8> Promise<Result8<T1, T2, T3, T4, T5, T6, T7, T8>> allOf(final Promise<Result<T1>> promise1,
-                                                                                                   final Promise<Result<T2>> promise2,
-                                                                                                   final Promise<Result<T3>> promise3,
-                                                                                                   final Promise<Result<T4>> promise4,
-                                                                                                   final Promise<Result<T5>> promise5,
-                                                                                                   final Promise<Result<T6>> promise6,
-                                                                                                   final Promise<Result<T7>> promise7,
-                                                                                                   final Promise<Result<T8>> promise8) {
-        return zipper(values -> Tuple.with((Result<T1>) values[0], (Result<T2>) values[1], (Result<T3>) values[2], (Result<T4>) values[3],
-                                           (Result<T5>) values[4], (Result<T6>) values[5], (Result<T7>) values[6], (Result<T8>) values[7]),
-                      tuple -> TupleResult.of(tuple).zip(),
-                      promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8);
-    }
-
-    @SuppressWarnings("unchecked")
-    static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Promise<Result9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> allOf(final Promise<Result<T1>> promise1,
-                                                                                                           final Promise<Result<T2>> promise2,
-                                                                                                           final Promise<Result<T3>> promise3,
-                                                                                                           final Promise<Result<T4>> promise4,
-                                                                                                           final Promise<Result<T5>> promise5,
-                                                                                                           final Promise<Result<T6>> promise6,
-                                                                                                           final Promise<Result<T7>> promise7,
-                                                                                                           final Promise<Result<T8>> promise8,
-                                                                                                           final Promise<Result<T9>> promise9) {
-        return zipper(values -> Tuple.with((Result<T1>) values[0], (Result<T2>) values[1], (Result<T3>) values[2], (Result<T4>) values[3],
-                                           (Result<T5>) values[4], (Result<T6>) values[5], (Result<T7>) values[6], (Result<T8>) values[7],
-                                           (Result<T9>) values[8]),
-                      tuple -> tuple.map(TupleResult::of).zip(),
-                      promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8, promise9);
-    }
-
-    /**
-     * Main worker method behind all {@code all(...)} and {@code zipAll(...)} methods.
-     * This method is not intended for external use.
-     *
-     * @param tupleBuilder
-     *        Function which transforms array of result values into single output value
-     * @param promises
-     *        Promises whose values created promise will be waiting for
-     * @return created promise
-     */
-    //TODO: switch to tuples?
-     static <R, T> Promise<R> zipper(final FN1<T, Object[]> tupleBuilder, final FN1<R, T> valueTransformer, final Promise<?>... promises) {
-        final var values = new Object[promises.length];
-        final var result = Promise.<R>give();
-        final var thresholdAction = ActionableThreshold.of(promises.length,
-                                                           () -> result.resolve(valueTransformer.apply(tupleBuilder.apply(values))));
-
-        int i = 0;
-        for (final var promise : promises) {
-            final var index = i;
-
-            promise.then(value -> {
-                values[index] = value;
-                thresholdAction.registerEvent();
-            });
-            i++;
-        }
-        return result;
+        return Promise.<T>give().apply(result -> List.of(promises)
+                                                     .forEach(promise -> promise.then(result::resolve)));
     }
 }
