@@ -18,6 +18,8 @@ package org.reactivetoolbox.core.type;
 
 import org.reactivetoolbox.core.functional.Result;
 
+import java.util.Objects;
+import java.util.StringJoiner;
 import java.util.function.Supplier;
 
 /**
@@ -56,6 +58,28 @@ public interface Error {
             @Override
             public String message() {
                 return message;
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(type, message);
+            }
+
+            @Override
+            public boolean equals(final Object obj) {
+                if (obj == this) {
+                    return true;
+                }
+
+                return (obj instanceof Error) && (Objects.equals(((Error) obj).type(), type) && Objects.equals(((Error) obj).message(), message));
+            }
+
+            @Override
+            public String toString() {
+                return new StringJoiner(", ", "Error(", ")")
+                        .add(type.toString())
+                        .add(message)
+                        .toString();
             }
         };
     }

@@ -21,6 +21,8 @@ import org.reactivetoolbox.core.functional.Tuple.Tuple8;
 import org.reactivetoolbox.core.functional.Tuple.Tuple9;
 import org.reactivetoolbox.core.type.Error;
 
+import java.util.Objects;
+import java.util.StringJoiner;
 import java.util.function.Consumer;
 
 /**
@@ -127,6 +129,27 @@ public interface Result<T> extends Either<Error, T> {
                              final FN1<? extends T, ? super R> rightMapper) {
                 return rightMapper.apply(value);
             }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(value);
+            }
+
+            @Override
+            public boolean equals(final Object obj) {
+                if (this == obj) {
+                    return true;
+                }
+
+                return (obj instanceof Result) ? ((Result<?>) obj).map($ -> false, val -> Objects.equals(val, value)) : false;
+            }
+
+            @Override
+            public String toString() {
+                return new StringJoiner(", ", "Result-success(", ")")
+                        .add(value.toString())
+                        .toString();
+            }
         };
     }
 
@@ -143,11 +166,32 @@ public interface Result<T> extends Either<Error, T> {
                              final FN1<? extends T, ? super R> rightMapper) {
                 return leftMapper.apply(value);
             }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(value);
+            }
+
+            @Override
+            public boolean equals(final Object obj) {
+                if (this == obj) {
+                    return true;
+                }
+
+                return (obj instanceof Result) ? ((Result<?>) obj).map(val -> Objects.equals(val, value), $ -> false) : false;
+            }
+
+            @Override
+            public String toString() {
+                return new StringJoiner(", ", "Result-failure(", ")")
+                        .add(value.toString())
+                        .toString();
+            }
         };
     }
 
     interface Result1<T1> extends Result<Tuple1<T1>> {
-        default <T> Result<T> thenMap(final FN1<T, T1> mapper) {
+        default <T> Result<T> mapTuple(final FN1<T, T1> mapper) {
             return map(tuple -> tuple.map(mapper));
         }
 
@@ -157,12 +201,33 @@ public interface Result<T> extends Either<Error, T> {
                 public <T> T map(final FN1<? extends T, ? super Error> leftMapper, final FN1<? extends T, ? super Tuple1<T1>> rightMapper) {
                     return value.map(leftMapper, rightMapper);
                 }
+
+                @Override
+                public int hashCode() {
+                    return Objects.hash(value);
+                }
+
+                @Override
+                public boolean equals(final Object obj) {
+                    if (this == obj) {
+                        return true;
+                    }
+
+                    return (obj instanceof Result) ? ((Result<?>) obj).map($ -> false, val -> Objects.equals(val, value)) : false;
+                }
+
+                @Override
+                public String toString() {
+                    return new StringJoiner(", ", "Result-success(", ")")
+                            .add(value.toString())
+                            .toString();
+                }
             };
         }
     }
 
     interface Result2<T1, T2> extends Result<Tuple2<T1, T2>> {
-        default <T> Result<T> thenMap(final FN2<T, T1, T2> mapper) {
+        default <T> Result<T> mapTuple(final FN2<T, T1, T2> mapper) {
             return map(tuple -> tuple.map(mapper));
         }
 
@@ -172,12 +237,33 @@ public interface Result<T> extends Either<Error, T> {
                 public <T> T map(final FN1<? extends T, ? super Error> leftMapper, final FN1<? extends T, ? super Tuple2<T1, T2>> rightMapper) {
                     return value.map(leftMapper, rightMapper);
                 }
+
+                @Override
+                public int hashCode() {
+                    return Objects.hash(value);
+                }
+
+                @Override
+                public boolean equals(final Object obj) {
+                    if (this == obj) {
+                        return true;
+                    }
+
+                    return (obj instanceof Result) ? ((Result<?>) obj).map($ -> false, val -> Objects.equals(val, value)) : false;
+                }
+
+                @Override
+                public String toString() {
+                    return new StringJoiner(", ", "Result-success(", ")")
+                            .add(value.toString())
+                            .toString();
+                }
             };
         }
     }
 
     interface Result3<T1, T2, T3> extends Result<Tuple3<T1, T2, T3>> {
-        default <T> Result<T> thenMap(final FN3<T, T1, T2, T3> mapper) {
+        default <T> Result<T> mapTuple(final FN3<T, T1, T2, T3> mapper) {
             return map(tuple -> tuple.map(mapper));
         }
 
@@ -187,12 +273,33 @@ public interface Result<T> extends Either<Error, T> {
                 public <T> T map(final FN1<? extends T, ? super Error> leftMapper, final FN1<? extends T, ? super Tuple3<T1, T2, T3>> rightMapper) {
                     return value.map(leftMapper, rightMapper);
                 }
+
+                @Override
+                public int hashCode() {
+                    return Objects.hash(value);
+                }
+
+                @Override
+                public boolean equals(final Object obj) {
+                    if (this == obj) {
+                        return true;
+                    }
+
+                    return (obj instanceof Result) ? ((Result<?>) obj).map($ -> false, val -> Objects.equals(val, value)) : false;
+                }
+
+                @Override
+                public String toString() {
+                    return new StringJoiner(", ", "Result-success(", ")")
+                            .add(value.toString())
+                            .toString();
+                }
             };
         }
     }
 
     interface Result4<T1, T2, T3, T4> extends Result<Tuple4<T1, T2, T3, T4>> {
-        default <T> Result<T> thenMap(final FN4<T, T1, T2, T3, T4> mapper) {
+        default <T> Result<T> mapTuple(final FN4<T, T1, T2, T3, T4> mapper) {
             return map(tuple -> tuple.map(mapper));
         }
 
@@ -202,12 +309,33 @@ public interface Result<T> extends Either<Error, T> {
                 public <T> T map(final FN1<? extends T, ? super Error> leftMapper, final FN1<? extends T, ? super Tuple4<T1, T2, T3, T4>> rightMapper) {
                     return value.map(leftMapper, rightMapper);
                 }
+
+                @Override
+                public int hashCode() {
+                    return Objects.hash(value);
+                }
+
+                @Override
+                public boolean equals(final Object obj) {
+                    if (this == obj) {
+                        return true;
+                    }
+
+                    return (obj instanceof Result) ? ((Result<?>) obj).map($ -> false, val -> Objects.equals(val, value)) : false;
+                }
+
+                @Override
+                public String toString() {
+                    return new StringJoiner(", ", "Result-success(", ")")
+                            .add(value.toString())
+                            .toString();
+                }
             };
         }
     }
 
     interface Result5<T1, T2, T3, T4, T5> extends Result<Tuple5<T1, T2, T3, T4, T5>> {
-        default <T> Result<T> thenMap(final FN5<T, T1, T2, T3, T4, T5> mapper) {
+        default <T> Result<T> mapTuple(final FN5<T, T1, T2, T3, T4, T5> mapper) {
             return map(tuple -> tuple.map(mapper));
         }
 
@@ -217,12 +345,33 @@ public interface Result<T> extends Either<Error, T> {
                 public <T> T map(final FN1<? extends T, ? super Error> leftMapper, final FN1<? extends T, ? super Tuple5<T1, T2, T3, T4, T5>> rightMapper) {
                     return value.map(leftMapper, rightMapper);
                 }
+
+                @Override
+                public int hashCode() {
+                    return Objects.hash(value);
+                }
+
+                @Override
+                public boolean equals(final Object obj) {
+                    if (this == obj) {
+                        return true;
+                    }
+
+                    return (obj instanceof Result) ? ((Result<?>) obj).map($ -> false, val -> Objects.equals(val, value)) : false;
+                }
+
+                @Override
+                public String toString() {
+                    return new StringJoiner(", ", "Result-success(", ")")
+                            .add(value.toString())
+                            .toString();
+                }
             };
         }
     }
 
     interface Result6<T1, T2, T3, T4, T5, T6> extends Result<Tuple6<T1, T2, T3, T4, T5, T6>> {
-        default <T> Result<T> thenMap(final FN6<T, T1, T2, T3, T4, T5, T6> mapper) {
+        default <T> Result<T> mapTuple(final FN6<T, T1, T2, T3, T4, T5, T6> mapper) {
             return map(tuple -> tuple.map(mapper));
         }
 
@@ -232,12 +381,33 @@ public interface Result<T> extends Either<Error, T> {
                 public <T> T map(final FN1<? extends T, ? super Error> leftMapper, final FN1<? extends T, ? super Tuple6<T1, T2, T3, T4, T5, T6>> rightMapper) {
                     return value.map(leftMapper, rightMapper);
                 }
+
+                @Override
+                public int hashCode() {
+                    return Objects.hash(value);
+                }
+
+                @Override
+                public boolean equals(final Object obj) {
+                    if (this == obj) {
+                        return true;
+                    }
+
+                    return (obj instanceof Result) ? ((Result<?>) obj).map($ -> false, val -> Objects.equals(val, value)) : false;
+                }
+
+                @Override
+                public String toString() {
+                    return new StringJoiner(", ", "Result-success(", ")")
+                            .add(value.toString())
+                            .toString();
+                }
             };
         }
     }
 
     interface Result7<T1, T2, T3, T4, T5, T6, T7> extends Result<Tuple7<T1, T2, T3, T4, T5, T6, T7>> {
-        default <T> Result<T> thenMap(final FN7<T, T1, T2, T3, T4, T5, T6, T7> mapper) {
+        default <T> Result<T> mapTuple(final FN7<T, T1, T2, T3, T4, T5, T6, T7> mapper) {
             return map(tuple -> tuple.map(mapper));
         }
 
@@ -247,12 +417,33 @@ public interface Result<T> extends Either<Error, T> {
                 public <T> T map(final FN1<? extends T, ? super Error> leftMapper, final FN1<? extends T, ? super Tuple7<T1, T2, T3, T4, T5, T6, T7>> rightMapper) {
                     return value.map(leftMapper, rightMapper);
                 }
+
+                @Override
+                public int hashCode() {
+                    return Objects.hash(value);
+                }
+
+                @Override
+                public boolean equals(final Object obj) {
+                    if (this == obj) {
+                        return true;
+                    }
+
+                    return (obj instanceof Result) ? ((Result<?>) obj).map($ -> false, val -> Objects.equals(val, value)) : false;
+                }
+
+                @Override
+                public String toString() {
+                    return new StringJoiner(", ", "Result-success(", ")")
+                            .add(value.toString())
+                            .toString();
+                }
             };
         }
     }
 
     interface Result8<T1, T2, T3, T4, T5, T6, T7, T8> extends Result<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> {
-        default <T> Result<T> thenMap(final FN8<T, T1, T2, T3, T4, T5, T6, T7, T8> mapper) {
+        default <T> Result<T> mapTuple(final FN8<T, T1, T2, T3, T4, T5, T6, T7, T8> mapper) {
             return map(tuple -> tuple.map(mapper));
         }
 
@@ -262,12 +453,33 @@ public interface Result<T> extends Either<Error, T> {
                 public <T> T map(final FN1<? extends T, ? super Error> leftMapper, final FN1<? extends T, ? super Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> rightMapper) {
                     return value.map(leftMapper, rightMapper);
                 }
+
+                @Override
+                public int hashCode() {
+                    return Objects.hash(value);
+                }
+
+                @Override
+                public boolean equals(final Object obj) {
+                    if (this == obj) {
+                        return true;
+                    }
+
+                    return (obj instanceof Result) ? ((Result<?>) obj).map($ -> false, val -> Objects.equals(val, value)) : false;
+                }
+
+                @Override
+                public String toString() {
+                    return new StringJoiner(", ", "Result-success(", ")")
+                            .add(value.toString())
+                            .toString();
+                }
             };
         }
     }
 
     interface Result9<T1, T2, T3, T4, T5, T6, T7, T8, T9> extends Result<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> {
-        default <T> Result<T> thenMap(final FN9<T, T1, T2, T3, T4, T5, T6, T7, T8, T9> mapper) {
+        default <T> Result<T> mapTuple(final FN9<T, T1, T2, T3, T4, T5, T6, T7, T8, T9> mapper) {
             return map(tuple -> tuple.map(mapper));
         }
 
@@ -277,142 +489,28 @@ public interface Result<T> extends Either<Error, T> {
                 public <T> T map(final FN1<? extends T, ? super Error> leftMapper, final FN1<? extends T, ? super Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> rightMapper) {
                     return value.map(leftMapper, rightMapper);
                 }
+
+                @Override
+                public int hashCode() {
+                    return Objects.hash(value);
+                }
+
+                @Override
+                public boolean equals(final Object obj) {
+                    if (this == obj) {
+                        return true;
+                    }
+
+                    return (obj instanceof Result) ? ((Result<?>) obj).map($ -> false, val -> Objects.equals(val, value)) : false;
+                }
+
+                @Override
+                public String toString() {
+                    return new StringJoiner(", ", "Result-success(", ")")
+                            .add(value.toString())
+                            .toString();
+                }
             };
         }
-    }
-
-    /**
-     * Convenience method to transform instance of {@link Result} which holds {@link Tuple1}
-     *
-     * @param result
-     *         Input instance
-     * @param mapper
-     *         Mapping function
-     *
-     * @return transformed instance of {@link Result}
-     */
-    static <R, T1> Result<R> map(final Result<Tuple1<T1>> result,
-                                 final FN1<R, T1> mapper) {
-        return result.map(tuple -> tuple.map(mapper));
-    }
-
-    /**
-     * Convenience method to transform instance of {@link Result} which holds {@link Tuple2}
-     *
-     * @param result
-     *         Input instance
-     * @param mapper
-     *         Mapping function
-     *
-     * @return transformed instance of {@link Result}
-     */
-    static <R, T1, T2> Result<R> map(final Result<Tuple2<T1, T2>> result,
-                                     final FN2<R, T1, T2> mapper) {
-        return result.map(tuple -> tuple.map(mapper));
-    }
-
-    /**
-     * Convenience method to transform instance of {@link Result} which holds {@link Tuple3}
-     *
-     * @param result
-     *         Input instance
-     * @param mapper
-     *         Mapping function
-     *
-     * @return transformed instance of {@link Result}
-     */
-    static <R, T1, T2, T3> Result<R> map(final Result<Tuple3<T1, T2, T3>> result,
-                                         final FN3<R, T1, T2, T3> mapper) {
-        return result.map(tuple -> tuple.map(mapper));
-    }
-
-    /**
-     * Convenience method to transform instance of {@link Result} which holds {@link Tuple4}
-     *
-     * @param result
-     *         Input instance
-     * @param mapper
-     *         Mapping function
-     *
-     * @return transformed instance of {@link Result}
-     */
-    static <R, T1, T2, T3, T4> Result<R> map(final Result<Tuple4<T1, T2, T3, T4>> result,
-                                             final FN4<R, T1, T2, T3, T4> mapper) {
-        return result.map(tuple -> tuple.map(mapper));
-    }
-
-    /**
-     * Convenience method to transform instance of {@link Result} which holds {@link Tuple5}
-     *
-     * @param result
-     *         Input instance
-     * @param mapper
-     *         Mapping function
-     *
-     * @return transformed instance of {@link Result}
-     */
-    static <R, T1, T2, T3, T4, T5> Result<R> map(final Result<Tuple5<T1, T2, T3, T4, T5>> result,
-                                                 final FN5<R, T1, T2, T3, T4, T5> mapper) {
-        return result.map(tuple -> tuple.map(mapper));
-    }
-
-    /**
-     * Convenience method to transform instance of {@link Result} which holds {@link Tuple6}
-     *
-     * @param result
-     *         Input instance
-     * @param mapper
-     *         Mapping function
-     *
-     * @return transformed instance of {@link Result}
-     */
-    static <R, T1, T2, T3, T4, T5, T6> Result<R> map(final Result<Tuple6<T1, T2, T3, T4, T5, T6>> result,
-                                                     final FN6<R, T1, T2, T3, T4, T5, T6> mapper) {
-        return result.map(tuple -> tuple.map(mapper));
-    }
-
-    /**
-     * Convenience method to transform instance of {@link Result} which holds {@link Tuple7}
-     *
-     * @param result
-     *         Input instance
-     * @param mapper
-     *         Mapping function
-     *
-     * @return transformed instance of {@link Result}
-     */
-    static <R, T1, T2, T3, T4, T5, T6, T7> Result<R> map(final Result<Tuple7<T1, T2, T3, T4, T5, T6, T7>> result,
-                                                         final FN7<R, T1, T2, T3, T4, T5, T6, T7> mapper) {
-        return result.map(tuple -> tuple.map(mapper));
-    }
-
-    /**
-     * Convenience method to transform instance of {@link Result} which holds {@link Tuple8}
-     *
-     * @param result
-     *         Input instance
-     * @param mapper
-     *         Mapping function
-     *
-     * @return transformed instance of {@link Result}
-     */
-    static <R, T1, T2, T3, T4, T5, T6, T7, T8> Result<R> map(final Result<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> result,
-                                                             final FN8<R, T1, T2, T3, T4, T5, T6, T7, T8> mapper) {
-        return result.map(tuple -> tuple.map(mapper));
-    }
-
-    /**
-     * Convenience method to transform instance of {@link Result} which holds {@link Tuple9}
-     *
-     * @param result
-     *         Input instance
-     * @param mapper
-     *         Mapping function
-     *
-     * @return transformed instance of {@link Result}
-     */
-    static <R, T1, T2, T3, T4, T5, T6, T7, T8, T9> Result<R> map(final Result<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> result,
-                                                                 final FN9<R, T1, T2, T3, T4, T5, T6, T7, T8, T9> mapper) {
-        return result.map(tuple -> tuple.map(mapper));
     }
 }

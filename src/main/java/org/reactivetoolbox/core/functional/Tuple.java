@@ -28,6 +28,7 @@ import org.reactivetoolbox.core.functional.Functions.FN8;
 import org.reactivetoolbox.core.functional.Functions.FN9;
 
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /**
  * Tuples with various size and convenient static factories for tuple creation.<br/>
@@ -129,6 +130,11 @@ public interface Tuple<S extends Tuple> {
             public int hashCode() {
                 return super.hashCode();
             }
+
+            @Override
+            public String toString() {
+                return "Tuple0[]";
+            }
         };
     }
 
@@ -150,7 +156,14 @@ public interface Tuple<S extends Tuple> {
 
             @Override
             public int hashCode() {
-                return param1.hashCode();
+                return Objects.hash(param1);
+            }
+
+            @Override
+            public String toString() {
+                return new StringJoiner(", ", "Tuple1(", ")")
+                        .add(param1.toString())
+                        .toString();
             }
         };
     }
@@ -175,7 +188,15 @@ public interface Tuple<S extends Tuple> {
 
             @Override
             public int hashCode() {
-                return param1.hashCode() + param2.hashCode();
+                return Objects.hash(param1, param2);
+            }
+
+            @Override
+            public String toString() {
+                return new StringJoiner(", ", "Tuple2(", ")")
+                        .add(param1.toString())
+                        .add(param2.toString())
+                        .toString();
             }
         };
     }
@@ -201,7 +222,16 @@ public interface Tuple<S extends Tuple> {
 
             @Override
             public int hashCode() {
-                return param1.hashCode() + param2.hashCode() + param3.hashCode();
+                return Objects.hash(param1, param2, param3);
+            }
+
+            @Override
+            public String toString() {
+                return new StringJoiner(", ", "Tuple3(", ")")
+                        .add(param1.toString())
+                        .add(param2.toString())
+                        .add(param3.toString())
+                        .toString();
             }
         };
     }
@@ -229,7 +259,17 @@ public interface Tuple<S extends Tuple> {
 
             @Override
             public int hashCode() {
-                return param1.hashCode() + param2.hashCode() + param3.hashCode() + param4.hashCode();
+                return Objects.hash(param1, param2, param3, param4);
+            }
+
+            @Override
+            public String toString() {
+                return new StringJoiner(", ", "Tuple4(", ")")
+                        .add(param1.toString())
+                        .add(param2.toString())
+                        .add(param3.toString())
+                        .add(param4.toString())
+                        .toString();
             }
         };
     }
@@ -258,8 +298,18 @@ public interface Tuple<S extends Tuple> {
 
             @Override
             public int hashCode() {
-                return param1.hashCode() + param2.hashCode() + param3.hashCode() +
-                       param4.hashCode() + param5.hashCode();
+                return Objects.hash(param1, param2, param3, param4, param5);
+            }
+
+            @Override
+            public String toString() {
+                return new StringJoiner(", ", "Tuple5(", ")")
+                        .add(param1.toString())
+                        .add(param2.toString())
+                        .add(param3.toString())
+                        .add(param4.toString())
+                        .add(param5.toString())
+                        .toString();
             }
         };
     }
@@ -289,8 +339,19 @@ public interface Tuple<S extends Tuple> {
 
             @Override
             public int hashCode() {
-                return param1.hashCode() + param2.hashCode() + param3.hashCode() +
-                       param4.hashCode() + param5.hashCode() + param6.hashCode();
+                return Objects.hash(param1, param2, param3, param4, param5, param6);
+            }
+
+            @Override
+            public String toString() {
+                return new StringJoiner(", ", "Tuple6(", ")")
+                        .add(param1.toString())
+                        .add(param2.toString())
+                        .add(param3.toString())
+                        .add(param4.toString())
+                        .add(param5.toString())
+                        .add(param6.toString())
+                        .toString();
             }
         };
     }
@@ -322,8 +383,20 @@ public interface Tuple<S extends Tuple> {
 
             @Override
             public int hashCode() {
-                return param1.hashCode() + param2.hashCode() + param3.hashCode() + param4.hashCode() +
-                       param5.hashCode() + param6.hashCode() + param7.hashCode();
+                return Objects.hash(param1, param2, param3, param4, param5, param6, param7);
+            }
+
+            @Override
+            public String toString() {
+                return new StringJoiner(", ", "Tuple7(", ")")
+                        .add(param1.toString())
+                        .add(param2.toString())
+                        .add(param3.toString())
+                        .add(param4.toString())
+                        .add(param5.toString())
+                        .add(param6.toString())
+                        .add(param7.toString())
+                        .toString();
             }
         };
     }
@@ -356,8 +429,21 @@ public interface Tuple<S extends Tuple> {
 
             @Override
             public int hashCode() {
-                return param1.hashCode() + param2.hashCode() + param3.hashCode() + param4.hashCode() +
-                       param5.hashCode() + param6.hashCode() + param7.hashCode() + param8.hashCode();
+                return Objects.hash(param1, param2, param3, param4, param5, param6, param7, param8);
+            }
+
+            @Override
+            public String toString() {
+                return new StringJoiner(", ", "Tuple8(", ")")
+                        .add(param1.toString())
+                        .add(param2.toString())
+                        .add(param3.toString())
+                        .add(param4.toString())
+                        .add(param5.toString())
+                        .add(param6.toString())
+                        .add(param7.toString())
+                        .add(param8.toString())
+                        .toString();
             }
         };
     }
@@ -391,9 +477,22 @@ public interface Tuple<S extends Tuple> {
 
             @Override
             public int hashCode() {
-                return param1.hashCode() + param2.hashCode() + param3.hashCode() +
-                       param4.hashCode() + param5.hashCode() + param6.hashCode() +
-                       param7.hashCode() + param8.hashCode() + param9.hashCode();
+                return Objects.hash(param1, param2, param3, param4, param5, param6, param7, param8, param9);
+            }
+
+            @Override
+            public String toString() {
+                return new StringJoiner(", ", "Tuple9(", ")")
+                        .add(param1.toString())
+                        .add(param2.toString())
+                        .add(param3.toString())
+                        .add(param4.toString())
+                        .add(param5.toString())
+                        .add(param6.toString())
+                        .add(param7.toString())
+                        .add(param8.toString())
+                        .add(param9.toString())
+                        .toString();
             }
         };
     }

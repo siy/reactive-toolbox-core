@@ -6,6 +6,7 @@ import org.reactivetoolbox.core.meta.AppMetaRepository;
 import org.reactivetoolbox.core.scheduler.TaskScheduler;
 import org.reactivetoolbox.core.scheduler.Timeout;
 
+import java.util.StringJoiner;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -130,6 +131,13 @@ public class PromiseImpl<T> implements Promise<T> {
     @Override
     public Promise<T> async(final Consumer<Promise<T>> task) {
         return TaskSchedulerHolder.instance().submit(this, task);
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", "Promise(", ")")
+                .add(ready() ? value.getReference().toString() : "")
+                .toString();
     }
 
     private static final class TaskSchedulerHolder {
