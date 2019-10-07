@@ -1,99 +1,147 @@
 package org.reactivetoolbox.core.async;
 
+import org.reactivetoolbox.core.functional.Functions.FN1;
+import org.reactivetoolbox.core.functional.Option;
 import org.reactivetoolbox.core.functional.Result;
-import org.reactivetoolbox.core.functional.Result.Result1;
-import org.reactivetoolbox.core.functional.Result.Result2;
-import org.reactivetoolbox.core.functional.Result.Result3;
-import org.reactivetoolbox.core.functional.Result.Result4;
-import org.reactivetoolbox.core.functional.Result.Result5;
-import org.reactivetoolbox.core.functional.Result.Result6;
-import org.reactivetoolbox.core.functional.Result.Result7;
-import org.reactivetoolbox.core.functional.Result.Result8;
-import org.reactivetoolbox.core.functional.Result.Result9;
-import org.reactivetoolbox.core.functional.ResultTuple;
+import org.reactivetoolbox.core.scheduler.Timeout;
+import org.reactivetoolbox.core.type.Error;
 
-public interface PromiseResult {
-    static <T1> Promise<Result1<T1>> resultOf(final Promise<Result<T1>> promise1) {
-        return PromiseAll.allOf(promise1)
-                         .map(tuple -> ResultTuple.of(tuple).zip());
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+public interface PromiseResult<T> extends Promise<Result<T>> {
+    /**
+     * Convenience method for performing some actions with current promise instance. Useful for cases
+     * when there is (quite typical) sequence: create unresolved promise -> setup -> return created promise.
+     *
+     * @param consumer
+     *        Action to perform on current instance.
+     * @return Current instance
+     */
+    default PromiseResult<T> apply(final Consumer<PromiseResult<T>> consumer) {
+        consumer.accept(this);
+        return this;
     }
 
-    static <T1, T2> Promise<Result2<T1, T2>> resultOf(final Promise<Result<T1>> promise1,
-                                                      final Promise<Result<T2>> promise2) {
-        return PromiseAll.allOf(promise1, promise2)
-                         .map(tuple -> ResultTuple.of(tuple).zip());
+    /**
+     * Set timeout for instance resolution. When timeout expires, instance will be resolved with specified timeout
+     * result.
+     *
+     * @param timeout
+     *        Timeout amount
+     * @param timeoutResult
+     *        Resolution value in case of timeout
+     * @return Current instance
+     */
+    default PromiseResult<T> with(final Timeout timeout, final Result<T> timeoutResult) {
+        return (PromiseResult<T>) async(timeout, promise -> promise.resolve(timeoutResult));
     }
 
-    static <T1, T2, T3> Promise<Result3<T1, T2, T3>> resultOf(final Promise<Result<T1>> promise1,
-                                                              final Promise<Result<T2>> promise2,
-                                                              final Promise<Result<T3>> promise3) {
-        return PromiseAll.allOf(promise1, promise2, promise3)
-                         .map(tuple -> ResultTuple.of(tuple).zip());
+    /**
+     * Set timeout for instance resolution. When timeout expires, instance will be resolved with value returned by
+     * provided supplier. Resolution value is lazily evaluated.
+     *
+     * @param timeout
+     *        Timeout amount
+     * @param timeoutResultSupplier
+     *        Supplier of resolution value in case of timeout
+     * @return Current instance
+     */
+    default PromiseResult<T> with(final Timeout timeout, final Supplier<Result<T>> timeoutResultSupplier) {
+        return (PromiseResult<T>) async(timeout, promise -> promise.resolve(timeoutResultSupplier.get()));
     }
 
-    static <T1, T2, T3, T4> Promise<Result4<T1, T2, T3, T4>> resultOf(final Promise<Result<T1>> promise1,
-                                                                      final Promise<Result<T2>> promise2,
-                                                                      final Promise<Result<T3>> promise3,
-                                                                      final Promise<Result<T4>> promise4) {
-        return PromiseAll.allOf(promise1, promise2, promise3, promise4)
-                         .map(tuple -> ResultTuple.of(tuple).zip());
+    /**
+     * This method enables chaining of calls to functions which return {@link PromiseResult} and require unwrapped
+     * results successful previous calls. If current instance is resolved to {@link Result#failure(Error)}, then
+     * function passes as parameter is not invoked and resolved instance of {@link PromiseResult} is returned instead.
+     *
+     * @param mapper
+     *        Function to call if current instance is resolved with success.
+     * @return Created instance which is either already resolved with same error as current instance or
+     *         waiting for resolving by provided mapping function.
+     */
+    default <R> PromiseResult<R> chainMap(final FN1<PromiseResult<R>, T> mapper) {
+        return PromiseResult.result(promise -> then(result -> result.map(error -> PromiseResult.<R>result().resolve(Result.failure(error)),
+                                                                         success -> mapper.apply(success)
+                                                                                          .then(promise::resolve))));
     }
 
-    static <T1, T2, T3, T4, T5> Promise<Result5<T1, T2, T3, T4, T5>> resultOf(final Promise<Result<T1>> promise1,
-                                                                              final Promise<Result<T2>> promise2,
-                                                                              final Promise<Result<T3>> promise3,
-                                                                              final Promise<Result<T4>> promise4,
-                                                                              final Promise<Result<T5>> promise5) {
-        return PromiseAll.allOf(promise1, promise2, promise3, promise4, promise5)
-                         .map(tuple -> ResultTuple.of(tuple).zip());
+    static <T> PromiseResult<T> result() {
+        return new PromiseResultImpl<>(Promise.give());
     }
 
-    static <T1, T2, T3, T4, T5, T6> Promise<Result6<T1, T2, T3, T4, T5, T6>> resultOf(final Promise<Result<T1>> promise1,
-                                                                                      final Promise<Result<T2>> promise2,
-                                                                                      final Promise<Result<T3>> promise3,
-                                                                                      final Promise<Result<T4>> promise4,
-                                                                                      final Promise<Result<T5>> promise5,
-                                                                                      final Promise<Result<T6>> promise6) {
-        return PromiseAll.allOf(promise1, promise2, promise3, promise4, promise5, promise6)
-                         .map(tuple -> ResultTuple.of(tuple).zip());
+    static <T> PromiseResult<T> from(final Promise<Result<T>> promise) {
+        return new PromiseResultImpl<>(promise);
     }
 
-    static <T1, T2, T3, T4, T5, T6, T7> Promise<Result7<T1, T2, T3, T4, T5, T6, T7>> resultOf(final Promise<Result<T1>> promise1,
-                                                                                              final Promise<Result<T2>> promise2,
-                                                                                              final Promise<Result<T3>> promise3,
-                                                                                              final Promise<Result<T4>> promise4,
-                                                                                              final Promise<Result<T5>> promise5,
-                                                                                              final Promise<Result<T6>> promise6,
-                                                                                              final Promise<Result<T7>> promise7) {
-        return PromiseAll.allOf(promise1, promise2, promise3, promise4, promise5, promise6, promise7)
-                         .map(tuple -> ResultTuple.of(tuple).zip());
+    static <T> PromiseResult<T> result(final Consumer<PromiseResult<T>> mapper) {
+        return PromiseResult.<T>result().apply(mapper);
     }
 
-    static <T1, T2, T3, T4, T5, T6, T7, T8> Promise<Result8<T1, T2, T3, T4, T5, T6, T7, T8>> resultOf(final Promise<Result<T1>> promise1,
-                                                                                                      final Promise<Result<T2>> promise2,
-                                                                                                      final Promise<Result<T3>> promise3,
-                                                                                                      final Promise<Result<T4>> promise4,
-                                                                                                      final Promise<Result<T5>> promise5,
-                                                                                                      final Promise<Result<T6>> promise6,
-                                                                                                      final Promise<Result<T7>> promise7,
-                                                                                                      final Promise<Result<T8>> promise8) {
-        return PromiseAll.allOf(promise1, promise2, promise3, promise4,
-                                promise5, promise6, promise7, promise8)
-                         .map(tuple -> ResultTuple.of(tuple).zip());
-    }
+    class PromiseResultImpl<T> implements PromiseResult<T> {
+        private final Promise<Result<T>> promise;
 
-    static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Promise<Result9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> resultOf(final Promise<Result<T1>> promise1,
-                                                                                                              final Promise<Result<T2>> promise2,
-                                                                                                              final Promise<Result<T3>> promise3,
-                                                                                                              final Promise<Result<T4>> promise4,
-                                                                                                              final Promise<Result<T5>> promise5,
-                                                                                                              final Promise<Result<T6>> promise6,
-                                                                                                              final Promise<Result<T7>> promise7,
-                                                                                                              final Promise<Result<T8>> promise8,
-                                                                                                              final Promise<Result<T9>> promise9) {
-        return PromiseAll.allOf(promise1, promise2, promise3,
-                                promise4, promise5, promise6,
-                                promise7, promise8, promise9)
-                         .map(tuple -> ResultTuple.of(tuple).zip());
+        private PromiseResultImpl(final Promise<Result<T>> promise) {
+            this.promise = promise;
+        }
+
+        @Override
+        public Option<Result<T>> value() {
+            return promise.value();
+        }
+
+        @Override
+        public boolean ready() {
+            return promise.ready();
+        }
+
+        @Override
+        public PromiseResult<T> resolve(final Result<T> result) {
+            promise.resolve(result);
+            return this;
+        }
+
+        @Override
+        public PromiseResult<T> resolveAsync(final Result<T> result) {
+            promise.resolveAsync(result);
+            return this;
+        }
+
+        @Override
+        public PromiseResult<T> then(final Consumer<Result<T>> action) {
+            promise.then(action);
+            return this;
+        }
+
+        @Override
+        public PromiseResult<T> syncWait() {
+            promise.syncWait();
+            return this;
+        }
+
+        @Override
+        public PromiseResult<T> syncWait(final Timeout timeout) {
+            promise.syncWait(timeout);
+            return this;
+        }
+
+        @Override
+        public PromiseResult<T> async(final Consumer<Promise<Result<T>>> task) {
+            promise.async(task);
+            return this;
+        }
+
+        @Override
+        public PromiseResult<T> async(final Timeout timeout,
+                                      final Consumer<Promise<Result<T>>> task) {
+            promise.async(timeout, task);
+            return this;
+        }
+
+        @Override
+        public String toString() {
+            return promise.toString();
+        }
     }
 }

@@ -114,7 +114,7 @@ class PromiseTest {
 
     @Test
     void promiseIsResolvedWhenTimeoutExpires() {
-        final var promise = Promise.<Integer>give().with(Timeout.of(100).millis(), 123);
+        final var promise = Promise.<Integer>give().async(Timeout.of(100).millis(), task -> task.resolve(123));
 
         assertFalse(promise.ready());
 
@@ -125,18 +125,8 @@ class PromiseTest {
     }
 
     @Test
-    void promiseIsResolvedWhenTimeoutExpiresAndResultIsProvidedBySupplier() {
-        final var promise = Promise.<Integer>give().with(Timeout.of(100).millis(), () -> 123);
-
-        assertFalse(promise.ready());
-
-        assertTrue(promise.syncWait().ready());
-        assertEquals(Option.with(123), promise.value());
-    }
-
-    @Test
     void taskCanBeExecuted() {
-        final var promise = Promise.<Integer>give().with(Timeout.of(100).millis(), () -> 123);
+        final var promise = Promise.<Integer>give().async(Timeout.of(100).millis(), task -> task.resolve(123));
 
         assertFalse(promise.ready());
 

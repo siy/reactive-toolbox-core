@@ -1,6 +1,17 @@
 package org.reactivetoolbox.core.async;
 
 import org.reactivetoolbox.core.async.impl.PromiseImpl;
+import org.reactivetoolbox.core.functional.Result;
+import org.reactivetoolbox.core.functional.Result.Result1;
+import org.reactivetoolbox.core.functional.Result.Result2;
+import org.reactivetoolbox.core.functional.Result.Result3;
+import org.reactivetoolbox.core.functional.Result.Result4;
+import org.reactivetoolbox.core.functional.Result.Result5;
+import org.reactivetoolbox.core.functional.Result.Result6;
+import org.reactivetoolbox.core.functional.Result.Result7;
+import org.reactivetoolbox.core.functional.Result.Result8;
+import org.reactivetoolbox.core.functional.Result.Result9;
+import org.reactivetoolbox.core.functional.ResultTuple;
 import org.reactivetoolbox.core.functional.Tuple;
 import org.reactivetoolbox.core.functional.Tuple.Tuple1;
 import org.reactivetoolbox.core.functional.Tuple.Tuple2;
@@ -82,6 +93,90 @@ public interface PromiseAll<T> {
                                                                                                           final Promise<T8> promise8,
                                                                                                           final Promise<T9> promise9) {
         return new PromiseAll9<>(promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8, promise9);
+    }
+
+    static <T1> Promise<Result1<T1>> resultsOf(final Promise<Result<T1>> promise1) {
+        return allOf(promise1)
+                         .map(tuple -> ResultTuple.of(tuple).zip());
+    }
+
+    static <T1, T2> Promise<Result2<T1, T2>> resultsOf(final Promise<Result<T1>> promise1,
+                                                       final Promise<Result<T2>> promise2) {
+        return allOf(promise1, promise2)
+                         .map(tuple -> ResultTuple.of(tuple).zip());
+    }
+
+    static <T1, T2, T3> Promise<Result3<T1, T2, T3>> resultsOf(final Promise<Result<T1>> promise1,
+                                                               final Promise<Result<T2>> promise2,
+                                                               final Promise<Result<T3>> promise3) {
+        return allOf(promise1, promise2, promise3)
+                         .map(tuple -> ResultTuple.of(tuple).zip());
+    }
+
+    static <T1, T2, T3, T4> Promise<Result4<T1, T2, T3, T4>> resultsOf(final Promise<Result<T1>> promise1,
+                                                                       final Promise<Result<T2>> promise2,
+                                                                       final Promise<Result<T3>> promise3,
+                                                                       final Promise<Result<T4>> promise4) {
+        return allOf(promise1, promise2, promise3, promise4)
+                         .map(tuple -> ResultTuple.of(tuple).zip());
+    }
+
+    static <T1, T2, T3, T4, T5> Promise<Result5<T1, T2, T3, T4, T5>> resultsOf(final Promise<Result<T1>> promise1,
+                                                                               final Promise<Result<T2>> promise2,
+                                                                               final Promise<Result<T3>> promise3,
+                                                                               final Promise<Result<T4>> promise4,
+                                                                               final Promise<Result<T5>> promise5) {
+        return allOf(promise1, promise2, promise3, promise4, promise5)
+                         .map(tuple -> ResultTuple.of(tuple).zip());
+    }
+
+    static <T1, T2, T3, T4, T5, T6> Promise<Result6<T1, T2, T3, T4, T5, T6>> resultsOf(final Promise<Result<T1>> promise1,
+                                                                                       final Promise<Result<T2>> promise2,
+                                                                                       final Promise<Result<T3>> promise3,
+                                                                                       final Promise<Result<T4>> promise4,
+                                                                                       final Promise<Result<T5>> promise5,
+                                                                                       final Promise<Result<T6>> promise6) {
+        return allOf(promise1, promise2, promise3, promise4, promise5, promise6)
+                         .map(tuple -> ResultTuple.of(tuple).zip());
+    }
+
+    static <T1, T2, T3, T4, T5, T6, T7> Promise<Result7<T1, T2, T3, T4, T5, T6, T7>> resultsOf(final Promise<Result<T1>> promise1,
+                                                                                               final Promise<Result<T2>> promise2,
+                                                                                               final Promise<Result<T3>> promise3,
+                                                                                               final Promise<Result<T4>> promise4,
+                                                                                               final Promise<Result<T5>> promise5,
+                                                                                               final Promise<Result<T6>> promise6,
+                                                                                               final Promise<Result<T7>> promise7) {
+        return allOf(promise1, promise2, promise3, promise4, promise5, promise6, promise7)
+                         .map(tuple -> ResultTuple.of(tuple).zip());
+    }
+
+    static <T1, T2, T3, T4, T5, T6, T7, T8> Promise<Result8<T1, T2, T3, T4, T5, T6, T7, T8>> resultsOf(final Promise<Result<T1>> promise1,
+                                                                                                       final Promise<Result<T2>> promise2,
+                                                                                                       final Promise<Result<T3>> promise3,
+                                                                                                       final Promise<Result<T4>> promise4,
+                                                                                                       final Promise<Result<T5>> promise5,
+                                                                                                       final Promise<Result<T6>> promise6,
+                                                                                                       final Promise<Result<T7>> promise7,
+                                                                                                       final Promise<Result<T8>> promise8) {
+        return allOf(promise1, promise2, promise3, promise4,
+                     promise5, promise6, promise7, promise8)
+                         .map(tuple -> ResultTuple.of(tuple).zip());
+    }
+
+    static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Promise<Result9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> resultsOf(final Promise<Result<T1>> promise1,
+                                                                                                               final Promise<Result<T2>> promise2,
+                                                                                                               final Promise<Result<T3>> promise3,
+                                                                                                               final Promise<Result<T4>> promise4,
+                                                                                                               final Promise<Result<T5>> promise5,
+                                                                                                               final Promise<Result<T6>> promise6,
+                                                                                                               final Promise<Result<T7>> promise7,
+                                                                                                               final Promise<Result<T8>> promise8,
+                                                                                                               final Promise<Result<T9>> promise9) {
+        return allOf(promise1, promise2, promise3,
+                     promise4, promise5, promise6,
+                     promise7, promise8, promise9)
+                         .map(tuple -> ResultTuple.of(tuple).zip());
     }
 
     class PromiseAll1<T1> extends PromiseImpl<Tuple1<T1>> {

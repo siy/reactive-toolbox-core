@@ -9,7 +9,6 @@ import org.reactivetoolbox.core.type.TypeToken;
 
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * Simple and lightweight Promise implementation
@@ -17,7 +16,6 @@ import java.util.function.Supplier;
  * @param <T>
  *        Type of contained value
  * @see PromiseAll - for Promise's which depend on several Promises
- * @see PromiseResult - for Promise's which depend on several Promises containing {@link Result}
  */
 public interface Promise<T> {
     /**
@@ -33,19 +31,6 @@ public interface Promise<T> {
      * @return <code>true</code> if instance is resolved and <code>false</code> if not
      */
     boolean ready();
-
-    /**
-     * Convenience method for performing some actions with current promise instance. Useful for cases
-     * when there is (quite typical) sequence: create unresolved promise -> setup -> return created promise.
-     *
-     * @param consumer
-     *        Action to perform on current instance.
-     * @return Current instance
-     */
-    default Promise<T> apply(final Consumer<Promise<T>> consumer) {
-        consumer.accept(this);
-        return this;
-    }
 
     /**
      * Resolve the promise by passing non-null value to it. All actions already
@@ -81,18 +66,6 @@ public interface Promise<T> {
     Promise<T> then(final Consumer<T> action);
 
     /**
-     * Create new promise which will be resolved when current instance will be resolved. The value with which
-     * new instance will be resolved will be computed from current instance value by application of provided mapper.
-     *
-     * @param mapper
-     *        Function to apply to current instance value upon resolution
-     * @return created instance
-     */
-    default <R> Promise<R> map(final FN1<R, T> mapper) {
-        return Promise.<R>give().apply(promise -> then(val -> promise.resolve(mapper.apply(val))));
-    }
-
-    /**
      * Synchronously wait for this instance resolution.
      * Note that this method is not recommended to use for following reasons:
      * <ul>
@@ -118,33 +91,7 @@ public interface Promise<T> {
     Promise<T> syncWait(final Timeout timeout);
 
     /**
-     * Set timeout for instance resolution. When timeout expires, instance will be resolved with specified timeout
-     * result.
-     *
-     * @param timeout
-     *        Timeout amount
-     * @param timeoutResult
-     *        Resolution value in case of timeout
-     * @return Current instance
-     */
-    Promise<T> with(final Timeout timeout, final T timeoutResult);
-
-    /**
-     * Set timeout for instance resolution. When timeout expires, instance will be resolved with value returned by
-     * provided supplier. Resolution value is lazily evaluated.
-     *
-     * @param timeout
-     *        Timeout amount
-     * @param timeoutResultSupplier
-     *        Supplier of resolution value in case of timeout
-     * @return Current instance
-     */
-    Promise<T> with(final Timeout timeout, final Supplier<T> timeoutResultSupplier);
-
-    /**
      * Run specified task asynchronously. Current instance of {@link Promise} is passed to the task as a parameter.
-     * Note that it is expected that by the time of invocation of this method, instance has it's timeout already
-     * configured. If this is not the case, then task may run (theoretically) indefinitely.
      *
      * @param task
      *        Task to execute with this promise
@@ -152,6 +99,43 @@ public interface Promise<T> {
      * @return Current instance
      */
     Promise<T> async(final Consumer<Promise<T>> task);
+
+    /**
+     * Run specified task asynchronously after specified timeout expires. Current instance of {@link Promise} is passed
+     * to the task as a parameter.
+     *
+     * @param task
+     *        Task to execute with this promise
+     *
+     * @return Current instance
+     */
+    Promise<T> async(final Timeout timeout, final Consumer<Promise<T>> task);
+
+    /**
+     * Create new promise which will be resolved when current instance will be resolved. The value with which
+     * new instance will be resolved will be computed from current instance value by application of provided mapper.
+     *
+     * @param mapper
+     *        Function to apply to current instance value upon resolution
+     * @return created instance
+     */
+    default <R> Promise<R> map(final FN1<R, T> mapper) {
+        return Promise.give(promise -> then(val -> promise.resolve(mapper.apply(val))));
+    }
+
+    /**
+     * Create new promise which will be resolved when will be resolved promise returned by mapping function. The invocation
+     * of mapping function will performed when current instance will be resolved and resolution value will be passed
+     * as argument to mapping function. Overall this method is necessary to postpone invocation of mapping function
+     * until current instance will be resolved.
+     *
+     * @param mapper
+     *        Function to invoke with current instance value upon resolution
+     * @return created instance
+     */
+    default <R> Promise<R> flatMap(final FN1<Promise<R>, T> mapper) {
+        return Promise.give(promise -> then(t -> mapper.apply(t).then(promise::resolve)));
+    }
 
     /**
      * Create and empty (unresolved) promise
@@ -162,6 +146,12 @@ public interface Promise<T> {
         return new PromiseImpl<>();
     }
 
+    static <T> Promise<T> give(final Consumer<Promise<T>> consumer) {
+        final Promise<T> promise = new PromiseImpl<>();
+        consumer.accept(promise);
+        return promise;
+    }
+
     static <T> Promise<T> me(final Class<T> $) {
         return new PromiseImpl<>();
     }
@@ -170,16 +160,9 @@ public interface Promise<T> {
         return new PromiseImpl<>();
     }
 
-    static <T> Promise<Result<T>> result() {
-        return new PromiseImpl<>();
-    }
-
-    static <T> Promise<Result<T>> result(final Class<T> $) {
-        return new PromiseImpl<>();
-    }
-
-    static <T> Promise<Result<T>> result(final TypeToken<T> $) {
-        return new PromiseImpl<>();
+    static <T, P> Promise<Result<T>> result(final Result<P> result, final FN1<Promise<Result<T>>, P> consumer) {
+        return result.map(error -> Promise.<Result<T>>give().resolve(Result.failure(error)),
+                          consumer::apply);
     }
 
     /**
@@ -204,7 +187,7 @@ public interface Promise<T> {
      */
     @SafeVarargs
     static <T> Promise<T> any(final Promise<T>... promises) {
-        return Promise.<T>give().apply(result -> List.of(promises)
-                                                     .forEach(promise -> promise.then(result::resolve)));
+        return Promise.give(result -> List.of(promises)
+                                          .forEach(promise -> promise.then(result::resolve)));
     }
 }

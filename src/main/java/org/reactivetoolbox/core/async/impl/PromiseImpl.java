@@ -13,7 +13,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicMarkableReference;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * Implementation of {@link Promise}
@@ -113,24 +112,15 @@ public class PromiseImpl<T> implements Promise<T> {
      * {@inheritDoc}
      */
     @Override
-    public Promise<T> with(final Timeout timeout, final T timeoutResult) {
-        return apply(promise -> TaskSchedulerHolder.instance().submit(timeout, () -> promise.resolve(timeoutResult)));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Promise<T> with(final Timeout timeout, final Supplier<T> timeoutResultSupplier) {
-        return apply(promise -> TaskSchedulerHolder.instance().submit(timeout, () -> promise.resolve(timeoutResultSupplier.get())));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Promise<T> async(final Consumer<Promise<T>> task) {
-        return TaskSchedulerHolder.instance().submit(this, task);
+        TaskSchedulerHolder.instance().submit(() -> task.accept(this));
+        return this;
+    }
+
+    @Override
+    public Promise<T> async(final Timeout timeout, final Consumer<Promise<T>> task) {
+        TaskSchedulerHolder.instance().submit(timeout, () -> task.accept(this));
+        return this;
     }
 
     @Override
