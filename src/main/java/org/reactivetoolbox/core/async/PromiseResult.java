@@ -3,16 +3,17 @@ package org.reactivetoolbox.core.async;
 import org.reactivetoolbox.core.functional.Functions.FN1;
 import org.reactivetoolbox.core.functional.Option;
 import org.reactivetoolbox.core.functional.Result;
+import org.reactivetoolbox.core.scheduler.Errors;
 import org.reactivetoolbox.core.scheduler.Timeout;
 import org.reactivetoolbox.core.type.Error;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public interface PromiseResult<T> extends Promise<Result<T>> {
     /**
-     * Convenience method for performing some actions with current promise instance. Useful for cases
-     * when there is (quite typical) sequence: create unresolved promise -> setup -> return created promise.
+     * Convenience method for performing some actions with current promise instance.
      *
      * @param consumer
      *        Action to perform on current instance.
@@ -34,7 +35,7 @@ public interface PromiseResult<T> extends Promise<Result<T>> {
      * @return Current instance
      */
     default PromiseResult<T> with(final Timeout timeout, final Result<T> timeoutResult) {
-        return (PromiseResult<T>) async(timeout, promise -> promise.resolve(timeoutResult));
+        return async(timeout, promise -> promise.resolve(timeoutResult));
     }
 
     /**
@@ -48,7 +49,30 @@ public interface PromiseResult<T> extends Promise<Result<T>> {
      * @return Current instance
      */
     default PromiseResult<T> with(final Timeout timeout, final Supplier<Result<T>> timeoutResultSupplier) {
-        return (PromiseResult<T>) async(timeout, promise -> promise.resolve(timeoutResultSupplier.get()));
+        return async(timeout, promise -> promise.resolve(timeoutResultSupplier.get()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    PromiseResult<T> async(final Consumer<Promise<Result<T>>> task);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    PromiseResult<T> async(final Timeout timeout, final Consumer<Promise<Result<T>>> task);
+
+    /**
+     * Resolve instance with {@link Errors#CANCELLED}. Often necessary if pending request need to be resolved prematurely,
+     * without waiting for response or timeout.
+     *
+     * @return Current instance
+     */
+    default PromiseResult<T> cancel() {
+        resolve(Result.failure(Errors.CANCELLED));
+        return this;
     }
 
     /**
@@ -67,16 +91,112 @@ public interface PromiseResult<T> extends Promise<Result<T>> {
                                                                                           .then(promise::resolve))));
     }
 
+    /**
+     * Create new unresolved instance.
+     *
+     * @return Created instance
+     */
     static <T> PromiseResult<T> result() {
         return new PromiseResultImpl<>(Promise.give());
     }
 
+    /**
+     * Create instance from instance of {@link Promise}.
+     *
+     * @return Created instance
+     */
     static <T> PromiseResult<T> from(final Promise<Result<T>> promise) {
         return new PromiseResultImpl<>(promise);
     }
 
-    static <T> PromiseResult<T> result(final Consumer<PromiseResult<T>> mapper) {
-        return PromiseResult.<T>result().apply(mapper);
+    /**
+     * Create instance and immediately invoke provided function with created instance.
+     * Usually this function is used to configure actions on created instance.
+     *
+     * @param consumer
+     *        Function to invoke with created instance
+     * @return Created instance
+     */
+    static <T> PromiseResult<T> result(final Consumer<PromiseResult<T>> consumer) {
+        return PromiseResult.<T>result().apply(consumer);
+    }
+
+    /**
+     * Create instance which will be resolved once any of the promises
+     * provided as a parameters will be resolved.
+     * <br/>
+     * Note: unlike {@link Promise#any(Promise[])} this method cancels all remaining
+     * instances once one is resolved.
+     *
+     * @param promises
+     *        Input promises
+     *
+     * @return created instance
+     */
+    @SafeVarargs
+    static <T> PromiseResult<T> any(final PromiseResult<T>... promises) {
+        return PromiseResult.result(result -> List.of(promises).forEach(promise -> promise.then(result::resolve)
+                                                                                          .then(v -> cancelAll(promises))));
+    }
+
+    /**
+     * Create instance which will be resolved once any of the promises provided as a parameters will be resolved
+     * with successful result. If none of the promises will be resolved with successful result, then created
+     * instance will be resolved with {@link Errors#CANCELLED}.
+     *
+     * @param promises
+     *        Input promises
+     *
+     * @return Created instance
+     */
+    @SafeVarargs
+    static <T> PromiseResult<T> anySuccess(final PromiseResult<T>... promises) {
+        return anySuccess(Result.failure(Errors.CANCELLED), promises);
+    }
+
+    /**
+     * Create instance which will be resolved once any of the promises provided as a parameters will be resolved
+     * with successful result. If none of the promises will be resolved with successful result, then created
+     * instance will be resolved with provided {@code failureResult}.
+     *
+     * @param failureResult
+     *        Result in case if no instances were resolved with success
+     * @param promises
+     *        Input promises
+     *
+     * @return Created instance
+     */
+    static <T> PromiseResult<T> anySuccess(final Result<T> failureResult, final PromiseResult<T>... promises) {
+        final var result = PromiseResult.<T>result();
+        final var counter = ActionableThreshold.of(promises.length, () -> resolveAll(failureResult, promises));
+
+        List.of(promises)
+            .forEach(promise -> promise.then($ -> counter.registerEvent())
+                                       .then(res -> res.ifSuccess(t -> { result.resolve(res); resolveAll(failureResult, promises);})));
+
+        return result;
+    }
+
+    /**
+     * Cancel several promises at once.
+     *
+     * @param promises
+     *        Promises to cancel.
+     */
+    static <T> void cancelAll(final PromiseResult<T>... promises) {
+        resolveAll(Result.failure(Errors.CANCELLED), promises);
+    }
+
+    /**
+     * Resolve several promises at once.
+     *
+     * @param result
+     *        Resolution result
+     * @param promises
+     *        Promises to resolve
+     */
+    static <T> void resolveAll(final Result<T> result, final PromiseResult<T>... promises) {
+        List.of(promises).forEach(promise -> promise.resolve(result));
     }
 
     class PromiseResultImpl<T> implements PromiseResult<T> {

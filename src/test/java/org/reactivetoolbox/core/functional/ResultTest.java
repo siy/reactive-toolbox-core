@@ -2,7 +2,7 @@ package org.reactivetoolbox.core.functional;
 
 import org.junit.jupiter.api.Test;
 import org.reactivetoolbox.core.functional.Result.Result1;
-import org.reactivetoolbox.core.scheduler.SchedulerError;
+import org.reactivetoolbox.core.scheduler.Errors;
 import org.reactivetoolbox.core.type.Error;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,7 +25,7 @@ class ResultTest {
     void equalsFollowsContract() {
         assertEquals(success("1"), success("1"));
         assertNotEquals(success(1), success(2));
-        assertNotEquals(success(1), failure(SchedulerError.TIMEOUT));
+        assertNotEquals(success(1), failure(Errors.TIMEOUT));
     }
 
     @Test

@@ -3,7 +3,6 @@ package org.reactivetoolbox.core.async;
 import org.reactivetoolbox.core.async.impl.PromiseImpl;
 import org.reactivetoolbox.core.functional.Functions.FN1;
 import org.reactivetoolbox.core.functional.Option;
-import org.reactivetoolbox.core.functional.Result;
 import org.reactivetoolbox.core.scheduler.Timeout;
 import org.reactivetoolbox.core.type.TypeToken;
 
@@ -158,11 +157,6 @@ public interface Promise<T> {
 
     static <T> Promise<T> me(final TypeToken<T> $) {
         return new PromiseImpl<>();
-    }
-
-    static <T, P> Promise<Result<T>> result(final Result<P> result, final FN1<Promise<Result<T>>, P> consumer) {
-        return result.map(error -> Promise.<Result<T>>give().resolve(Result.failure(error)),
-                          consumer::apply);
     }
 
     /**

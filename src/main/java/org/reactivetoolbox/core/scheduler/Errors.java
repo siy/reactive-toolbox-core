@@ -21,6 +21,7 @@ import org.reactivetoolbox.core.type.WebErrorTypes;
 /**
  * Scheduler errors
  */
-public interface SchedulerError {
+public interface Errors {
     Error TIMEOUT = Error.of(WebErrorTypes.REQUEST_TIMEOUT, "Processing timeout error");
+    Error CANCELLED = Error.of(WebErrorTypes.NO_RESPONSE, "Request cancelled");
 }

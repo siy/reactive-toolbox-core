@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import static java.util.stream.IntStream.range;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.reactivetoolbox.core.scheduler.SchedulerError.TIMEOUT;
+import static org.reactivetoolbox.core.scheduler.Errors.TIMEOUT;
 
 class TimeoutSchedulerTest {
     private final Random random = new Random();

@@ -6,7 +6,7 @@ import org.reactivetoolbox.core.functional.ResultTuple;
 import org.reactivetoolbox.core.scheduler.Timeout;
 
 import static org.reactivetoolbox.core.async.PromiseAll.allOf;
-import static org.reactivetoolbox.core.scheduler.SchedulerError.TIMEOUT;
+import static org.reactivetoolbox.core.scheduler.Errors.TIMEOUT;
 
 public class PromiseAllExample_Test {
     private final AsyncService service = new AsyncService();
