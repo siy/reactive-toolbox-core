@@ -86,9 +86,22 @@ public interface PromiseResult<T> extends Promise<Result<T>> {
      *         waiting for resolving by provided mapping function.
      */
     default <R> PromiseResult<R> chainMap(final FN1<PromiseResult<R>, T> mapper) {
-        return PromiseResult.result(promise -> then(result -> result.map(error -> PromiseResult.<R>result().resolve(Result.failure(error)),
+        return PromiseResult.result(promise -> then(result -> result.map(error -> promise.resolve(Result.failure(error)),
                                                                          success -> mapper.apply(success)
                                                                                           .then(promise::resolve))));
+    }
+
+    /**
+     * Convenience method which provides access to inner value of successful result. If current instance
+     * contains failure, then mapping function is not called and created instance is resolved with same error
+     * as current instance.
+     *
+     * @param mapper
+     *        Function to transform successful result value if current instance is resolved with success
+     * @return Created instance
+     */
+    default <R> PromiseResult<R> mapResult(final FN1<R, T> mapper) {
+        return PromiseResult.result(promise -> then(val -> promise.resolve(val.map(mapper))));
     }
 
     /**
@@ -202,7 +215,7 @@ public interface PromiseResult<T> extends Promise<Result<T>> {
     class PromiseResultImpl<T> implements PromiseResult<T> {
         private final Promise<Result<T>> promise;
 
-        private PromiseResultImpl(final Promise<Result<T>> promise) {
+        protected PromiseResultImpl(final Promise<Result<T>> promise) {
             this.promise = promise;
         }
 

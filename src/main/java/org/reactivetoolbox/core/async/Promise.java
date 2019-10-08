@@ -133,7 +133,7 @@ public interface Promise<T> {
      * @return created instance
      */
     default <R> Promise<R> flatMap(final FN1<Promise<R>, T> mapper) {
-        return Promise.give(promise -> then(t -> mapper.apply(t).then(promise::resolve)));
+        return Promise.give(promise -> then(val -> mapper.apply(val).then(promise::resolve)));
     }
 
     /**

@@ -20,6 +20,6 @@ public class UserProfileHandler_Test {
                                     userService.followers(userId),
                                     articleService.articlesByUser(userId, Order.DESC),
                                     commentService.commentsByUser(userId, Order.DESC))
-                         .map(result -> result.mapTuple(UserDashboard::with));
+                         .mapResult(tuple -> tuple.map(UserDashboard::with));
     }
 }

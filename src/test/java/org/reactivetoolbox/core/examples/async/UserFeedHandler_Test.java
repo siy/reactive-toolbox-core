@@ -7,17 +7,21 @@ import org.reactivetoolbox.core.examples.async.domain.Topic;
 import org.reactivetoolbox.core.examples.async.domain.User;
 import org.reactivetoolbox.core.examples.async.services.ArticleService;
 import org.reactivetoolbox.core.examples.async.services.TopicService;
+import org.reactivetoolbox.core.examples.async.services.UserService;
 
 import java.util.List;
 
 import static org.reactivetoolbox.core.CollectionUtil.map;
+import static org.reactivetoolbox.core.async.PromiseAll.resultsOf;
 
-public class UserTopicHandler_Test {
+public class UserFeedHandler_Test {
     private ArticleService articleService;
     private TopicService topicService;
+    private UserService userService;
 
-    public PromiseResult<List<Article>> userTopicHandler(final User.Id userId) {
-        return topicService.topicsByUser(userId, Order.ANY)
-                           .chainMap(topicsList -> articleService.articlesByUserTopics(userId, map(topicsList, Topic::id)));
+    public PromiseResult<List<Article>> userFeedHandler(final User.Id userId) {
+        return resultsOf(topicService.topicsByUser(userId, Order.ANY),
+                         userService.followers(userId))
+                .chainMap(tuple -> tuple.map((topics, users) -> articleService.userFeed(map(topics, Topic::id), map(users, User::id))));
     }
 }
