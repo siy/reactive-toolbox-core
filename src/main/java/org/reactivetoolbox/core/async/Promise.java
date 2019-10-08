@@ -4,7 +4,6 @@ import org.reactivetoolbox.core.async.impl.PromiseImpl;
 import org.reactivetoolbox.core.functional.Functions.FN1;
 import org.reactivetoolbox.core.functional.Option;
 import org.reactivetoolbox.core.scheduler.Timeout;
-import org.reactivetoolbox.core.type.TypeToken;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -149,14 +148,6 @@ public interface Promise<T> {
         final Promise<T> promise = new PromiseImpl<>();
         consumer.accept(promise);
         return promise;
-    }
-
-    static <T> Promise<T> me(final Class<T> $) {
-        return new PromiseImpl<>();
-    }
-
-    static <T> Promise<T> me(final TypeToken<T> $) {
-        return new PromiseImpl<>();
     }
 
     /**

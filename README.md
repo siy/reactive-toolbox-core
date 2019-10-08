@@ -28,13 +28,39 @@ might be not very convenient in real life use cases.
 Second version operates with results wrapped into `Result` (see below) and tuned to fit more complex use cases. 
 It provides very convenient and natural way for handling errors during processing.
 
-Beside traditional methods for setting up processing when result arrives (`then()`) both implementation provide  
+Beside traditional methods for setting up processing when result arrives (`then()`, `onSuccess`, `onFailure`) 
+implementations provide methods for asynchronous execution of tasks which accept `Promise` or `PromiseResult` 
+(respectively) as a parameter. For this purpose library contains task scheduler tuned for running large amounts
+of short non-blocking tasks. This scheduler also supports simple and convenient execution of tasks after specified delay.
+Delayed task processing does not involve additional threads or blocking. One of the very convenient uses of this ability 
+is implementation of timeouts for processing.
+
+Along with operations on single promises, library implements operations on multiple instances at once, for example, 
+creating `Promise` and `PromiseResult` instances which are resolved when any or all of the provided promises are resolved.
+Also, library allows "chaining" of promises with transformation of the value when it is transferred from one promise to 
+another. On top of that `PromiseResult` supports even more complex scenarios, when results of promise resolution 
+are conditionally passed to another function which also returns `PromiseResult` and uses intermediate results as parameters.
+See some examples below for more details. 
+
+For testing purposes and some rare use cases blocking waiting is also implemented (with and without timeout).
 
 #### Plain `Promise` examples
 
+Create empty (unresolved) instance:
 ```java
-
+    final Promise<Integer> promise = Promise.give();    //Classic syntax
+    final var promise = Promise.<Integer>give();      //Java 11 syntax
 ```
+Create resolved promise: 
+```java
+    final Promise<Integer> promise = Promise.funfilled(123);    //Classic syntax 
+    final var promise = Promise.funfilled(123);                 //Java 11 syntax
+```
+Promise can be configured before returning:
+```java
+    
+```
+
 
 ### Functional Code Style Support
 
