@@ -9,6 +9,7 @@ This library contains core classes for writing asynchronous processing in (more 
 This library is an attempt to implement Promise-based asynchronous processing model. Being combined with FP-style error
 handling, built-in scheduler and timeout processing it provides simple, expressive and convenient tool to write 
 reactive services in Java.
+
 Main focus of this library is convenience and performance.
 
 ### Prerequisites
@@ -17,13 +18,23 @@ to build and run code in the module.
 
 ### Asynchronous Processing
 
-Asynchronous processing model implemented in this module is based on __Promise__-based asynchronous processing model. 
-The core class for this purpose is (obviously) `Promise`. Beside usual triggering
-actions upon resolution, this implementation contains built-in asynchronous task scheduler and timeout processor. 
-Implementation is designed to be highly scalable, although careful benchmarking is still pending.  
+Asynchronous processing model implemented in this module is based on __Promise__-based asynchronous processing model,
+although API is significantly different from similar model implemented in ECMAScript 2015. 
 
-The implementation does not use (nor based on) Java `CompletableFuture`. Instead it provides very simple
-and lightweight implementation. 
+There are two versions of `Promise` implemented in the library. 
+First version is plain `Promise` with content value defined
+by user. While this version is quite simple and straightforward to use, it lacks error handling and for this reason
+might be not very convenient in real life use cases. 
+Second version operates with results wrapped into `Result` (see below) and tuned to fit more complex use cases. 
+It provides very convenient and natural way for handling errors during processing.
+
+Beside traditional methods for setting up processing when result arrives (`then()`) both implementation provide  
+
+#### Plain `Promise` examples
+
+```java
+
+```
 
 ### Functional Code Style Support
 

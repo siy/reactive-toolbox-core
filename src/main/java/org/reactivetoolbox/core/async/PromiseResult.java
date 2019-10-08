@@ -52,6 +52,16 @@ public interface PromiseResult<T> extends Promise<Result<T>> {
         return async(timeout, promise -> promise.resolve(timeoutResultSupplier.get()));
     }
 
+    default PromiseResult<T> onSuccess(final Consumer<T> consumer) {
+        then(result -> result.ifSuccess(consumer));
+        return this;
+    }
+
+    default PromiseResult<T> onFailure(final Consumer<? super Error> consumer) {
+        then(result -> result.ifFailure(consumer));
+        return this;
+    }
+
     /**
      * {@inheritDoc}
      */
