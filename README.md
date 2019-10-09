@@ -12,12 +12,24 @@ Main focus of this library is convenience to use and performance.
 ### Asynchronous Processing
 
 Asynchronous processing model implemented in this module is based on __Promise__-based asynchronous processing model (if you
-re not familiar with this concept, see [Short Introduction](#short-introduction-to-promises) below),
-although it is not identical to similar model implemented in ECMAScript 2015. The main difference is that there is only 
-two states of __Promise__ (pending and resolved) comparing to three states used by ECMAScript implementation (pending, 
-resolved and rejected). The difference is caused by different approach to error handling - __reactive-toolbox-core__ 
-uses __Either__-based error handling (see [Error Handling](#error-handling)) instead of explicit error state. This 
-streamlines and simplifies code which uses __Promise__'s.
+re not familiar with this concept, see [Short Introduction](#short-introduction-to-promises) below).
+
+Most famous and widely used implementation of __Promise__-bases processing is one found in ECMAScript 2015. 
+While at first sight this implementation may look similar to one provided in ECMAScript 2015, there are few important
+differences which should be kept in mind while comparing these two implementations.  
+
+The main difference is that there is only two states of __Promise__ (pending and resolved) comparing to three states 
+used by ECMAScript implementation (pending, resolved and rejected). This difference is caused by different approach 
+to error handling - __reactive-toolbox-core__ uses __Either__-based error handling (see [Error Handling](#error-handling)) 
+instead of explicit error state. Use of __Either__-based error handling is far less prone to __callback hell__ and much 
+more clear and concise.
+ 
+Another significant difference is the API. Despite identical naming, `then()` method attaches action to the instance for 
+which it is invoked, it does not create sequence of __Promise__ instances waiting for previous instance to be resolved. 
+This approach enables attachment of actions to same promise in different locations. For example, library heavily uses
+attaching of internal actions to promises in order to implement necessary behavior. If chaining of the promises is 
+necessary (i.e. promise which should wait for resolution of existing promise and then perform some action), then `map()` 
+method. This method is close counterpart of ECMAScripts' `Promise.then()`.  
 
 There are two versions of `Promise` implemented in the library. 
 
@@ -225,6 +237,7 @@ TODO:
 Some examples are present in [Examples](https://github.com/siy/reactive-toolbox-core/tree/master/src/test/java/org/reactivetoolbox/core/examples).
 
 ### TODO
- - Finish documentation
- - More examples
  - Guide
+ - More examples
+ - Better test coverage
+ 
