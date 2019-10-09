@@ -123,8 +123,34 @@ public abstract class Option<T> implements Either<Void, T>{
      *        Consumer to pass contained value to
      * @return this instance for fluent call chaining
      */
-    public Option<T> consume(final Consumer<? super T> consumer) {
+    public Option<T> ifPresent(final Consumer<? super T> consumer) {
         map(t -> {consumer.accept(t); return null;});
+        return this;
+    }
+
+    /**
+     * Execute action if instance is empty and do nothing otherwise.
+     *
+     * @param action
+     *        Action to perform on empty instance
+     * @return this instance for fluent call chaining
+     */
+    public Option<T> ifEmpty(final Runnable action) {
+        map(t1 -> { action.run(); return null; }, t -> null);
+        return this;
+    }
+
+    /**
+     * Convenience method which allows to perform specific actions for empty and non-empty instances at once.
+     *
+     * @param emptyValConsumer
+     *        Action to perform in case of empty instance
+     * @param nonEmptyValConsumer
+     *        Action to perform on non-empty instance value
+     * @return this instance for fluent call chaining
+     */
+    public Option<T> consume(final Runnable emptyValConsumer, final Consumer<? super T> nonEmptyValConsumer) {
+        map(t1 -> { emptyValConsumer.run(); return null;}, t2 -> { nonEmptyValConsumer.accept(t2); return null;});
         return this;
     }
 

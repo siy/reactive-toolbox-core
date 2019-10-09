@@ -54,13 +54,9 @@ public class PromiseImpl<T> implements Promise<T> {
     /**
      * {@inheritDoc}
      */
-    //TODO: perhaps run all actions in single async task?
     @Override
     public Promise<T> resolveAsync(final T result) {
-        if (value.compareAndSet(null, result, false, true)) {
-            thenActions.forEach(action -> TaskSchedulerHolder.instance().submit(() -> action.accept(value.getReference())));
-        }
-        return this;
+        return async(promise -> promise.resolve(result));
     }
 
     /**

@@ -1,5 +1,6 @@
 package org.reactivetoolbox.core.functional;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -8,63 +9,61 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 //TODO: fix tests
 class OptionTest {
-//    @Test
-//    void emptyOptionCanBeCreated() {
-//        assertNull(Option.empty().get());
-//    }
-//
-//    @Test
-//    void optionWithDataCanBeCreated() {
-//        assertEquals("not empty", Option.with("not empty").get());
-//    }
-//
-//    @Test
-//    void nonEmptyOptionCanBeMappedToOtherOption() {
-//        final var originalOption = Option.with(123);
-//
-//        assertEquals(123, originalOption.get());
-//        assertEquals("123", originalOption.map(Object::toString).get());
-//    }
-//
-//    @Test
-//    void emptyOptionRemainsEmptyAfterMapping() {
-//        assertNull(Option.empty().map(Object::toString).get());
-//    }
-//
-//    @Test
-//    void emptyOptionIsNotPresent() {
-//        assertFalse(Option.with(null).isPresent());
-//        assertFalse(Option.empty().isPresent());
-//        assertTrue(Option.with(null).isEmpty());
-//        assertTrue(Option.empty().isEmpty());
-//    }
-//
-//    @Test
-//    void nonEmptyOptionIsPresent() {
-//        assertTrue(Option.with(1).isPresent());
-//    }
-//
     @Test
-    void nonEmptyOptionCanBeConsumed() {
-        Option.with(321L)
-              .consume(val -> assertEquals(321L, val));
-    }
-
-    @Test
-    void nonEmptyOptionCantBeConsumed() {
+    void emptyOptionCanBeCreated() {
         Option.empty()
-              .consume(val -> fail());
+              .ifPresent(v -> fail());
     }
 
-//    @Test
-//    void nonEmptyOptionCanBeFlatMappedIntoOtherOption() {
-//        assertEquals(347 , Option.with(345).flatMap(val -> Option.with(val + 2)).get());
-//    }
-//
-//    @Test
-//    void emptyOptionRemainsEmptyAndNotFlatMapped() {
-//        assertTrue(Option.empty().flatMap(val -> Option.with(Objects.toString(val))).isEmpty());
-//    }
+    @Test
+    void optionWithDataCanBeCreated() {
+        Option.with("not empty")
+              .ifPresent(v -> assertEquals("not empty", v))
+              .ifEmpty(Assertions::fail);
+    }
+
+    @Test
+    void nonEmptyOptionCanBeMappedToOtherOption() {
+        Option.with(123)
+                .ifEmpty(Assertions::fail)
+                .ifPresent(v -> assertEquals(123, v))
+                .map(Object::toString)
+                .ifEmpty(Assertions::fail)
+                .ifPresent(v -> assertEquals("123", v));
+    }
+
+    @Test
+    void emptyOptionRemainsEmptyAfterMapping() {
+        Option.empty()
+              .ifPresent(v -> fail())
+              .map(Object::toString)
+              .ifPresent(v -> fail());
+    }
+
+    @Test
+    void nonEmptyCanContainNull() {
+        Option.with(null)
+              .ifEmpty(Assertions::fail)
+              .ifPresent(Assertions::assertNull);
+    }
+
+    @Test
+    void nonEmptyOptionCanBeFlatMappedIntoOtherOption() {
+        Option.with(345)
+              .ifEmpty(Assertions::fail)
+              .ifPresent(v -> assertEquals(345, v))
+              .flatMap(val -> Option.with(val + 2))
+              .ifEmpty(Assertions::fail)
+              .ifPresent(v -> assertEquals(347, v));
+    }
+
+    @Test
+    void emptyOptionRemainsEmptyAndNotFlatMapped() {
+        Option.empty()
+              .ifPresent(v -> fail())
+              .flatMap(val -> Option.with("not empty"))
+              .ifPresent(v -> fail());
+    }
 
     @Test
     void logicalOrChoosesFirsNonEmptyOption1() {
@@ -105,13 +104,21 @@ class OptionTest {
         assertEquals(123, Option.with(123).stream().findFirst().get());
     }
 
-//    @Test
-//    void nonEmptyInstanceCanBeFiltered() {
-//        assertEquals(123, Option.with(123).filter(val -> val > 1).get());
-//    }
-//
-//    @Test
-//    void emptyInstanceRemainsEmptyAfterFilteringAndPredicateIsNotInvoked() {
-//        assertTrue( Option.empty().filter(val -> {fail(); return true;}).isEmpty());
-//    }
+    @Test
+    void nonEmptyInstanceCanBeFiltered() {
+        Option.with(123)
+              .ifEmpty(Assertions::fail)
+              .filter(val -> val > 1)
+              .ifEmpty(Assertions::fail)
+              .filter(val -> val < 100)
+              .ifPresent(val -> fail());
+    }
+
+    @Test
+    void emptyInstanceRemainsEmptyAfterFilteringAndPredicateIsNotInvoked() {
+        Option.empty()
+              .ifPresent(v -> fail())
+              .filter(v -> true)
+              .ifPresent(v -> fail());
+    }
 }

@@ -17,20 +17,6 @@ import java.util.function.Consumer;
  */
 public interface Promise<T> {
     /**
-     * Retrieve value from this instance.
-     *
-     * @return {@link Option} filled with value if instance is resolved or empty if instance is still not resolved
-     */
-    Option<T> value();
-
-    /**
-     * Check if instance is resolved.
-     *
-     * @return <code>true</code> if instance is resolved and <code>false</code> if not
-     */
-    boolean ready();
-
-    /**
      * Resolve the promise by passing non-null value to it. All actions already
      * waiting for resolution will be executed upon return from the call to
      * this method and in the context of current thread.
@@ -62,31 +48,6 @@ public interface Promise<T> {
      * @return Current instance
      */
     Promise<T> then(final Consumer<T> action);
-
-    /**
-     * Synchronously wait for this instance resolution.
-     * Note that this method is not recommended to use for following reasons:
-     * <ul>
-     *     <li>Synchronous waiting blocks the current thread</li>
-     *     <li>If current thread will be {@link Thread#interrupt() interrupted} with other thread, then method may
-     *     return non-resolved instance. This may lead to subtle and hard to debug issues.</li>
-     * </ul>.
-     *
-     * @return Current instance
-     */
-    Promise<T> syncWait();
-
-    /**
-     * Synchronously wait for this instance resolution or timeout.
-     *
-     * Note that this method is not recommended to use because synchronous waiting blocks the current thread.
-     * Keep in mind that this method may exit without instance being resolved.
-     *
-     * @param timeout
-     *        Timeout amount
-     * @return Current instance
-     */
-    Promise<T> syncWait(final Timeout timeout);
 
     /**
      * Run specified task asynchronously. Current instance of {@link Promise} is passed to the task as a parameter.
@@ -134,6 +95,59 @@ public interface Promise<T> {
     default <R> Promise<R> flatMap(final FN1<Promise<R>, T> mapper) {
         return Promise.give(promise -> then(val -> mapper.apply(val).then(promise::resolve)));
     }
+
+    /**
+     * Retrieve value from this instance.
+     * <br/>
+     * This method is provided only for testing purposes, it is not recommended to use in code.
+     *
+     * @return {@link Option} filled with value if instance is resolved or empty if instance is still not resolved
+     */
+    @Deprecated
+    Option<T> value();
+
+    /**
+     * Check if instance is resolved.
+     * <br/>
+     * This method is provided only for testing purposes, it is not recommended to use in code.
+     *
+     * @return <code>true</code> if instance is resolved and <code>false</code> if not
+     */
+    @Deprecated
+    boolean ready();
+
+    /**
+     * Synchronously wait for this instance resolution.
+     * <br/>
+     * This method is provided only for testing purposes, it is not recommended to use for following reasons:
+     * <ul>
+     *     <li>Synchronous waiting blocks the current thread</li>
+     *     <li>If current thread will be {@link Thread#interrupt() interrupted} with other thread, then method may
+     *     return non-resolved instance. This may lead to subtle and hard to debug issues.</li>
+     * </ul>
+     *
+     * @return Current instance
+     */
+    @Deprecated
+    Promise<T> syncWait();
+
+    /**
+     * Synchronously wait for this instance resolution or timeout.
+     *
+     * <br/>
+     * This method is provided only for testing purposes, it is not recommended to use for following reasons:
+     * <ul>
+     *     <li>Synchronous waiting blocks the current thread</li>
+     *     <li>If current thread will be {@link Thread#interrupt() interrupted} with other thread or timeout
+     *     expires, then method may return non-resolved instance. This may lead to subtle and hard to debug issues.</li>
+     * </ul>
+     *
+     * @param timeout
+     *        Timeout amount
+     * @return Current instance
+     */
+    @Deprecated
+    Promise<T> syncWait(final Timeout timeout);
 
     /**
      * Create and empty (unresolved) promise

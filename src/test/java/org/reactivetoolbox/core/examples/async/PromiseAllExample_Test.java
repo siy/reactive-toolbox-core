@@ -21,7 +21,7 @@ public class PromiseAllExample_Test {
     @Test
     void simpleAsyncTaskWithTimeout() {
         service.slowRetrieveInteger(4242)
-               .with(Timeout.of(10).sec(), TIMEOUT.asFailure())
+               .with(Timeout.of(10).seconds(), TIMEOUT.asFailure())
                .then(result -> result.ifSuccess(System.out::println))
                .syncWait();
     }
