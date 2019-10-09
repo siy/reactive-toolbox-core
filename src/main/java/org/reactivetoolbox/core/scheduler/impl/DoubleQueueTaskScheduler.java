@@ -18,7 +18,6 @@ package org.reactivetoolbox.core.scheduler.impl;
 
 import org.reactivetoolbox.core.scheduler.RunnablePredicate;
 import org.reactivetoolbox.core.scheduler.TaskScheduler;
-import org.reactivetoolbox.core.scheduler.Timeout;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -32,9 +31,8 @@ public class DoubleQueueTaskScheduler implements TaskScheduler {
     private final ExecutorService executor;
     private final PredicateProcessor[] processors;
     private int counter = 0;
-    private final Timeout defaultTimeout;
 
-    private DoubleQueueTaskScheduler(final int size, final Timeout defaultTimeout) {
+    private DoubleQueueTaskScheduler(final int size) {
         executor = Executors.newFixedThreadPool(size, DaemonThreadFactory.of("Task Scheduler Thread #%d"));
         processors = new PredicateProcessor[size];
 
@@ -51,12 +49,10 @@ public class DoubleQueueTaskScheduler implements TaskScheduler {
                 }
             });
         });
-
-        this.defaultTimeout = defaultTimeout;
     }
 
-    public static DoubleQueueTaskScheduler with(final int size, final Timeout defaultTimeout) {
-        return new DoubleQueueTaskScheduler(size, defaultTimeout);
+    public static DoubleQueueTaskScheduler with(final int size) {
+        return new DoubleQueueTaskScheduler(size);
     }
 
     @Override
@@ -66,11 +62,6 @@ public class DoubleQueueTaskScheduler implements TaskScheduler {
         }
         processors[counter = (counter + 1) % processors.length].submit(predicate);
         return this;
-    }
-
-    @Override
-    public Timeout defaultTimeout() {
-        return defaultTimeout;
     }
 
     @Override

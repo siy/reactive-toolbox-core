@@ -1,5 +1,4 @@
-package org.reactivetoolbox.core.async;
-
+package org.reactivetoolbox.core.scheduler;
 /*
  * Copyright (c) 2017-2019 Sergiy Yevtushenko
  *
@@ -16,16 +15,13 @@ package org.reactivetoolbox.core.async;
  * limitations under the License.
  */
 
-import org.reactivetoolbox.core.functional.Either;
+import org.reactivetoolbox.core.type.Error;
+import org.reactivetoolbox.core.type.WebErrorTypes;
 
 /**
- * Marker interface for error types.
- *
- * @author Sergiy Yevtushenko
+ * Scheduler errors
  */
-public interface BaseError {
-    int code();
-    String message();
-
-    <T> Either<? extends BaseError, T> asFailure();
+public interface Errors {
+    Error TIMEOUT = Error.of(WebErrorTypes.REQUEST_TIMEOUT, "Processing timeout error");
+    Error CANCELLED = Error.of(WebErrorTypes.NO_RESPONSE, "Request cancelled");
 }

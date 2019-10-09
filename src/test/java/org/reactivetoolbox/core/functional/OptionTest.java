@@ -1,78 +1,74 @@
 package org.reactivetoolbox.core.functional;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Objects;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+//TODO: fix tests
 class OptionTest {
     @Test
     void emptyOptionCanBeCreated() {
-        assertNull(Option.empty().get());
+        Option.empty()
+              .ifPresent(v -> fail());
     }
 
     @Test
     void optionWithDataCanBeCreated() {
-        assertEquals("not empty", Option.of("not empty").get());
+        Option.with("not empty")
+              .ifPresent(v -> assertEquals("not empty", v))
+              .ifEmpty(Assertions::fail);
     }
 
     @Test
     void nonEmptyOptionCanBeMappedToOtherOption() {
-        final var originalOption = Option.of(123);
-
-        assertEquals(123, originalOption.get());
-        assertEquals("123", originalOption.map(Object::toString).get());
+        Option.with(123)
+                .ifEmpty(Assertions::fail)
+                .ifPresent(v -> assertEquals(123, v))
+                .map(Object::toString)
+                .ifEmpty(Assertions::fail)
+                .ifPresent(v -> assertEquals("123", v));
     }
 
     @Test
     void emptyOptionRemainsEmptyAfterMapping() {
-        assertNull(Option.empty().map(Object::toString).get());
-    }
-
-    @Test
-    void emptyOptionIsNotPresent() {
-        assertFalse(Option.of(null).isPresent());
-        assertFalse(Option.empty().isPresent());
-        assertTrue(Option.of(null).isEmpty());
-        assertTrue(Option.empty().isEmpty());
-    }
-
-    @Test
-    void nonEmptyOptionIsPresent() {
-        assertTrue(Option.of(1).isPresent());
-    }
-
-    @Test
-    void nonEmptyOptionCanBeConsumed() {
-        Option.of(321L)
-              .consume(val -> assertEquals(321L, val));
-    }
-
-    @Test
-    void nonEmptyOptionCantBeConsumed() {
         Option.empty()
-              .consume(val -> fail());
+              .ifPresent(v -> fail())
+              .map(Object::toString)
+              .ifPresent(v -> fail());
+    }
+
+    @Test
+    void nonEmptyCanContainNull() {
+        Option.with(null)
+              .ifEmpty(Assertions::fail)
+              .ifPresent(Assertions::assertNull);
     }
 
     @Test
     void nonEmptyOptionCanBeFlatMappedIntoOtherOption() {
-        assertEquals(347 , Option.of(345).flatMap(val -> Option.of(val + 2)).get());
+        Option.with(345)
+              .ifEmpty(Assertions::fail)
+              .ifPresent(v -> assertEquals(345, v))
+              .flatMap(val -> Option.with(val + 2))
+              .ifEmpty(Assertions::fail)
+              .ifPresent(v -> assertEquals(347, v));
     }
 
     @Test
     void emptyOptionRemainsEmptyAndNotFlatMapped() {
-        assertTrue(Option.empty().flatMap(val -> Option.of(Objects.toString(val))).isEmpty());
+        Option.empty()
+              .ifPresent(v -> fail())
+              .flatMap(val -> Option.with("not empty"))
+              .ifPresent(v -> fail());
     }
 
     @Test
     void logicalOrChoosesFirsNonEmptyOption1() {
-        final var firstNonEmpty = Option.of("1");
-        final var secondNonEmpty = Option.of("2");
+        final var firstNonEmpty = Option.with("1");
+        final var secondNonEmpty = Option.with("2");
         final var firstEmpty = Option.<String>empty();
         final var secondEmpty = Option.<String>empty();
 
@@ -84,8 +80,8 @@ class OptionTest {
 
     @Test
     void logicalOrChoosesFirsNonEmptyOption2() {
-        final var firstNonEmpty = Option.of("1");
-        final var secondNonEmpty = Option.of("2");
+        final var firstNonEmpty = Option.with("1");
+        final var secondNonEmpty = Option.with("2");
         final var firstEmpty = Option.<String>empty();
         final var secondEmpty = Option.<String>empty();
 
@@ -105,16 +101,24 @@ class OptionTest {
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     void optionCanBeStreamed() {
         assertTrue(Option.empty().stream().findFirst().isEmpty());
-        assertEquals(123, Option.of(123).stream().findFirst().get());
+        assertEquals(123, Option.with(123).stream().findFirst().get());
     }
 
     @Test
     void nonEmptyInstanceCanBeFiltered() {
-        assertEquals(123, Option.of(123).filter(val -> val > 1).get());
+        Option.with(123)
+              .ifEmpty(Assertions::fail)
+              .filter(val -> val > 1)
+              .ifEmpty(Assertions::fail)
+              .filter(val -> val < 100)
+              .ifPresent(val -> fail());
     }
 
     @Test
     void emptyInstanceRemainsEmptyAfterFilteringAndPredicateIsNotInvoked() {
-        assertTrue( Option.empty().filter(val -> {fail(); return true;}).isEmpty());
+        Option.empty()
+              .ifPresent(v -> fail())
+              .filter(v -> true)
+              .ifPresent(v -> fail());
     }
 }

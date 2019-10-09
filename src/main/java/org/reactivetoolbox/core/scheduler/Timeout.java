@@ -86,7 +86,7 @@ public final class Timeout {
          *
          * @return Created instance
          */
-        public Timeout sec() {
+        public Timeout seconds() {
             return new Timeout(TimeUnit.SECONDS.toMillis(value));
         }
 
@@ -95,7 +95,7 @@ public final class Timeout {
          *
          * @return Created instance
          */
-        public Timeout min() {
+        public Timeout minutes() {
             return new Timeout(TimeUnit.MINUTES.toMillis(value));
         }
 
@@ -104,7 +104,7 @@ public final class Timeout {
          *
          * @return Created instance
          */
-        public Timeout hrs() {
+        public Timeout hours() {
             return new Timeout(TimeUnit.HOURS.toMillis(value));
         }
     }

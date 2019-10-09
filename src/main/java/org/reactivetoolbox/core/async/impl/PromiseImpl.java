@@ -1,24 +1,23 @@
 package org.reactivetoolbox.core.async.impl;
 
 import org.reactivetoolbox.core.async.Promise;
-import org.reactivetoolbox.core.functional.Functions.FN1;
 import org.reactivetoolbox.core.functional.Option;
 import org.reactivetoolbox.core.meta.AppMetaRepository;
 import org.reactivetoolbox.core.scheduler.TaskScheduler;
 import org.reactivetoolbox.core.scheduler.Timeout;
 
+import java.util.StringJoiner;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicMarkableReference;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * Implementation of {@link Promise}
  */
-public final class PromiseImpl<T> implements Promise<T> {
+public class PromiseImpl<T> implements Promise<T> {
     private final AtomicMarkableReference<T> value = new AtomicMarkableReference<>(null, false);
     private final BlockingQueue<Consumer<T>> thenActions = new LinkedBlockingQueue<>();
 
@@ -30,7 +29,7 @@ public final class PromiseImpl<T> implements Promise<T> {
      */
     @Override
     public Option<T> value() {
-        return Option.of(value.getReference());
+        return Option.nullAsEmpty(value.getReference());
     }
 
     /**
@@ -38,7 +37,7 @@ public final class PromiseImpl<T> implements Promise<T> {
      */
     @Override
     public boolean ready() {
-        return value().isPresent();
+        return value.isMarked();
     }
 
     /**
@@ -57,10 +56,7 @@ public final class PromiseImpl<T> implements Promise<T> {
      */
     @Override
     public Promise<T> resolveAsync(final T result) {
-        if (value.compareAndSet(null, result, false, true)) {
-            thenActions.forEach(action -> TaskSchedulerHolder.instance().submit(() -> action.accept(value.getReference())));
-        }
-        return this;
+        return async(promise -> promise.resolve(result));
     }
 
     /**
@@ -74,16 +70,6 @@ public final class PromiseImpl<T> implements Promise<T> {
             thenActions.offer(action);
         }
         return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <R> Promise<R> map(final FN1<R, T> mapper) {
-        final var result = new PromiseImpl<R>();
-        then(val -> result.resolve(mapper.apply(val)));
-        return result;
     }
 
     /**
@@ -122,28 +108,22 @@ public final class PromiseImpl<T> implements Promise<T> {
      * {@inheritDoc}
      */
     @Override
-    public Promise<T> with(final Timeout timeout, final T timeoutResult) {
-        TaskSchedulerHolder.instance().submit(timeout, () -> resolve(timeoutResult));
-
+    public Promise<T> async(final Consumer<Promise<T>> task) {
+        TaskSchedulerHolder.instance().submit(() -> task.accept(this));
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Promise<T> with(final Timeout timeout, final Supplier<T> timeoutResultSupplier) {
-        TaskSchedulerHolder.instance().submit(timeout, () -> resolve(timeoutResultSupplier.get()));
-
+    public Promise<T> async(final Timeout timeout, final Consumer<Promise<T>> task) {
+        TaskSchedulerHolder.instance().submit(timeout, () -> task.accept(this));
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Promise<T> perform(final Consumer<Promise<T>> task) {
-        return TaskSchedulerHolder.instance().submit(this, task);
+    public String toString() {
+        return new StringJoiner(", ", "Promise(", ")")
+                .add(ready() ? value.getReference().toString() : "")
+                .toString();
     }
 
     private static final class TaskSchedulerHolder {

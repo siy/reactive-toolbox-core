@@ -10,8 +10,8 @@ class TimeoutTest {
     @Test
     void timeoutCreatedProperly() {
         assertEquals(1234, Timeout.of(1234).millis().timeout());
-        assertEquals(TimeUnit.SECONDS.toMillis(123), Timeout.of(123).sec().timeout());
-        assertEquals(TimeUnit.MINUTES.toMillis(12), Timeout.of(12).min().timeout());
-        assertEquals(TimeUnit.HOURS.toMillis(32), Timeout.of(32).hrs().timeout());
+        assertEquals(TimeUnit.SECONDS.toMillis(123), Timeout.of(123).seconds().timeout());
+        assertEquals(TimeUnit.MINUTES.toMillis(12), Timeout.of(12).minutes().timeout());
+        assertEquals(TimeUnit.HOURS.toMillis(32), Timeout.of(32).hours().timeout());
     }
 }

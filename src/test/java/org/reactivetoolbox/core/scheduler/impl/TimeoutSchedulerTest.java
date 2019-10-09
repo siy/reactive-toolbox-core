@@ -1,7 +1,7 @@
 package org.reactivetoolbox.core.scheduler.impl;
 
 import org.junit.jupiter.api.Test;
-import org.reactivetoolbox.core.async.Promise;
+import org.reactivetoolbox.core.async.PromiseResult;
 import org.reactivetoolbox.core.scheduler.Timeout;
 
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import static java.util.stream.IntStream.range;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.reactivetoolbox.core.scheduler.SchedulerError.TIMEOUT;
+import static org.reactivetoolbox.core.scheduler.Errors.TIMEOUT;
 
 class TimeoutSchedulerTest {
     private final Random random = new Random();
@@ -38,16 +38,16 @@ class TimeoutSchedulerTest {
                 .forEach((n) -> executor.execute(() -> {
                     counters[n] = new AtomicLong();
                     range(0, N_ITEMS_PER_TASK).forEach((k) -> {
-                        Promise.give()
-                               .with(Timeout.of(nextTaskDelay()).millis(), TIMEOUT.asFailure())
-                               .then(v -> counters[n].incrementAndGet());
+                        PromiseResult.result()
+                                     .with(Timeout.of(nextTaskDelay()).millis(), TIMEOUT.asFailure())
+                                     .then(v -> counters[n].incrementAndGet());
                     });
                 }));
 
         executor.shutdown();
         assertTrue(executor.awaitTermination(15, TimeUnit.SECONDS));
 
-        Thread.sleep(100);
+        Thread.sleep(150);
 
         assertEquals(N_TASKS * N_ITEMS_PER_TASK, List.of(counters).stream().mapToLong(AtomicLong::get).sum());
     }
