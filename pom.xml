@@ -4,7 +4,7 @@
 
     <groupId>org.reactive-toolbox</groupId>
     <artifactId>reactive-toolbox-core</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.2.0</version>
     <packaging>jar</packaging>
 
     <name>Reactive Toolbox</name>
@@ -15,7 +15,7 @@
         <url>https://github.com/siy/reactive-toolbox-core.git</url>
         <connection>scm:git:ssh://git@github.com/siy/reactive-toolbox-core.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/siy/reactive-toolbox-core.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>reactive-toolbox-core-0.2.0</tag>
     </scm>
 
     <licenses>
