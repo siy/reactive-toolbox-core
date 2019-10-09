@@ -151,7 +151,7 @@ one of two types - successful execution result or error (failure). The dedicated
 For convenience and conciseness all types of errors are collected under __Error__ interface umbrella. This allows to significantly reduce 
 code verbosity and use only one type to specialize __Result__ for particular value type. Original __Either__ implementation is symmetric in 
 regard to each value type (usually called `left` and `right`). This provides generality and flexibility. Specialization of __Result__ to 
-narrower use case enables focusing it's interface on convenient error handling, performing operations only when previous operation result is
+narrower use case enables focusing its interface on convenient error handling, performing operations only when previous operation result is
 successful and fast error propagation in case of failure at any step.
 
 Since result of any operation can be either success or failure and result can be conveniently used for controlling execution flow, there is 
