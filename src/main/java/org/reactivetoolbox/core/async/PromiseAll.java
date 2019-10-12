@@ -1,18 +1,18 @@
 package org.reactivetoolbox.core.async;
 
 import org.reactivetoolbox.core.async.impl.PromiseImpl;
-import org.reactivetoolbox.core.functional.Result;
-import org.reactivetoolbox.core.functional.ResultTuple;
-import org.reactivetoolbox.core.functional.Tuple;
-import org.reactivetoolbox.core.functional.Tuple.Tuple1;
-import org.reactivetoolbox.core.functional.Tuple.Tuple2;
-import org.reactivetoolbox.core.functional.Tuple.Tuple3;
-import org.reactivetoolbox.core.functional.Tuple.Tuple4;
-import org.reactivetoolbox.core.functional.Tuple.Tuple5;
-import org.reactivetoolbox.core.functional.Tuple.Tuple6;
-import org.reactivetoolbox.core.functional.Tuple.Tuple7;
-import org.reactivetoolbox.core.functional.Tuple.Tuple8;
-import org.reactivetoolbox.core.functional.Tuple.Tuple9;
+import org.reactivetoolbox.core.lang.Result;
+import org.reactivetoolbox.core.lang.ResultTuple;
+import org.reactivetoolbox.core.lang.Tuple;
+import org.reactivetoolbox.core.lang.Tuple.Tuple1;
+import org.reactivetoolbox.core.lang.Tuple.Tuple2;
+import org.reactivetoolbox.core.lang.Tuple.Tuple3;
+import org.reactivetoolbox.core.lang.Tuple.Tuple4;
+import org.reactivetoolbox.core.lang.Tuple.Tuple5;
+import org.reactivetoolbox.core.lang.Tuple.Tuple6;
+import org.reactivetoolbox.core.lang.Tuple.Tuple7;
+import org.reactivetoolbox.core.lang.Tuple.Tuple8;
+import org.reactivetoolbox.core.lang.Tuple.Tuple9;
 
 public interface PromiseAll<T> {
     static <T1> Promise<Tuple1<T1>> allOf(final Promise<T1> param1) {

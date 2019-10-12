@@ -1,4 +1,4 @@
-package org.reactivetoolbox.core.functional;
+package org.reactivetoolbox.core.lang;
 
 /*
  * Copyright (c) 2017-2019 Sergiy Yevtushenko
@@ -16,8 +16,8 @@ package org.reactivetoolbox.core.functional;
  * limitations under the License.
  */
 
-import org.reactivetoolbox.core.functional.Functions.FN1;
-import org.reactivetoolbox.core.functional.Functions.FN2;
+import org.reactivetoolbox.core.lang.Functions.FN1;
+import org.reactivetoolbox.core.lang.Functions.FN2;
 
 import java.util.Objects;
 import java.util.StringJoiner;

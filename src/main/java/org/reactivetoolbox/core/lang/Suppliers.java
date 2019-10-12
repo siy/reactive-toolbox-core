@@ -1,4 +1,4 @@
-package org.reactivetoolbox.core.functional;
+package org.reactivetoolbox.core.lang;
 
 import java.util.function.Supplier;
 

@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.reactivetoolbox.core.functional.Option.with;
+import static org.reactivetoolbox.core.lang.Option.with;
 
 
 class PromiseTest {

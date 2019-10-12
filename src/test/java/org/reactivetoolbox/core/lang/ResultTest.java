@@ -1,7 +1,7 @@
-package org.reactivetoolbox.core.functional;
+package org.reactivetoolbox.core.lang;
 
 import org.junit.jupiter.api.Test;
-import org.reactivetoolbox.core.functional.Result.Result1;
+import org.reactivetoolbox.core.lang.Result.Result1;
 import org.reactivetoolbox.core.scheduler.Errors;
 import org.reactivetoolbox.core.type.Error;
 import org.reactivetoolbox.core.type.WebErrorTypes;
@@ -11,9 +11,9 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.reactivetoolbox.core.functional.Result.failure;
-import static org.reactivetoolbox.core.functional.Result.success;
-import static org.reactivetoolbox.core.functional.Tuple.with;
+import static org.reactivetoolbox.core.lang.Result.failure;
+import static org.reactivetoolbox.core.lang.Result.success;
+import static org.reactivetoolbox.core.lang.Tuple.with;
 import static org.reactivetoolbox.core.type.WebErrorTypes.INTERNAL_SERVER_ERROR;
 
 class ResultTest {

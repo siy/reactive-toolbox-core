@@ -1,7 +1,7 @@
 package org.reactivetoolbox.core.async;
 
 import org.junit.jupiter.api.Test;
-import org.reactivetoolbox.core.functional.Tuple;
+import org.reactivetoolbox.core.lang.Tuple;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

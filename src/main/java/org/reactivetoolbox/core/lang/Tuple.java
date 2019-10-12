@@ -1,4 +1,4 @@
-package org.reactivetoolbox.core.functional;
+package org.reactivetoolbox.core.lang;
 
 /*
  * Copyright (c) 2017-2019 Sergiy Yevtushenko
@@ -16,16 +16,16 @@ package org.reactivetoolbox.core.functional;
  * limitations under the License.
  */
 
-import org.reactivetoolbox.core.functional.Functions.FN0;
-import org.reactivetoolbox.core.functional.Functions.FN1;
-import org.reactivetoolbox.core.functional.Functions.FN2;
-import org.reactivetoolbox.core.functional.Functions.FN3;
-import org.reactivetoolbox.core.functional.Functions.FN4;
-import org.reactivetoolbox.core.functional.Functions.FN5;
-import org.reactivetoolbox.core.functional.Functions.FN6;
-import org.reactivetoolbox.core.functional.Functions.FN7;
-import org.reactivetoolbox.core.functional.Functions.FN8;
-import org.reactivetoolbox.core.functional.Functions.FN9;
+import org.reactivetoolbox.core.lang.Functions.FN0;
+import org.reactivetoolbox.core.lang.Functions.FN1;
+import org.reactivetoolbox.core.lang.Functions.FN2;
+import org.reactivetoolbox.core.lang.Functions.FN3;
+import org.reactivetoolbox.core.lang.Functions.FN4;
+import org.reactivetoolbox.core.lang.Functions.FN5;
+import org.reactivetoolbox.core.lang.Functions.FN6;
+import org.reactivetoolbox.core.lang.Functions.FN7;
+import org.reactivetoolbox.core.lang.Functions.FN8;
+import org.reactivetoolbox.core.lang.Functions.FN9;
 
 import java.util.Objects;
 import java.util.StringJoiner;

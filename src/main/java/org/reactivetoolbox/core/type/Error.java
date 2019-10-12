@@ -16,7 +16,7 @@ package org.reactivetoolbox.core.type;
  * limitations under the License.
  */
 
-import org.reactivetoolbox.core.functional.Result;
+import org.reactivetoolbox.core.lang.Result;
 
 import java.util.Objects;
 import java.util.StringJoiner;

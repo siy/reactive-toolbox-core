@@ -2,7 +2,7 @@ package org.reactivetoolbox.core.examples.async;
 
 import org.junit.jupiter.api.Test;
 import org.reactivetoolbox.core.async.PromiseAll;
-import org.reactivetoolbox.core.functional.ResultTuple;
+import org.reactivetoolbox.core.lang.ResultTuple;
 import org.reactivetoolbox.core.scheduler.Timeout;
 
 import static org.reactivetoolbox.core.async.PromiseAll.allOf;

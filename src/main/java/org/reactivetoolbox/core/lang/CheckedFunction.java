@@ -1,4 +1,4 @@
-package org.reactivetoolbox.core.functional;
+package org.reactivetoolbox.core.lang;
 
 /*
  * Copyright (c) 2019 Sergiy Yevtushenko
@@ -54,7 +54,7 @@ public interface CheckedFunction<T, R> {
      *         if before is null
      * @see #andThen(CheckedFunction)
      */
-    default <V> CheckedFunction<V, R> compose(CheckedFunction<? super V, ? extends T> before) {
+    default <V> CheckedFunction<V, R> compose(final CheckedFunction<? super V, ? extends T> before) {
         Objects.requireNonNull(before);
         return (V v) -> apply(before.apply(v));
     }
@@ -72,7 +72,7 @@ public interface CheckedFunction<T, R> {
      *         if before is null
      * @see #andThen(CheckedFunction)
      */
-    default <V> CheckedFunction<V, R> compose(Function<? super V, ? extends T> before) {
+    default <V> CheckedFunction<V, R> compose(final Function<? super V, ? extends T> before) {
         Objects.requireNonNull(before);
         return (V v) -> apply(before.apply(v));
     }
@@ -90,7 +90,7 @@ public interface CheckedFunction<T, R> {
      *         if after is null
      * @see #compose(CheckedFunction)
      */
-    default <V> CheckedFunction<T, V> andThen(CheckedFunction<? super R, ? extends V> after) {
+    default <V> CheckedFunction<T, V> andThen(final CheckedFunction<? super R, ? extends V> after) {
         Objects.requireNonNull(after);
         return (T t) -> after.apply(apply(t));
     }

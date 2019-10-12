@@ -1,6 +1,6 @@
 package org.reactivetoolbox.core;
 
-import org.reactivetoolbox.core.functional.Functions.FN1;
+import org.reactivetoolbox.core.lang.Functions.FN1;
 
 import java.util.List;
 import java.util.Set;

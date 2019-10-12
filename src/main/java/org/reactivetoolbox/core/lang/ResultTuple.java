@@ -1,35 +1,35 @@
-package org.reactivetoolbox.core.functional;
+package org.reactivetoolbox.core.lang;
 
-import org.reactivetoolbox.core.functional.Functions.FN1;
-import org.reactivetoolbox.core.functional.Functions.FN2;
-import org.reactivetoolbox.core.functional.Functions.FN3;
-import org.reactivetoolbox.core.functional.Functions.FN4;
-import org.reactivetoolbox.core.functional.Functions.FN5;
-import org.reactivetoolbox.core.functional.Functions.FN6;
-import org.reactivetoolbox.core.functional.Functions.FN7;
-import org.reactivetoolbox.core.functional.Functions.FN8;
-import org.reactivetoolbox.core.functional.Functions.FN9;
-import org.reactivetoolbox.core.functional.Result.Result1;
-import org.reactivetoolbox.core.functional.Result.Result2;
-import org.reactivetoolbox.core.functional.Result.Result3;
-import org.reactivetoolbox.core.functional.Result.Result4;
-import org.reactivetoolbox.core.functional.Result.Result5;
-import org.reactivetoolbox.core.functional.Result.Result6;
-import org.reactivetoolbox.core.functional.Result.Result7;
-import org.reactivetoolbox.core.functional.Result.Result8;
-import org.reactivetoolbox.core.functional.Result.Result9;
-import org.reactivetoolbox.core.functional.Tuple.Tuple1;
-import org.reactivetoolbox.core.functional.Tuple.Tuple2;
-import org.reactivetoolbox.core.functional.Tuple.Tuple3;
-import org.reactivetoolbox.core.functional.Tuple.Tuple4;
-import org.reactivetoolbox.core.functional.Tuple.Tuple5;
-import org.reactivetoolbox.core.functional.Tuple.Tuple6;
-import org.reactivetoolbox.core.functional.Tuple.Tuple7;
-import org.reactivetoolbox.core.functional.Tuple.Tuple8;
-import org.reactivetoolbox.core.functional.Tuple.Tuple9;
+import org.reactivetoolbox.core.lang.Functions.FN1;
+import org.reactivetoolbox.core.lang.Functions.FN2;
+import org.reactivetoolbox.core.lang.Functions.FN3;
+import org.reactivetoolbox.core.lang.Functions.FN4;
+import org.reactivetoolbox.core.lang.Functions.FN5;
+import org.reactivetoolbox.core.lang.Functions.FN6;
+import org.reactivetoolbox.core.lang.Functions.FN7;
+import org.reactivetoolbox.core.lang.Functions.FN8;
+import org.reactivetoolbox.core.lang.Functions.FN9;
+import org.reactivetoolbox.core.lang.Result.Result1;
+import org.reactivetoolbox.core.lang.Result.Result2;
+import org.reactivetoolbox.core.lang.Result.Result3;
+import org.reactivetoolbox.core.lang.Result.Result4;
+import org.reactivetoolbox.core.lang.Result.Result5;
+import org.reactivetoolbox.core.lang.Result.Result6;
+import org.reactivetoolbox.core.lang.Result.Result7;
+import org.reactivetoolbox.core.lang.Result.Result8;
+import org.reactivetoolbox.core.lang.Result.Result9;
+import org.reactivetoolbox.core.lang.Tuple.Tuple1;
+import org.reactivetoolbox.core.lang.Tuple.Tuple2;
+import org.reactivetoolbox.core.lang.Tuple.Tuple3;
+import org.reactivetoolbox.core.lang.Tuple.Tuple4;
+import org.reactivetoolbox.core.lang.Tuple.Tuple5;
+import org.reactivetoolbox.core.lang.Tuple.Tuple6;
+import org.reactivetoolbox.core.lang.Tuple.Tuple7;
+import org.reactivetoolbox.core.lang.Tuple.Tuple8;
+import org.reactivetoolbox.core.lang.Tuple.Tuple9;
 
-import static org.reactivetoolbox.core.functional.Result.success;
-import static org.reactivetoolbox.core.functional.Tuple.with;
+import static org.reactivetoolbox.core.lang.Result.success;
+import static org.reactivetoolbox.core.lang.Tuple.with;
 
 public interface ResultTuple {
     interface Zipable<T> {

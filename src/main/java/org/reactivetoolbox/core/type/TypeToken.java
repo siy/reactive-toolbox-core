@@ -1,6 +1,6 @@
 package org.reactivetoolbox.core.type;
 
-import org.reactivetoolbox.core.functional.Result;
+import org.reactivetoolbox.core.lang.Result;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

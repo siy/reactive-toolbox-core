@@ -1,8 +1,8 @@
 package org.reactivetoolbox.core.async;
 
-import org.reactivetoolbox.core.functional.Functions.FN1;
-import org.reactivetoolbox.core.functional.Option;
-import org.reactivetoolbox.core.functional.Result;
+import org.reactivetoolbox.core.lang.Functions.FN1;
+import org.reactivetoolbox.core.lang.Option;
+import org.reactivetoolbox.core.lang.Result;
 import org.reactivetoolbox.core.scheduler.Errors;
 import org.reactivetoolbox.core.scheduler.Timeout;
 import org.reactivetoolbox.core.type.Error;

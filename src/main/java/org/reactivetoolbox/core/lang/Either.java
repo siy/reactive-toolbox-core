@@ -1,6 +1,6 @@
-package org.reactivetoolbox.core.functional;
+package org.reactivetoolbox.core.lang;
 
-import org.reactivetoolbox.core.functional.Functions.FN1;
+import org.reactivetoolbox.core.lang.Functions.FN1;
 
 /**
  * The core interface which represents variables which can hold either one value
