@@ -29,7 +29,7 @@ public class PromiseImpl<T> implements Promise<T> {
      */
     @Override
     public Option<T> value() {
-        return Option.nullAsEmpty(value.getReference());
+        return Option.of(value.getReference());
     }
 
     /**

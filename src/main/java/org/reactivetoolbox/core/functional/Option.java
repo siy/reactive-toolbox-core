@@ -28,7 +28,7 @@ import java.util.stream.Stream;
  * Note that unlike {@link java.util.Optional} this implementation does not treat {@code null}
  * as {@code empty} value. The {@code null} value is a completely valid content of non-empty
  * instance. The {@code empty} instance actually does not contain anything.
- * For convenience there is a static factory method {@link #nullAsEmpty(Object)} which creates
+ * For convenience there is a static factory method {@link #of(Object)} which creates
  * empty instance for {@code null} values and non-empty instance for other values.
  *
  * @param <T>
@@ -43,7 +43,7 @@ public abstract class Option<T> implements Either<Void, T>{
      *        Value to convert.
      * @return created instance.
      */
-    public static <T> Option<T> nullAsEmpty(final T value) {
+    public static <T> Option<T> of(final T value) {
          return value == null ? Option.empty() : Option.with(value);
     }
 
@@ -90,6 +90,15 @@ public abstract class Option<T> implements Either<Void, T>{
      */
     public Option<T> filter(final Predicate<? super T> predicate) {
         return flatMap(v -> predicate.test(v) ? this : empty());
+    }
+
+    /**
+     * Shorthand for {@code filer(v -> v != null)}.
+     *
+     * @return current instance if it contains not null value and empty instance otherwise
+     */
+    public Option<T> notNull() {
+        return flatMap(v -> v != null ? this : empty());
     }
 
     /**
@@ -217,7 +226,7 @@ public abstract class Option<T> implements Either<Void, T>{
      * @return either value stored in current instance or value returned by provided supplier if current instance
      * is empty
      */
-    public T otherwiseGet(final Supplier<T> supplier) {
+    public T otherwise(final Supplier<T> supplier) {
         return map(v -> supplier.get(), v -> v);
     }
 
@@ -237,9 +246,10 @@ public abstract class Option<T> implements Either<Void, T>{
             return true;
         }
 
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o  instanceof Option)) {
             return false;
         }
+
         final Option<?> option = (Option<?>) o;
         return map(v -> option.map(vo -> true, vo -> false),
                    v -> option.map(vo -> false, vo -> Objects.equals(v, vo)));

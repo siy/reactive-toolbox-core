@@ -22,6 +22,8 @@ public class UserFeedHandler_Test {
     public PromiseResult<List<Article>> userFeedHandler(final User.Id userId) {
         return resultsOf(topicService.topicsByUser(userId, Order.ANY),
                          userService.followers(userId))
-                .chainMap(tuple -> tuple.map((topics, users) -> articleService.userFeed(map(topics, Topic::id), map(users, User::id))));
+                .chainMap(tuple -> tuple.map((topics, users) -> articleService.userFeed(map(topics, Topic::id), map(users, User::id))))
+                //.with(Timeout.of(30).seconds(), Result.failure(Error.with()));
+        ;
     }
 }

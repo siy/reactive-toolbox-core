@@ -1,7 +1,6 @@
 package org.reactivetoolbox.core.async;
 
 import org.junit.jupiter.api.Test;
-import org.reactivetoolbox.core.functional.Option;
 import org.reactivetoolbox.core.scheduler.Timeout;
 
 import java.util.concurrent.Executor;
@@ -11,6 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.reactivetoolbox.core.functional.Option.with;
 
 
 class PromiseTest {
@@ -121,7 +121,7 @@ class PromiseTest {
         promise.syncWait();
 
         assertTrue(promise.ready());
-        assertEquals(Option.with(123), promise.value());
+        assertEquals(with(123), promise.value());
     }
 
     @Test
@@ -134,7 +134,7 @@ class PromiseTest {
                .then(val -> assertEquals(345, val));
 
         assertTrue(promise.syncWait().ready());
-        assertEquals(Option.with(345), promise.value());
+        assertEquals(with(345), promise.value());
     }
 
     @Test
