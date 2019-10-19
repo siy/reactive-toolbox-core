@@ -15,13 +15,13 @@ package org.reactivetoolbox.core.scheduler;
  * limitations under the License.
  */
 
-import org.reactivetoolbox.core.type.Error;
-import org.reactivetoolbox.core.type.WebErrorTypes;
+import org.reactivetoolbox.core.lang.Failure;
+import org.reactivetoolbox.core.lang.support.WebFailureTypes;
 
 /**
  * Scheduler errors
  */
 public interface Errors {
-    Error TIMEOUT = Error.of(WebErrorTypes.REQUEST_TIMEOUT, "Processing timeout error");
-    Error CANCELLED = Error.of(WebErrorTypes.NO_RESPONSE, "Request cancelled");
+    Failure TIMEOUT = Failure.of(WebFailureTypes.REQUEST_TIMEOUT, "Processing timeout error");
+    Failure CANCELLED = Failure.of(WebFailureTypes.NO_RESPONSE, "Request cancelled");
 }

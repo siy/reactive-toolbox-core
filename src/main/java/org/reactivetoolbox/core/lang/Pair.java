@@ -21,6 +21,8 @@ import org.reactivetoolbox.core.lang.Functions.FN2;
 
 import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * General purpose container suitable for holding pair of linked values, like key and value in map.
@@ -30,87 +32,11 @@ import java.util.StringJoiner;
  * @param <R>
  *        Type of right value
  */
-public final class Pair<L, R> {
-    private final L left;
-    private final R right;
-
-    private Pair(final L left, final R right) {
-        this.left = left;
-        this.right = right;
-    }
-
+//TODO: docs
+public interface Pair<L, R> {
     /**
-     * Factory method for creation of instances of {@link Pair} with given values.
+     * Transform pair into value of other type by applying specified function to both elements together.
      *
-     * @param left
-     *        Left value
-     * @param right
-     *        Right value
-     * @param <L>
-     *        type of left value
-     * @param <R>
-     *        type of right value
-     * @return created instance
-     */
-    public static <L, R> Pair<L, R> with(final L left, final R right) {
-        return new Pair<>(left, right);
-    }
-
-    /**
-     * Factory method for creation of instances of {@link Pair} with given values.
-     *
-     * @param left
-     *        Left value
-     * @param right
-     *        Right value
-     * @param <L>
-     *        type of left value
-     * @param <R>
-     *        type of right value
-     * @return created instance
-     */
-    public static <L, R> Pair<L, R> pair(final L left, final R right) {
-        return new Pair<>(left, right);
-    }
-
-    /**
-     * Get left value in pair
-     *
-     * @return left value
-     */
-    public L left() {
-        return left;
-    }
-
-    /**
-     * Get right value in pair
-     *
-     * @return right value
-     */
-    public R right() {
-        return right;
-    }
-
-    /**
-     * Transform both values in pair and construct an instance with new values.
-     *
-     * @param leftMapper
-     *        Function used to transform left value
-     * @param rightMapper
-     *        Function used to transform right value
-     * @param <L1>
-     *        New type of left value
-     * @param <R1>
-     *        New type of right value
-     *
-     * @return Transformed pair
-     */
-    public <L1, R1> Pair<L1, R1> map(final FN1<L1, L> leftMapper, final FN1<R1, R> rightMapper) {
-        return with(leftMapper.apply(left), rightMapper.apply(right));
-    }
-
-    /**
-     * Transform pair into value of other type
      * @param mapper
      *        Function used transform pair
      * @param <V>
@@ -118,24 +44,83 @@ public final class Pair<L, R> {
      *
      * @return Result of transformation
      */
-    public <V> V map(final FN2<V, L, R> mapper) {
-        return mapper.apply(left, right);
+    <V> V map(final FN2<V, L, R> mapper);
+
+    /**
+     * Transform pair into another pair by applying functions to each element of pair.
+     *
+     * @param leftMapper
+     *        Function to apply to left value
+     * @param rightMapper
+     *        Function to apply to right value
+     *
+     * @return Transformed instance
+     */
+    default <NL, NR> Pair<NL, NR> map(final FN1<? extends NL, ? super L> leftMapper, final FN1<? extends NR, ? super R> rightMapper) {
+        return map((l, r) -> with(leftMapper.apply(l), rightMapper.apply(r)));
     }
 
     /**
-     * Transform pair into pair of values of other types
+     * Factory method for creation of instances of {@link Pair} with given values.
      *
-     * @param mapper
-     *        Function used to transform pair
-     * @param <L1>
-     *        New left value type
-     * @param <R1>
-     *        New right value type
+     * @param left
+     *        Left value
+     * @param right
+     *        Right value
      *
-     * @return Pair of transformed values
+     * @return created instance
      */
-    public <L1, R1> Pair<L1, R1> flatMap(final FN2<Pair<L1, R1>, L, R> mapper) {
-        return mapper.apply(left, right);
+    static <L, R> Pair<L, R> with(final L left, final R right) {
+        return new Pair<L, R>() {
+            @Override
+            public <V> V map(final FN2<V, L, R> mapper) {
+                return mapper.apply(left, right);
+            }
+
+            @Override
+            public boolean equals(final Object o) {
+                if (this == o) {
+                    return true;
+                }
+
+                if (!(o instanceof Pair)) {
+                    return false;
+                }
+
+                return map((l, r) -> ((Pair<?, ?>) o).map((ol, or) -> Objects.equals(l, ol)
+                                                                      && Objects.equals(r, or)));
+            }
+
+            @Override
+            public int hashCode() {
+                return map((l, r) -> Objects.hash(left, right));
+            }
+
+            @Override
+            public String toString() {
+                return map((l, r) -> new StringJoiner(", ", "Pair(", ")")
+                            .add(Objects.toString(l))
+                            .add(Objects.toString(r))
+                            .toString());
+            }
+        };
+    }
+
+    /**
+     * Factory method for creation of instances of {@link Pair} with given values.
+     *
+     * @param left
+     *        Left value
+     * @param right
+     *        Right value
+     * @param <L>
+     *        type of left value
+     * @param <R>
+     *        type of right value
+     * @return created instance
+     */
+    static <L, R> Pair<L, R> pair(final L left, final R right) {
+        return with(left, right);
     }
 
     /**
@@ -143,50 +128,22 @@ public final class Pair<L, R> {
      *
      * @return Transformed pair
      */
-    public Pair<R, L> swap() {
-        return with(right, left);
+    default Pair<R, L> swap() {
+        return map((l, r) -> with(r, l));
     }
 
-    /**
-     * Get access to left value
-     *
-     * @return {@link Option} which contains left value
-     */
-    public Option<L> tryLeft() {
-        return Option.with(left);
+    default Pair<L, R> apply(final BiConsumer<L, R> biconsumer) {
+        map((l, r) -> { biconsumer.accept(l, r); return null; });
+        return this;
     }
 
-    /**
-     * Get access to right value
-     *
-     * @return {@link Option} which contains right value
-     */
-    public Option<R> tryRight() {
-        return Option.with(right);
+    default Pair<L, R> applyLeft(final Consumer<L> consumer) {
+        map((l, r) -> { consumer.accept(l); return null; });
+        return this;
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final Pair<?, ?> pair = (Pair<?, ?>) o;
-        return Objects.equals(left, pair.left) && Objects.equals(right, pair.right);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(left, right);
-    }
-
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", "Pair(", ")")
-                .add(Objects.toString(left))
-                .add(Objects.toString(right))
-                .toString();
+    default Pair<L, R> applyRight(final Consumer<R> consumer) {
+        map((l, r) -> { consumer.accept(r); return null; });
+        return this;
     }
 }

@@ -1,6 +1,6 @@
-package org.reactivetoolbox.core.type;
+package org.reactivetoolbox.core.lang;
 
-import org.reactivetoolbox.core.lang.Result;
+import org.reactivetoolbox.core.lang.support.WebFailureTypes;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -28,6 +28,6 @@ public abstract class TypeToken<T> {
             return Result.success(((ParameterizedType) type).getActualTypeArguments()[0]);
         }
 
-        return Error.with(WebErrorTypes.INTERNAL_SERVER_ERROR, "Unable to recognize type $1", type).asFailure();
+        return Failure.with(WebFailureTypes.INTERNAL_SERVER_ERROR, "Unable to recognize type $1", type).asFailure();
     }
 }

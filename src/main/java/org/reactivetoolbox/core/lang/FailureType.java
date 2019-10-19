@@ -1,9 +1,9 @@
-package org.reactivetoolbox.core.type;
+package org.reactivetoolbox.core.lang;
 
 /**
  * Error types marker interface
  */
-public interface ErrorType {
+public interface FailureType {
     int code();
     String description();
 }

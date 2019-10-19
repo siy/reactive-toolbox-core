@@ -1,6 +1,8 @@
-package org.reactivetoolbox.core.type;
+package org.reactivetoolbox.core.lang.support;
 
-public enum  WebErrorTypes implements ErrorType {
+import org.reactivetoolbox.core.lang.FailureType;
+
+public enum WebFailureTypes implements FailureType {
     BAD_REQUEST(400, "Bad Request"),
     UNAUTHORIZED(401, "Unauthorized"),
     PAYMENT_REQUIRED(402, "Payment Required"),
@@ -52,7 +54,7 @@ public enum  WebErrorTypes implements ErrorType {
     private final int code;
     private final String description;
 
-    WebErrorTypes(final int code, final String description) {
+    WebFailureTypes(final int code, final String description) {
         this.code = code;
         this.description = description;
     }

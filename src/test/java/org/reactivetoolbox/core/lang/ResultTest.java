@@ -2,9 +2,8 @@ package org.reactivetoolbox.core.lang;
 
 import org.junit.jupiter.api.Test;
 import org.reactivetoolbox.core.lang.Result.Result1;
+import org.reactivetoolbox.core.lang.support.WebFailureTypes;
 import org.reactivetoolbox.core.scheduler.Errors;
-import org.reactivetoolbox.core.type.Error;
-import org.reactivetoolbox.core.type.WebErrorTypes;
 
 import java.util.Objects;
 
@@ -14,15 +13,15 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.reactivetoolbox.core.lang.Result.failure;
 import static org.reactivetoolbox.core.lang.Result.success;
 import static org.reactivetoolbox.core.lang.Tuple.with;
-import static org.reactivetoolbox.core.type.WebErrorTypes.INTERNAL_SERVER_ERROR;
+import static org.reactivetoolbox.core.lang.support.WebFailureTypes.INTERNAL_SERVER_ERROR;
 
 class ResultTest {
-    static final Error TEST_ERROR = Error.of(INTERNAL_SERVER_ERROR, "Test error");
+    static final Failure TEST_FAILURE = Failure.of(INTERNAL_SERVER_ERROR, "Test error");
 
     @Test
     void flatMapIsSafeInRegardToTypes() {
         Result1.from(success(1).flatMap(vv11 -> success(with(vv11))));
-        Result1.from(failure(TEST_ERROR).flatMap(vv1 -> success(with(vv1))));
+        Result1.from(failure(TEST_FAILURE).flatMap(vv1 -> success(with(vv1))));
     }
 
     @Test
@@ -35,8 +34,8 @@ class ResultTest {
     @Test
     void orSelectsFirstSuccess() {
         assertEquals(success(1), success(1).or(success(2)).or(success(3)));
-        assertEquals(success(2), failure(TEST_ERROR).or(success(2)).or(success(3)));
-        assertEquals(success(3), failure(TEST_ERROR).or(failure(TEST_ERROR)).or(success(3)));
+        assertEquals(success(2), failure(TEST_FAILURE).or(success(2)).or(success(3)));
+        assertEquals(success(3), failure(TEST_FAILURE).or(failure(TEST_FAILURE)).or(success(3)));
     }
 
     @Test
@@ -48,9 +47,9 @@ class ResultTest {
 
     @Test
     void ifFailureCalledForSuccessResult() {
-        final Error[] result = new Error[1];
-        failure(TEST_ERROR).ifFailure(v -> result[0] = v);
-        assertEquals(TEST_ERROR, result[0]);
+        final Failure[] result = new Failure[1];
+        failure(TEST_FAILURE).ifFailure(v -> result[0] = v);
+        assertEquals(TEST_FAILURE, result[0]);
     }
 
     @Test
@@ -77,12 +76,12 @@ class ResultTest {
     }
 
     private Result<Integer> validateGE(final int value, final int min) {
-        return value < min ? failure(Error.with(WebErrorTypes.UNPROCESSABLE_ENTITY, "Input value below %d", min))
+        return value < min ? failure(Failure.with(WebFailureTypes.UNPROCESSABLE_ENTITY, "Input value below %d", min))
                            : success(value);
     }
 
     private Result<Integer> validateLE(final int value, final int max) {
-        return value > max ? failure(Error.with(WebErrorTypes.UNPROCESSABLE_ENTITY, "Input value above %d", max))
+        return value > max ? failure(Failure.with(WebFailureTypes.UNPROCESSABLE_ENTITY, "Input value above %d", max))
                            : success(value);
     }
 }

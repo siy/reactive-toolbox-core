@@ -1,11 +1,11 @@
 package org.reactivetoolbox.core.async;
 
+import org.reactivetoolbox.core.lang.Failure;
 import org.reactivetoolbox.core.lang.Functions.FN1;
 import org.reactivetoolbox.core.lang.Option;
 import org.reactivetoolbox.core.lang.Result;
 import org.reactivetoolbox.core.scheduler.Errors;
 import org.reactivetoolbox.core.scheduler.Timeout;
-import org.reactivetoolbox.core.type.Error;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -57,7 +57,7 @@ public interface PromiseResult<T> extends Promise<Result<T>> {
         return this;
     }
 
-    default PromiseResult<T> onFailure(final Consumer<? super Error> consumer) {
+    default PromiseResult<T> onFailure(final Consumer<? super Failure> consumer) {
         then(result -> result.ifFailure(consumer));
         return this;
     }
@@ -87,7 +87,7 @@ public interface PromiseResult<T> extends Promise<Result<T>> {
 
     /**
      * This method enables chaining of calls to functions which return {@link PromiseResult} and require unwrapped
-     * results successful previous calls. If current instance is resolved to {@link Result#failure(Error)}, then
+     * results successful previous calls. If current instance is resolved to {@link Result#failure(Failure)}, then
      * function passes as parameter is not invoked and resolved instance of {@link PromiseResult} is returned instead.
      *
      * @param mapper

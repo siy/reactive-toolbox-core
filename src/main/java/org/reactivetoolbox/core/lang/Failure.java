@@ -1,4 +1,4 @@
-package org.reactivetoolbox.core.type;
+package org.reactivetoolbox.core.lang;
 
 /*
  * Copyright (c) 2017-2019 Sergiy Yevtushenko
@@ -16,42 +16,40 @@ package org.reactivetoolbox.core.type;
  * limitations under the License.
  */
 
-import org.reactivetoolbox.core.lang.Result;
-
 import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.function.Supplier;
 
 /**
- * Basic interface for error types.
+ * Basic interface for failure types.
  *
  * @author Sergiy Yevtushenko
  */
-//TODO: extend for precise error tracking, include (optional) subcode, file name, line number
-public interface Error {
-    ErrorType type();
+//TODO: extend for precise failure tracking, include (optional) subcode, file name, line number
+public interface Failure {
+    FailureType type();
     String message();
 
     default <T> Result<T> asFailure() {
         return Result.failure(this);
     }
 
-    static <T> Supplier<Result<T>> lazyFailure(final ErrorType type, final String format, final Object ... params) {
+    static <T> Supplier<Result<T>> lazyFailure(final FailureType type, final String format, final Object ... params) {
         return () -> with(type, format, params).asFailure();
     }
 
-    static Supplier<Error> lazy(final ErrorType type, final String format, final Object ... params) {
+    static Supplier<Failure> lazy(final FailureType type, final String format, final Object ... params) {
         return () -> with(type, format, params);
     }
 
-    static Error with(final ErrorType type, final String format, final Object ... params) {
+    static Failure with(final FailureType type, final String format, final Object ... params) {
         return of(type, String.format(format, params));
     }
 
-    static Error of(final ErrorType type, final String message) {
-        return new Error() {
+    static Failure of(final FailureType type, final String message) {
+        return new Failure() {
             @Override
-            public ErrorType type() {
+            public FailureType type() {
                 return type;
             }
 
@@ -71,7 +69,7 @@ public interface Error {
                     return true;
                 }
 
-                return (obj instanceof Error) && (Objects.equals(((Error) obj).type(), type) && Objects.equals(((Error) obj).message(), message));
+                return (obj instanceof Failure) && (Objects.equals(((Failure) obj).type(), type) && Objects.equals(((Failure) obj).message(), message));
             }
 
             @Override
