@@ -12,57 +12,57 @@ class OptionTest {
     @Test
     void emptyOptionCanBeCreated() {
         Option.empty()
-              .ifPresent(v -> fail());
+              .whenPresent(v -> fail());
     }
 
     @Test
     void optionWithDataCanBeCreated() {
         Option.with("not empty")
-              .ifPresent(v -> assertEquals("not empty", v))
-              .ifEmpty(Assertions::fail);
+              .whenPresent(v -> assertEquals("not empty", v))
+              .whenEmpty(Assertions::fail);
     }
 
     @Test
     void nonEmptyOptionCanBeMappedToOtherOption() {
         Option.with(123)
-                .ifEmpty(Assertions::fail)
-                .ifPresent(v -> assertEquals(123, v))
+                .whenEmpty(Assertions::fail)
+                .whenPresent(v -> assertEquals(123, v))
                 .map(Object::toString)
-                .ifEmpty(Assertions::fail)
-                .ifPresent(v -> assertEquals("123", v));
+                .whenEmpty(Assertions::fail)
+                .whenPresent(v -> assertEquals("123", v));
     }
 
     @Test
     void emptyOptionRemainsEmptyAfterMapping() {
         Option.empty()
-              .ifPresent(v -> fail())
+              .whenPresent(v -> fail())
               .map(Object::toString)
-              .ifPresent(v -> fail());
+              .whenPresent(v -> fail());
     }
 
     @Test
     void nonEmptyCanContainNull() {
         Option.with(null)
-              .ifEmpty(Assertions::fail)
-              .ifPresent(Assertions::assertNull);
+              .whenEmpty(Assertions::fail)
+              .whenPresent(Assertions::assertNull);
     }
 
     @Test
     void nonEmptyOptionCanBeFlatMappedIntoOtherOption() {
         Option.with(345)
-              .ifEmpty(Assertions::fail)
-              .ifPresent(v -> assertEquals(345, v))
+              .whenEmpty(Assertions::fail)
+              .whenPresent(v -> assertEquals(345, v))
               .flatMap(val -> Option.with(val + 2))
-              .ifEmpty(Assertions::fail)
-              .ifPresent(v -> assertEquals(347, v));
+              .whenEmpty(Assertions::fail)
+              .whenPresent(v -> assertEquals(347, v));
     }
 
     @Test
     void emptyOptionRemainsEmptyAndNotFlatMapped() {
         Option.empty()
-              .ifPresent(v -> fail())
+              .whenPresent(v -> fail())
               .flatMap(val -> Option.with("not empty"))
-              .ifPresent(v -> fail());
+              .whenPresent(v -> fail());
     }
 
     @Test
@@ -107,18 +107,18 @@ class OptionTest {
     @Test
     void nonEmptyInstanceCanBeFiltered() {
         Option.with(123)
-              .ifEmpty(Assertions::fail)
+              .whenEmpty(Assertions::fail)
               .filter(val -> val > 1)
-              .ifEmpty(Assertions::fail)
+              .whenEmpty(Assertions::fail)
               .filter(val -> val < 100)
-              .ifPresent(val -> fail());
+              .whenPresent(val -> fail());
     }
 
     @Test
     void emptyInstanceRemainsEmptyAfterFilteringAndPredicateIsNotInvoked() {
         Option.empty()
-              .ifPresent(v -> fail())
+              .whenPresent(v -> fail())
               .filter(v -> true)
-              .ifPresent(v -> fail());
+              .whenPresent(v -> fail());
     }
 }

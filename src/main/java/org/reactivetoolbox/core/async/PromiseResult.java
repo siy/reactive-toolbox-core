@@ -1,5 +1,21 @@
 package org.reactivetoolbox.core.async;
 
+/*
+ * Copyright (c) 2019 Sergiy Yevtushenko
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import org.reactivetoolbox.core.lang.Failure;
 import org.reactivetoolbox.core.lang.Functions.FN1;
 import org.reactivetoolbox.core.lang.Option;
@@ -11,6 +27,9 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+/**
+ * Extended {@link Promise} implementation which works with {@link Result} values.
+ */
 public interface PromiseResult<T> extends Promise<Result<T>> {
     /**
      * Convenience method for performing some actions with current promise instance.
@@ -53,12 +72,12 @@ public interface PromiseResult<T> extends Promise<Result<T>> {
     }
 
     default PromiseResult<T> onSuccess(final Consumer<T> consumer) {
-        then(result -> result.ifSuccess(consumer));
+        then(result -> result.whenSuccess(consumer));
         return this;
     }
 
     default PromiseResult<T> onFailure(final Consumer<? super Failure> consumer) {
-        then(result -> result.ifFailure(consumer));
+        then(result -> result.whenFailure(consumer));
         return this;
     }
 
@@ -195,7 +214,7 @@ public interface PromiseResult<T> extends Promise<Result<T>> {
 
         List.of(promises)
             .forEach(promise -> promise.then($ -> counter.registerEvent())
-                                       .then(res -> res.ifSuccess(t -> { result.resolve(res); resolveAll(failureResult, promises);})));
+                                       .then(res -> res.whenSuccess(t -> { result.resolve(res); resolveAll(failureResult, promises);})));
 
         return result;
     }

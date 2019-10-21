@@ -1,6 +1,21 @@
 package org.reactivetoolbox.core.lang;
 
-import org.reactivetoolbox.core.lang.Functions.FN0;
+/*
+ * Copyright (c) 2019 Sergiy Yevtushenko
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import org.reactivetoolbox.core.lang.Functions.FN1;
 import org.reactivetoolbox.core.lang.Functions.FN2;
 import org.reactivetoolbox.core.lang.Functions.FN3;
@@ -23,6 +38,7 @@ import org.reactivetoolbox.core.lang.Tuple.Tuple9;
 import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * Representation of the operation result. The result can be either success or failure.
@@ -40,6 +56,7 @@ public interface Result<T> extends Either<Failure, T> {
      *
      * @param mapper
      *        Function to apply to result
+     *
      * @return transformed value (in case of success) or current instance (in case of failure)
      */
     @SuppressWarnings("unchecked")
@@ -55,6 +72,7 @@ public interface Result<T> extends Either<Failure, T> {
      *
      * @param mapper
      *        Function to transform successful value
+     *
      * @return transformed value (in case of success) or current instance (in case of failure)
      */
     @SuppressWarnings("unchecked")
@@ -62,7 +80,18 @@ public interface Result<T> extends Either<Failure, T> {
         return map(l -> (Result<R>) this, r -> success(mapper.apply(r)));
     }
 
-    default Result<T> visit(final Consumer<? super Failure> failureConsumer, final Consumer<? super T> successConsumer) {
+    /**
+     * Apply consumers to result value. Note that depending on the result (success or failure) only one consumer will be
+     * applied at a time.
+     *
+     * @param failureConsumer
+     *        Consumer for failure result
+     * @param successConsumer
+     *        Consumer for success result
+     *
+     * @return current instance
+     */
+    default Result<T> apply(final Consumer<? super Failure> failureConsumer, final Consumer<? super T> successConsumer) {
         return map(t -> {failureConsumer.accept(t); return this;}, t -> {successConsumer.accept(t); return this;});
     }
 
@@ -73,6 +102,7 @@ public interface Result<T> extends Either<Failure, T> {
      *
      * @param replacement
      *        Value to return if current instance contains failure operation result
+     *
      * @return current instance in case of success or replacement instance in case of failure.
      */
     default Result<T> or(final Result<T> replacement) {
@@ -81,15 +111,16 @@ public interface Result<T> extends Either<Failure, T> {
 
     /**
      * Combine current instance with another result. If current instance holds
-     * success then result is equivalent to current instance, otherwise other
-     * instance (retrieved by calling to {@code replacementFunction}) is returned.
+     * success then result is equivalent to current instance, otherwise instance provided by
+     * specified supplier is returned.
      *
-     * @param replacementFunction
-     *        Function which returns value if current instance contains failure operation result
-     * @return current instance in case of success or result of replacementFunction call in case of failure.
+     * @param supplier
+     *        Supplier for replacement instance if current instance contains failure operation result
+     *
+     * @return current instance in case of success or result returned by supplier in case of failure.
      */
-    default Result<T> or(final FN0<Result<T>> replacementFunction) {
-        return map(t -> replacementFunction.apply(), t -> this);
+    default Result<T> or(final Supplier<Result<T>> supplier) {
+        return map(t -> supplier.get(), t -> this);
     }
 
     /**
@@ -97,9 +128,10 @@ public interface Result<T> extends Either<Failure, T> {
      *
      * @param consumer
      *        Consumer to pass value to
+     *
      * @return current instance for fluent call chaining
      */
-    default Result<T> ifSuccess(final Consumer<T> consumer) {
+    default Result<T> whenSuccess(final Consumer<T> consumer) {
         return map(t1 -> this, t1 -> { consumer.accept(t1); return this; });
     }
 
@@ -108,9 +140,10 @@ public interface Result<T> extends Either<Failure, T> {
      *
      * @param consumer
      *        Consumer to pass value to
+     *
      * @return current instance for fluent call chaining
      */
-    default Result<T> ifFailure(final Consumer<? super Failure> consumer) {
+    default Result<T> whenFailure(final Consumer<? super Failure> consumer) {
         return map(t1 -> { consumer.accept(t1); return this; }, t1 -> this);
     }
 
@@ -119,6 +152,7 @@ public interface Result<T> extends Either<Failure, T> {
      *
      * @param value
      *        Operation result
+     *
      * @return created instance
      */
     static <R> Result<R> success(final R value) {
@@ -156,6 +190,7 @@ public interface Result<T> extends Either<Failure, T> {
      * Create an instance of failure operation result.
      * @param value
      *        Operation error value
+     *
      * @return created instance
      */
     static <R> Result<R> failure(final Failure value) {
@@ -188,6 +223,8 @@ public interface Result<T> extends Either<Failure, T> {
             }
         };
     }
+
+    // Helper interfaces to deal with instances of Result which hold Tuple with various size.
 
     interface Result1<T1> extends Result<Tuple1<T1>> {
         default <T> Result<T> mapTuple(final FN1<T, T1> mapper) {

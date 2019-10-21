@@ -1,5 +1,21 @@
 package org.reactivetoolbox.core.lang;
 
+/*
+ * Copyright (c) 2019 Sergiy Yevtushenko
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import org.reactivetoolbox.core.lang.Functions.FN1;
 import org.reactivetoolbox.core.lang.Functions.FN2;
 
@@ -23,6 +39,9 @@ import static java.lang.Math.min;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collector.Characteristics.IDENTITY_FINISH;
 
+/**
+ * Immutable List
+ */
 //TODO: experimental, requires more considerations and, most likely, more efficient implementation
 public interface List<E> {
     <R> List<R> mapN(final FN2<R, Integer, E> mapper);
@@ -195,7 +214,7 @@ public interface List<E> {
         }
     }
 
-    static final List EMPTY_LIST = new List() {
+    List EMPTY_LIST = new List() {
         @Override
         public List mapN(final FN2 mapper) {
             return this;
@@ -257,37 +276,41 @@ public interface List<E> {
         }
     };
 
-    static final Set<Characteristics> CH_ID = unmodifiableSet(EnumSet.of(IDENTITY_FINISH));
+    Set<Characteristics> CH_ID = unmodifiableSet(EnumSet.of(IDENTITY_FINISH));
+    Collector toListCollector = new Collector() {
+        @Override
+        public Supplier<java.util.List> supplier() {
+            return ArrayList::new;
+        }
 
+        @SuppressWarnings("unchecked")
+        @Override
+        public BiConsumer<java.util.List, ?> accumulator() {
+            return java.util.List::add;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public BinaryOperator<java.util.List> combiner() {
+            return (left, right) -> {
+                left.addAll(right);
+                return left;
+            };
+        }
+
+        @Override
+        public Function<java.util.List, List> finisher() {
+            return List::from;
+        }
+
+        @Override
+        public Set<Characteristics> characteristics() {
+            return CH_ID;
+        }
+    };
+
+    @SuppressWarnings("unchecked")
     static <T> Collector<T, ?, List<T>> toList() {
-        return new Collector<T, java.util.List<T>, List<T>>() {
-            @Override
-            public Supplier<java.util.List<T>> supplier() {
-                return ArrayList::new;
-            }
-
-            @Override
-            public BiConsumer<java.util.List<T>, T> accumulator() {
-                return java.util.List::add;
-            }
-
-            @Override
-            public BinaryOperator<java.util.List<T>> combiner() {
-                return (left, right) -> {
-                    left.addAll(right);
-                    return left;
-                };
-            }
-
-            @Override
-            public Function<java.util.List<T>, List<T>> finisher() {
-                return List::from;
-            }
-
-            @Override
-            public Set<Characteristics> characteristics() {
-                return CH_ID;
-            }
-        };
+        return (Collector<T, java.util.List<T>, List<T>>) toListCollector;
     }
 }

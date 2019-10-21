@@ -1,7 +1,7 @@
 package org.reactivetoolbox.core.lang;
 
 /*
- * Copyright (c) 2017-2019 Sergiy Yevtushenko
+ * Copyright (c) 2019 Sergiy Yevtushenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import java.util.function.Consumer;
  * @param <R>
  *        Type of right value
  */
-//TODO: docs
 public interface Pair<L, R> {
     /**
      * Transform pair into value of other type by applying specified function to both elements together.
@@ -117,6 +116,7 @@ public interface Pair<L, R> {
      *        type of left value
      * @param <R>
      *        type of right value
+     *
      * @return created instance
      */
     static <L, R> Pair<L, R> pair(final L left, final R right) {
@@ -132,16 +132,40 @@ public interface Pair<L, R> {
         return map((l, r) -> with(r, l));
     }
 
+    /**
+     * Apply provided consumer to both elements of pair.
+     *
+     * @param biconsumer
+     *        Consumer to apply
+     *
+     * @return current instance
+     */
     default Pair<L, R> apply(final BiConsumer<L, R> biconsumer) {
         map((l, r) -> { biconsumer.accept(l, r); return null; });
         return this;
     }
 
+    /**
+     * Apply consumer to left element of pair.
+     *
+     * @param consumer
+     *        Consumer to apply
+     *
+     * @return current instance
+     */
     default Pair<L, R> applyLeft(final Consumer<L> consumer) {
         map((l, r) -> { consumer.accept(l); return null; });
         return this;
     }
 
+    /**
+     * Apply consumer to right element of pair
+     *
+     * @param consumer
+     *        Consumer to apply
+     *
+     * @return current instance
+     */
     default Pair<L, R> applyRight(final Consumer<R> consumer) {
         map((l, r) -> { consumer.accept(r); return null; });
         return this;

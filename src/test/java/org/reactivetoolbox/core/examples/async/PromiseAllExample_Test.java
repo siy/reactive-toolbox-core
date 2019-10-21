@@ -14,7 +14,7 @@ public class PromiseAllExample_Test {
     @Test
     void simpleAsyncTask() {
         service.slowRetrieveInteger(42)
-               .then(result -> result.ifSuccess(System.out::println))
+               .then(result -> result.whenSuccess(System.out::println))
                .syncWait();
     }
 
@@ -22,7 +22,7 @@ public class PromiseAllExample_Test {
     void simpleAsyncTaskWithTimeout() {
         service.slowRetrieveInteger(4242)
                .with(Timeout.of(10).seconds(), TIMEOUT.asFailure())
-               .then(result -> result.ifSuccess(System.out::println))
+               .then(result -> result.whenSuccess(System.out::println))
                .syncWait();
     }
 
@@ -33,7 +33,7 @@ public class PromiseAllExample_Test {
               service.slowRetrieveString("text 1"),
               service.slowRetrieveUuid())
                 .map(tuple -> ResultTuple.of(tuple).zip())
-                .then(result -> result.ifSuccess(System.out::println))
+                .then(result -> result.whenSuccess(System.out::println))
                 .syncWait();
     }
 
@@ -43,7 +43,7 @@ public class PromiseAllExample_Test {
         PromiseAll.resultsOf(service.slowRetrieveInteger(345),
                              service.slowRetrieveString("text 3"),
                              service.slowRetrieveUuid())
-                  .then(result -> result.ifSuccess(System.out::println))
+                  .then(result -> result.whenSuccess(System.out::println))
                   .syncWait();
     }
 }

@@ -17,11 +17,11 @@ class ThrowingFunctionsTest {
         final var uriParser = lift((TFN1<URI, String>) URI::new);
 
         uriParser.apply("https://dev.to/")
-                 .ifFailure(failure -> fail())
-                 .ifSuccess(uri -> assertEquals("https://dev.to/", uri.toString()));
+                 .whenFailure(failure -> fail())
+                 .whenSuccess(uri -> assertEquals("https://dev.to/", uri.toString()));
 
         uriParser.apply(":malformed/url")
-                 .ifFailure(failure -> assertEquals(failure.type(), WebFailureTypes.BAD_REQUEST))
-                 .ifSuccess(uri -> fail());
+                 .whenFailure(failure -> assertEquals(failure.type(), WebFailureTypes.BAD_REQUEST))
+                 .whenSuccess(uri -> fail());
     }
 }

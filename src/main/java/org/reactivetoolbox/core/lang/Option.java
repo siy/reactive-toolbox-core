@@ -1,6 +1,7 @@
 package org.reactivetoolbox.core.lang;
+
 /*
- * Copyright (c) 2017-2019 Sergiy Yevtushenko
+ * Copyright (c) 2019 Sergiy Yevtushenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -132,7 +133,7 @@ public abstract class Option<T> implements Either<Void, T>{
      *        Consumer to pass contained value to
      * @return this instance for fluent call chaining
      */
-    public Option<T> ifPresent(final Consumer<? super T> consumer) {
+    public Option<T> whenPresent(final Consumer<? super T> consumer) {
         map(t -> {consumer.accept(t); return null;});
         return this;
     }
@@ -144,7 +145,7 @@ public abstract class Option<T> implements Either<Void, T>{
      *        Action to perform on empty instance
      * @return this instance for fluent call chaining
      */
-    public Option<T> ifEmpty(final Runnable action) {
+    public Option<T> whenEmpty(final Runnable action) {
         map(t1 -> { action.run(); return null; }, t -> null);
         return this;
     }
@@ -158,7 +159,7 @@ public abstract class Option<T> implements Either<Void, T>{
      *        Action to perform on non-empty instance value
      * @return this instance for fluent call chaining
      */
-    public Option<T> consume(final Runnable emptyValConsumer, final Consumer<? super T> nonEmptyValConsumer) {
+    public Option<T> apply(final Runnable emptyValConsumer, final Consumer<? super T> nonEmptyValConsumer) {
         map(t1 -> { emptyValConsumer.run(); return null;}, t2 -> { nonEmptyValConsumer.accept(t2); return null;});
         return this;
     }
