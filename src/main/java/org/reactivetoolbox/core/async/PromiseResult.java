@@ -180,7 +180,7 @@ public interface PromiseResult<T> extends Promise<Result<T>> {
     @SafeVarargs
     static <T> PromiseResult<T> any(final PromiseResult<T>... promises) {
         return result(result -> List.of(promises).forEach(promise -> promise.then(result::resolve)
-                                                                                          .then(v -> cancelAll(promises))));
+                                                                            .then(v -> cancelAll(promises))));
     }
 
     /**
@@ -216,7 +216,7 @@ public interface PromiseResult<T> extends Promise<Result<T>> {
 
         List.of(promises)
             .forEach(promise -> promise.then($ -> counter.registerEvent())
-                                       .then(res -> res.whenSuccess(t -> { result.resolve(res); resolveAll(failureResult, promises);})));
+                                       .then(res -> res.whenSuccess(t -> { result.resolve(res); resolveAll(failureResult, promises); })));
 
         return result;
     }
