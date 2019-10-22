@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import static org.reactivetoolbox.core.lang.Result.failure;
+
 /**
  * Extended {@link Promise} implementation which works with {@link Result} values.
  */
@@ -53,7 +55,7 @@ public interface PromiseResult<T> extends Promise<Result<T>> {
      *        Resolution value in case of timeout
      * @return Current instance
      */
-    default PromiseResult<T> with(final Timeout timeout, final Result<T> timeoutResult) {
+    default PromiseResult<T> on(final Timeout timeout, final Result<T> timeoutResult) {
         return async(timeout, promise -> promise.resolve(timeoutResult));
     }
 
@@ -67,7 +69,7 @@ public interface PromiseResult<T> extends Promise<Result<T>> {
      *        Supplier of resolution value in case of timeout
      * @return Current instance
      */
-    default PromiseResult<T> with(final Timeout timeout, final Supplier<Result<T>> timeoutResultSupplier) {
+    default PromiseResult<T> on(final Timeout timeout, final Supplier<Result<T>> timeoutResultSupplier) {
         return async(timeout, promise -> promise.resolve(timeoutResultSupplier.get()));
     }
 
@@ -100,7 +102,7 @@ public interface PromiseResult<T> extends Promise<Result<T>> {
      * @return Current instance
      */
     default PromiseResult<T> cancel() {
-        resolve(Result.failure(Errors.CANCELLED));
+        resolve(failure(Errors.CANCELLED));
         return this;
     }
 
@@ -115,9 +117,9 @@ public interface PromiseResult<T> extends Promise<Result<T>> {
      *         waiting for resolving by provided mapping function.
      */
     default <R> PromiseResult<R> chainMap(final FN1<PromiseResult<R>, T> mapper) {
-        return PromiseResult.result(promise -> then(result -> result.map(error -> promise.resolve(Result.failure(error)),
-                                                                         success -> mapper.apply(success)
-                                                                                          .then(promise::resolve))));
+        return result(promise -> then(result -> result.map(error -> promise.resolve(failure(error)),
+                                                           success -> mapper.apply(success)
+                                                                            .then(promise::resolve))));
     }
 
     /**
@@ -130,7 +132,7 @@ public interface PromiseResult<T> extends Promise<Result<T>> {
      * @return Created instance
      */
     default <R> PromiseResult<R> mapResult(final FN1<R, T> mapper) {
-        return PromiseResult.result(promise -> then(val -> promise.resolve(val.map(mapper))));
+        return result(promise -> then(result -> promise.resolve(result.map(mapper))));
     }
 
     /**
@@ -155,12 +157,12 @@ public interface PromiseResult<T> extends Promise<Result<T>> {
      * Create instance and immediately invoke provided function with created instance.
      * Usually this function is used to configure actions on created instance.
      *
-     * @param consumer
+     * @param setup
      *        Function to invoke with created instance
      * @return Created instance
      */
-    static <T> PromiseResult<T> result(final Consumer<PromiseResult<T>> consumer) {
-        return PromiseResult.<T>result().apply(consumer);
+    static <T> PromiseResult<T> result(final Consumer<PromiseResult<T>> setup) {
+        return PromiseResult.<T>result().apply(setup);
     }
 
     /**
@@ -177,7 +179,7 @@ public interface PromiseResult<T> extends Promise<Result<T>> {
      */
     @SafeVarargs
     static <T> PromiseResult<T> any(final PromiseResult<T>... promises) {
-        return PromiseResult.result(result -> List.of(promises).forEach(promise -> promise.then(result::resolve)
+        return result(result -> List.of(promises).forEach(promise -> promise.then(result::resolve)
                                                                                           .then(v -> cancelAll(promises))));
     }
 
@@ -193,7 +195,7 @@ public interface PromiseResult<T> extends Promise<Result<T>> {
      */
     @SafeVarargs
     static <T> PromiseResult<T> anySuccess(final PromiseResult<T>... promises) {
-        return anySuccess(Result.failure(Errors.CANCELLED), promises);
+        return anySuccess(failure(Errors.CANCELLED), promises);
     }
 
     /**
@@ -210,7 +212,7 @@ public interface PromiseResult<T> extends Promise<Result<T>> {
      */
     static <T> PromiseResult<T> anySuccess(final Result<T> failureResult, final PromiseResult<T>... promises) {
         final var result = PromiseResult.<T>result();
-        final var counter = ActionableThreshold.of(promises.length, () -> resolveAll(failureResult, promises));
+        final var counter = ActionableThreshold.threshold(promises.length, () -> resolveAll(failureResult, promises));
 
         List.of(promises)
             .forEach(promise -> promise.then($ -> counter.registerEvent())
@@ -226,7 +228,7 @@ public interface PromiseResult<T> extends Promise<Result<T>> {
      *        Promises to cancel.
      */
     static <T> void cancelAll(final PromiseResult<T>... promises) {
-        resolveAll(Result.failure(Errors.CANCELLED), promises);
+        resolveAll(failure(Errors.CANCELLED), promises);
     }
 
     /**

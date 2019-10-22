@@ -17,6 +17,7 @@ package org.reactivetoolbox.core.async;
  */
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 /**
  * Helper class used to track number of events and trigger action once threshold is reached. The action is
@@ -31,6 +32,11 @@ public class ActionableThreshold {
         this.action = action;
     }
 
+    public ActionableThreshold apply(final Consumer<ActionableThreshold> setup) {
+        setup.accept(this);
+        return this;
+    }
+
     /**
      * Create an instance configured for threshold and action.
      *
@@ -41,8 +47,24 @@ public class ActionableThreshold {
      *
      * @return Created instance
      */
-    public static ActionableThreshold of(final int count, final Runnable action) {
+    public static ActionableThreshold threshold(final int count, final Runnable action) {
         return new ActionableThreshold(count, action);
+    }
+
+    /**
+     * Create an instance configured for threshold and action.
+     *
+     * @param count
+     *        Number of events to register
+     * @param setup
+     *        Consumer to invoke once instance of {@link ActionableThreshold} is created
+     * @param action
+     *        Action to perform
+     *
+     * @return Created instance
+     */
+    public static ActionableThreshold threshold(final int count, final Consumer<ActionableThreshold> setup, final Runnable action) {
+        return threshold(count, action).apply(setup);
     }
 
     /**

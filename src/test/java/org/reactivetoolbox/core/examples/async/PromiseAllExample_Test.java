@@ -2,10 +2,9 @@ package org.reactivetoolbox.core.examples.async;
 
 import org.junit.jupiter.api.Test;
 import org.reactivetoolbox.core.async.PromiseAll;
-import org.reactivetoolbox.core.lang.ResultTuple;
 import org.reactivetoolbox.core.scheduler.Timeout;
 
-import static org.reactivetoolbox.core.async.PromiseAll.allOf;
+import static org.reactivetoolbox.core.async.PromiseAll.resultsOf;
 import static org.reactivetoolbox.core.scheduler.Errors.TIMEOUT;
 
 public class PromiseAllExample_Test {
@@ -21,18 +20,16 @@ public class PromiseAllExample_Test {
     @Test
     void simpleAsyncTaskWithTimeout() {
         service.slowRetrieveInteger(4242)
-               .with(Timeout.of(10).seconds(), TIMEOUT.asFailure())
+               .on(Timeout.of(10).seconds(), TIMEOUT.asFailure())
                .then(result -> result.whenSuccess(System.out::println))
                .syncWait();
     }
 
     @Test
     void waitForAllResults1() {
-        //Using Promise.map()
-        allOf(service.slowRetrieveInteger(123),
+        resultsOf(service.slowRetrieveInteger(123),
               service.slowRetrieveString("text 1"),
               service.slowRetrieveUuid())
-                .map(tuple -> ResultTuple.of(tuple).zip())
                 .then(result -> result.whenSuccess(System.out::println))
                 .syncWait();
     }

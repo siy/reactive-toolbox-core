@@ -16,9 +16,7 @@ package org.reactivetoolbox.core.async;
  * limitations under the License.
  */
 
-import org.reactivetoolbox.core.async.impl.PromiseImpl;
 import org.reactivetoolbox.core.lang.Result;
-import org.reactivetoolbox.core.lang.ResultTuple;
 import org.reactivetoolbox.core.lang.Tuple;
 import org.reactivetoolbox.core.lang.Tuple.Tuple1;
 import org.reactivetoolbox.core.lang.Tuple.Tuple2;
@@ -30,26 +28,51 @@ import org.reactivetoolbox.core.lang.Tuple.Tuple7;
 import org.reactivetoolbox.core.lang.Tuple.Tuple8;
 import org.reactivetoolbox.core.lang.Tuple.Tuple9;
 
+import static org.reactivetoolbox.core.async.ActionableThreshold.threshold;
+import static org.reactivetoolbox.core.async.Promise.give;
+import static org.reactivetoolbox.core.lang.Result.success;
+import static org.reactivetoolbox.core.lang.Tuple.with;
+
 public interface PromiseAll<T> {
-    static <T1> Promise<Tuple1<T1>> allOf(final Promise<T1> param1) {
-        return new PromiseAll1<>(param1);
+    static <T1> Promise<Tuple1<T1>> allOf(final Promise<T1> promise1) {
+        return give(promise -> threshold(Tuple1.size(),
+                                         (at) -> promise1.then($ -> at.registerEvent()),
+                                         () -> promise1.then(v1 -> promise.resolve(Tuple.with(v1)))));
     }
 
-    static <T1, T2> Promise<Tuple2<T1, T2>> allOf(final Promise<T1> param1, final Promise<T2> param2) {
-        return new PromiseAll2<>(param1, param2);
+    static <T1, T2> Promise<Tuple2<T1, T2>> allOf(final Promise<T1> promise1, final Promise<T2> promise2) {
+        return give(promise -> threshold(Tuple2.size(),
+                                         (at) -> { promise1.then($ -> at.registerEvent());
+                                                   promise2.then($ -> at.registerEvent()); },
+                                         () -> promise1.then(v1 ->
+                                                 promise2.then(v2 -> promise.resolve(Tuple.with(v1, v2))))));
     }
 
     static <T1, T2, T3> Promise<Tuple3<T1, T2, T3>> allOf(final Promise<T1> promise1,
                                                           final Promise<T2> promise2,
                                                           final Promise<T3> promise3) {
-        return new PromiseAll3<>(promise1, promise2, promise3);
+        return give(promise -> threshold(Tuple3.size(),
+                                         (at) -> { promise1.then($ -> at.registerEvent());
+                                                   promise2.then($ -> at.registerEvent());
+                                                   promise3.then($ -> at.registerEvent()); },
+                                         () -> promise1.then(v1 ->
+                                                 promise2.then(v2 ->
+                                                   promise3.then(v3 -> promise.resolve(Tuple.with(v1, v2, v3)))))));
     }
 
     static <T1, T2, T3, T4> Promise<Tuple4<T1, T2, T3, T4>> allOf(final Promise<T1> promise1,
                                                                   final Promise<T2> promise2,
                                                                   final Promise<T3> promise3,
                                                                   final Promise<T4> promise4) {
-        return new PromiseAll4<>(promise1, promise2, promise3, promise4);
+        return give(promise -> threshold(Tuple4.size(),
+                                         (at) -> { promise1.then($ -> at.registerEvent());
+                                                   promise2.then($ -> at.registerEvent());
+                                                   promise3.then($ -> at.registerEvent());
+                                                   promise4.then($ -> at.registerEvent()); },
+                                         () -> promise1.then(v1 ->
+                                                 promise2.then(v2 ->
+                                                   promise3.then(v3 ->
+                                                     promise4.then(v4 -> promise.resolve(Tuple.with(v1, v2, v3, v4))))))));
     }
 
     static <T1, T2, T3, T4, T5> Promise<Tuple5<T1, T2, T3, T4, T5>> allOf(final Promise<T1> promise1,
@@ -57,7 +80,17 @@ public interface PromiseAll<T> {
                                                                           final Promise<T3> promise3,
                                                                           final Promise<T4> promise4,
                                                                           final Promise<T5> promise5) {
-        return new PromiseAll5<>(promise1, promise2, promise3, promise4, promise5);
+        return give(promise -> threshold(Tuple5.size(),
+                                         (at) -> { promise1.then($ -> at.registerEvent());
+                                                   promise2.then($ -> at.registerEvent());
+                                                   promise3.then($ -> at.registerEvent());
+                                                   promise4.then($ -> at.registerEvent());
+                                                   promise5.then($ -> at.registerEvent()); },
+                                         () -> promise1.then(v1 ->
+                                                 promise2.then(v2 ->
+                                                   promise3.then(v3 ->
+                                                     promise4.then(v4 ->
+                                                       promise5.then(v5 -> promise.resolve(Tuple.with(v1, v2, v3, v4, v5)))))))));
     }
 
     static <T1, T2, T3, T4, T5, T6> Promise<Tuple6<T1, T2, T3, T4, T5, T6>> allOf(final Promise<T1> promise1,
@@ -66,7 +99,19 @@ public interface PromiseAll<T> {
                                                                                   final Promise<T4> promise4,
                                                                                   final Promise<T5> promise5,
                                                                                   final Promise<T6> promise6) {
-        return new PromiseAll6<>(promise1, promise2, promise3, promise4, promise5, promise6);
+        return give(promise -> threshold(Tuple6.size(),
+                                         (at) -> { promise1.then($ -> at.registerEvent());
+                                                   promise2.then($ -> at.registerEvent());
+                                                   promise3.then($ -> at.registerEvent());
+                                                   promise4.then($ -> at.registerEvent());
+                                                   promise5.then($ -> at.registerEvent());
+                                                   promise6.then($ -> at.registerEvent()); },
+                                         () -> promise1.then(v1 ->
+                                                 promise2.then(v2 ->
+                                                   promise3.then(v3 ->
+                                                     promise4.then(v4 ->
+                                                       promise5.then(v5 ->
+                                                         promise6.then(v6 -> promise.resolve(Tuple.with(v1, v2, v3, v4, v5, v6))))))))));
     }
 
     static <T1, T2, T3, T4, T5, T6, T7> Promise<Tuple7<T1, T2, T3, T4, T5, T6, T7>> allOf(final Promise<T1> promise1,
@@ -76,7 +121,21 @@ public interface PromiseAll<T> {
                                                                                           final Promise<T5> promise5,
                                                                                           final Promise<T6> promise6,
                                                                                           final Promise<T7> promise7) {
-        return new PromiseAll7<>(promise1, promise2, promise3, promise4, promise5, promise6, promise7);
+        return give(promise -> threshold(Tuple7.size(),
+                                         (at) -> { promise1.then($ -> at.registerEvent());
+                                                   promise2.then($ -> at.registerEvent());
+                                                   promise3.then($ -> at.registerEvent());
+                                                   promise4.then($ -> at.registerEvent());
+                                                   promise5.then($ -> at.registerEvent());
+                                                   promise6.then($ -> at.registerEvent());
+                                                   promise7.then($ -> at.registerEvent()); },
+                                         () -> promise1.then(v1 ->
+                                                 promise2.then(v2 ->
+                                                   promise3.then(v3 ->
+                                                     promise4.then(v4 ->
+                                                       promise5.then(v5 ->
+                                                         promise6.then(v6 ->
+                                                           promise7.then(v7 -> promise.resolve(Tuple.with(v1, v2, v3, v4, v5, v6, v7)))))))))));
     }
 
     static <T1, T2, T3, T4, T5, T6, T7, T8> Promise<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> allOf(final Promise<T1> promise1,
@@ -87,7 +146,23 @@ public interface PromiseAll<T> {
                                                                                                   final Promise<T6> promise6,
                                                                                                   final Promise<T7> promise7,
                                                                                                   final Promise<T8> promise8) {
-        return new PromiseAll8<>(promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8);
+        return give(promise -> threshold(Tuple8.size(),
+                                         (at) -> { promise1.then($ -> at.registerEvent());
+                                                   promise2.then($ -> at.registerEvent());
+                                                   promise3.then($ -> at.registerEvent());
+                                                   promise4.then($ -> at.registerEvent());
+                                                   promise5.then($ -> at.registerEvent());
+                                                   promise6.then($ -> at.registerEvent());
+                                                   promise7.then($ -> at.registerEvent());
+                                                   promise8.then($ -> at.registerEvent()); },
+                                         () -> promise1.then(v1 ->
+                                                 promise2.then(v2 ->
+                                                   promise3.then(v3 ->
+                                                     promise4.then(v4 ->
+                                                       promise5.then(v5 ->
+                                                         promise6.then(v6 ->
+                                                           promise7.then(v7 ->
+                                                             promise8.then(v8 -> promise.resolve(Tuple.with(v1, v2, v3, v4, v5, v6, v7, v8))))))))))));
     }
 
     static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Promise<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> allOf(final Promise<T1> promise1,
@@ -99,7 +174,25 @@ public interface PromiseAll<T> {
                                                                                                           final Promise<T7> promise7,
                                                                                                           final Promise<T8> promise8,
                                                                                                           final Promise<T9> promise9) {
-        return new PromiseAll9<>(promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8, promise9);
+        return give(promise -> threshold(Tuple9.size(),
+                                         (at) -> { promise1.then($ -> at.registerEvent());
+                                                   promise2.then($ -> at.registerEvent());
+                                                   promise3.then($ -> at.registerEvent());
+                                                   promise4.then($ -> at.registerEvent());
+                                                   promise5.then($ -> at.registerEvent());
+                                                   promise6.then($ -> at.registerEvent());
+                                                   promise7.then($ -> at.registerEvent());
+                                                   promise8.then($ -> at.registerEvent());
+                                                   promise9.then($ -> at.registerEvent()); },
+                                         () -> promise1.then(v1 ->
+                                                 promise2.then(v2 ->
+                                                   promise3.then(v3 ->
+                                                     promise4.then(v4 ->
+                                                       promise5.then(v5 ->
+                                                         promise6.then(v6 ->
+                                                           promise7.then(v7 ->
+                                                             promise8.then(v8 ->
+                                                               promise9.then(v9 -> promise.resolve(Tuple.with(v1, v2, v3, v4, v5, v6, v7, v8, v9)))))))))))));
     }
 
     //--------------------------------------------------------------------------------------
@@ -107,29 +200,49 @@ public interface PromiseAll<T> {
     //--------------------------------------------------------------------------------------
 
     static <T1> PromiseResult<Tuple1<T1>> resultsOf(final Promise<Result<T1>> promise1) {
-        return PromiseResult.from(allOf(promise1)
-                                          .map(tuple -> ResultTuple.of(tuple).zip()));
+        return PromiseResult.from(allOf(promise1).map(tuple -> tuple.map(PromiseAll::zip)));
+    }
+
+    static <T1> Result<Tuple1<T1>> zip(final Result<T1> value) {
+        return value.flatMap(vv1 -> success(Tuple.with(vv1)));
     }
 
     static <T1, T2> PromiseResult<Tuple2<T1, T2>> resultsOf(final Promise<Result<T1>> promise1,
                                                             final Promise<Result<T2>> promise2) {
-        return PromiseResult.from(allOf(promise1, promise2)
-                                          .map(tuple -> ResultTuple.of(tuple).zip()));
+        return PromiseResult.from(allOf(promise1, promise2).map(tuple -> tuple.map(PromiseAll::zip)));
+    }
+
+    static <T1, T2> Result<Tuple2<T1, T2>> zip(final Result<T1> value1, final Result<T2> value2) {
+        return value1.flatMap(vv1 -> value2.flatMap(vv2 -> success(with(vv1, vv2))));
     }
 
     static <T1, T2, T3> PromiseResult<Tuple3<T1, T2, T3>> resultsOf(final Promise<Result<T1>> promise1,
                                                                     final Promise<Result<T2>> promise2,
                                                                     final Promise<Result<T3>> promise3) {
-        return PromiseResult.from(allOf(promise1, promise2, promise3)
-                                          .map(tuple -> ResultTuple.of(tuple).zip()));
+        return PromiseResult.from(allOf(promise1, promise2, promise3).map(tuple -> tuple.map(PromiseAll::zip)));
+    }
+
+    static <T1, T2, T3> Result<Tuple3<T1, T2, T3>> zip(final Result<T1> value1, final Result<T2> value2, final Result<T3> value3) {
+        return value1.flatMap(vv1 ->
+                 value2.flatMap(vv2 ->
+                   value3.flatMap(vv3 -> success(with(vv1, vv2, vv3)))));
     }
 
     static <T1, T2, T3, T4> PromiseResult<Tuple4<T1, T2, T3, T4>> resultsOf(final Promise<Result<T1>> promise1,
                                                                             final Promise<Result<T2>> promise2,
                                                                             final Promise<Result<T3>> promise3,
                                                                             final Promise<Result<T4>> promise4) {
-        return PromiseResult.from(allOf(promise1, promise2, promise3, promise4)
-                                          .map(tuple -> ResultTuple.of(tuple).zip()));
+        return PromiseResult.from(allOf(promise1, promise2, promise3, promise4).map(tuple -> tuple.map(PromiseAll::zip)));
+    }
+
+    static <T1, T2, T3, T4> Result<Tuple4<T1, T2, T3, T4>> zip(final Result<T1> value1,
+                                                               final Result<T2> value2,
+                                                               final Result<T3> value3,
+                                                               final Result<T4> value4) {
+        return value1.flatMap(vv1 ->
+                 value2.flatMap(vv2 ->
+                   value3.flatMap(vv3 ->
+                     value4.flatMap(vv4 -> success(with(vv1, vv2, vv3, vv4))))));
     }
 
     static <T1, T2, T3, T4, T5> PromiseResult<Tuple5<T1, T2, T3, T4, T5>> resultsOf(final Promise<Result<T1>> promise1,
@@ -137,8 +250,20 @@ public interface PromiseAll<T> {
                                                                                     final Promise<Result<T3>> promise3,
                                                                                     final Promise<Result<T4>> promise4,
                                                                                     final Promise<Result<T5>> promise5) {
-        return PromiseResult.from(allOf(promise1, promise2, promise3, promise4, promise5)
-                                          .map(tuple -> ResultTuple.of(tuple).zip()));
+        return PromiseResult.from(allOf(promise1, promise2, promise3,
+                                        promise4, promise5).map(tuple -> tuple.map(PromiseAll::zip)));
+    }
+
+    static <T1, T2, T3, T4, T5> Result<Tuple5<T1, T2, T3, T4, T5>> zip(final Result<T1> value1,
+                                                                       final Result<T2> value2,
+                                                                       final Result<T3> value3,
+                                                                       final Result<T4> value4,
+                                                                       final Result<T5> value5) {
+        return value1.flatMap(vv1 ->
+                 value2.flatMap(vv2 ->
+                   value3.flatMap(vv3 ->
+                     value4.flatMap(vv4 ->
+                       value5.flatMap(vv5 -> success(with(vv1, vv2, vv3, vv4, vv5)))))));
     }
 
     static <T1, T2, T3, T4, T5, T6> PromiseResult<Tuple6<T1, T2, T3, T4, T5, T6>> resultsOf(final Promise<Result<T1>> promise1,
@@ -147,8 +272,22 @@ public interface PromiseAll<T> {
                                                                                             final Promise<Result<T4>> promise4,
                                                                                             final Promise<Result<T5>> promise5,
                                                                                             final Promise<Result<T6>> promise6) {
-        return PromiseResult.from(allOf(promise1, promise2, promise3, promise4, promise5, promise6)
-                                          .map(tuple -> ResultTuple.of(tuple).zip()));
+        return PromiseResult.from(allOf(promise1, promise2, promise3,
+                                        promise4, promise5, promise6).map(tuple -> tuple.map(PromiseAll::zip)));
+    }
+
+    static <T1, T2, T3, T4, T5, T6> Result<Tuple6<T1, T2, T3, T4, T5, T6>> zip(final Result<T1> value1,
+                                                                               final Result<T2> value2,
+                                                                               final Result<T3> value3,
+                                                                               final Result<T4> value4,
+                                                                               final Result<T5> value5,
+                                                                               final Result<T6> value6) {
+        return value1.flatMap(vv1 ->
+                 value2.flatMap(vv2 ->
+                   value3.flatMap(vv3 ->
+                     value4.flatMap(vv4 ->
+                       value5.flatMap(vv5 ->
+                         value6.flatMap(vv6 -> success(with(vv1, vv2, vv3, vv4, vv5, vv6))))))));
     }
 
     static <T1, T2, T3, T4, T5, T6, T7> PromiseResult<Tuple7<T1, T2, T3, T4, T5, T6, T7>> resultsOf(final Promise<Result<T1>> promise1,
@@ -158,8 +297,24 @@ public interface PromiseAll<T> {
                                                                                                     final Promise<Result<T5>> promise5,
                                                                                                     final Promise<Result<T6>> promise6,
                                                                                                     final Promise<Result<T7>> promise7) {
-        return PromiseResult.from(allOf(promise1, promise2, promise3, promise4, promise5, promise6, promise7)
-                                          .map(tuple -> ResultTuple.of(tuple).zip()));
+        return PromiseResult.from(allOf(promise1, promise2, promise3, promise4,
+                                        promise5, promise6, promise7).map(tuple -> tuple.map(PromiseAll::zip)));
+    }
+
+    static <T1, T2, T3, T4, T5, T6, T7> Result<Tuple7<T1, T2, T3, T4, T5, T6, T7>> zip(final Result<T1> value1,
+                                                                                       final Result<T2> value2,
+                                                                                       final Result<T3> value3,
+                                                                                       final Result<T4> value4,
+                                                                                       final Result<T5> value5,
+                                                                                       final Result<T6> value6,
+                                                                                       final Result<T7> value7) {
+        return value1.flatMap(vv1 ->
+                 value2.flatMap(vv2 ->
+                   value3.flatMap(vv3 ->
+                     value4.flatMap(vv4 ->
+                       value5.flatMap(vv5 ->
+                         value6.flatMap(vv6 ->
+                           value7.flatMap(vv7 -> success(with(vv1, vv2, vv3, vv4, vv5, vv6, vv7)))))))));
     }
 
     static <T1, T2, T3, T4, T5, T6, T7, T8> PromiseResult<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> resultsOf(final Promise<Result<T1>> promise1,
@@ -171,8 +326,25 @@ public interface PromiseAll<T> {
                                                                                                             final Promise<Result<T7>> promise7,
                                                                                                             final Promise<Result<T8>> promise8) {
         return PromiseResult.from(allOf(promise1, promise2, promise3, promise4,
-                                        promise5, promise6, promise7, promise8)
-                                          .map(tuple -> ResultTuple.of(tuple).zip()));
+                                        promise5, promise6, promise7, promise8).map(tuple -> tuple.map(PromiseAll::zip)));
+    }
+
+    static <T1, T2, T3, T4, T5, T6, T7, T8> Result<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> zip(final Result<T1> value1,
+                                                                                               final Result<T2> value2,
+                                                                                               final Result<T3> value3,
+                                                                                               final Result<T4> value4,
+                                                                                               final Result<T5> value5,
+                                                                                               final Result<T6> value6,
+                                                                                               final Result<T7> value7,
+                                                                                               final Result<T8> value8) {
+        return value1.flatMap(vv1 ->
+                 value2.flatMap(vv2 ->
+                   value3.flatMap(vv3 ->
+                     value4.flatMap(vv4 ->
+                       value5.flatMap(vv5 ->
+                         value6.flatMap(vv6 ->
+                           value7.flatMap(vv7 ->
+                             value8.flatMap(vv8 -> success(with(vv1, vv2, vv3, vv4, vv5, vv6, vv7, vv8))))))))));
     }
 
     static <T1, T2, T3, T4, T5, T6, T7, T8, T9> PromiseResult<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> resultsOf(final Promise<Result<T1>> promise1,
@@ -186,195 +358,26 @@ public interface PromiseAll<T> {
                                                                                                                     final Promise<Result<T9>> promise9) {
         return PromiseResult.from(allOf(promise1, promise2, promise3,
                                         promise4, promise5, promise6,
-                                        promise7, promise8, promise9)
-                                          .map(tuple -> ResultTuple.of(tuple).zip()));
+                                        promise7, promise8, promise9).map(tuple -> tuple.map(PromiseAll::zip)));
     }
 
-    class PromiseAll1<T1> extends PromiseImpl<Tuple1<T1>> {
-        private PromiseAll1(final Promise<T1> promise1) {
-            final ActionableThreshold threshold = ActionableThreshold.of(Tuple1.size(),
-                                                                         () -> promise1.then(v1 -> resolve(Tuple.with(v1))));
-            promise1.then($ -> threshold.registerEvent());
-        }         
-    }
-
-    class PromiseAll2<T1, T2> extends PromiseImpl<Tuple2<T1, T2>> {
-        private PromiseAll2(final Promise<T1> promise1,
-                            final Promise<T2> promise2) {
-            final var threshold = ActionableThreshold.of(Tuple2.size(),
-                                                         () ->
-                                                          promise1.then(v1 ->
-                                                           promise2.then(v2 -> resolve(Tuple.with(v1, v2)))));
-            promise1.then($ -> threshold.registerEvent());
-            promise2.then($ -> threshold.registerEvent());
-        }
-    }
-
-    class PromiseAll3<T1, T2, T3> extends PromiseImpl<Tuple3<T1, T2, T3>> {
-        private PromiseAll3(final Promise<T1> promise1,
-                            final Promise<T2> promise2,
-                            final Promise<T3> promise3) {
-            final var threshold = ActionableThreshold.of(Tuple3.size(),
-                                                         () ->
-                                                          promise1.then(v1 ->
-                                                           promise2.then(v2 ->
-                                                            promise3.then(v3 -> resolve(Tuple.with(v1, v2, v3))))));
-            promise1.then($ -> threshold.registerEvent());
-            promise2.then($ -> threshold.registerEvent());
-            promise3.then($ -> threshold.registerEvent());
-        }
-    }
-
-    class PromiseAll4<T1, T2, T3, T4> extends PromiseImpl<Tuple4<T1, T2, T3, T4>> {
-        private PromiseAll4(final Promise<T1> promise1,
-                            final Promise<T2> promise2,
-                            final Promise<T3> promise3,
-                            final Promise<T4> promise4) {
-            final var threshold = ActionableThreshold.of(Tuple4.size(),
-                                                         () ->
-                                                          promise1.then(v1 ->
-                                                           promise2.then(v2 ->
-                                                            promise3.then(v3 ->
-                                                             promise4.then(v4 -> resolve(Tuple.with(v1, v2, v3, v4)))))));
-            promise1.then($ -> threshold.registerEvent());
-            promise2.then($ -> threshold.registerEvent());
-            promise3.then($ -> threshold.registerEvent());
-            promise4.then($ -> threshold.registerEvent());
-        }
-    }
-
-    class PromiseAll5<T1, T2, T3, T4, T5> extends PromiseImpl<Tuple5<T1, T2, T3, T4, T5>> {
-        private PromiseAll5(final Promise<T1> promise1,
-                            final Promise<T2> promise2,
-                            final Promise<T3> promise3,
-                            final Promise<T4> promise4,
-                            final Promise<T5> promise5) {
-            final var threshold = ActionableThreshold.of(Tuple5.size(),
-                                                         () ->
-                                                          promise1.then(v1 ->
-                                                           promise2.then(v2 ->
-                                                            promise3.then(v3 ->
-                                                             promise4.then(v4 ->
-                                                              promise5.then(v5 -> resolve(Tuple.with(v1, v2, v3, v4, v5))))))));
-            promise1.then($ -> threshold.registerEvent());
-            promise2.then($ -> threshold.registerEvent());
-            promise3.then($ -> threshold.registerEvent());
-            promise4.then($ -> threshold.registerEvent());
-            promise5.then($ -> threshold.registerEvent());
-        }
-    }
-
-    class PromiseAll6<T1, T2, T3, T4, T5, T6> extends PromiseImpl<Tuple6<T1, T2, T3, T4, T5, T6>> {
-        private PromiseAll6(final Promise<T1> promise1,
-                            final Promise<T2> promise2,
-                            final Promise<T3> promise3,
-                            final Promise<T4> promise4,
-                            final Promise<T5> promise5,
-                            final Promise<T6> promise6) {
-            final var threshold = ActionableThreshold.of(Tuple6.size(),
-                                                         () ->
-                                                          promise1.then(v1 ->
-                                                           promise2.then(v2 ->
-                                                            promise3.then(v3 ->
-                                                             promise4.then(v4 ->
-                                                              promise5.then(v5 ->
-                                                               promise6.then(v6 ->resolve(Tuple.with(v1, v2, v3, v4, v5, v6)))))))));
-            promise1.then($ -> threshold.registerEvent());
-            promise2.then($ -> threshold.registerEvent());
-            promise3.then($ -> threshold.registerEvent());
-            promise4.then($ -> threshold.registerEvent());
-            promise5.then($ -> threshold.registerEvent());
-            promise6.then($ -> threshold.registerEvent());
-        }
-    }
-
-    class PromiseAll7<T1, T2, T3, T4, T5, T6, T7> extends PromiseImpl<Tuple7<T1, T2, T3, T4, T5, T6, T7>> {
-        private PromiseAll7(final Promise<T1> promise1,
-                            final Promise<T2> promise2,
-                            final Promise<T3> promise3,
-                            final Promise<T4> promise4,
-                            final Promise<T5> promise5,
-                            final Promise<T6> promise6,
-                            final Promise<T7> promise7) {
-            final var threshold = ActionableThreshold.of(Tuple7.size(),
-                                                         () ->
-                                                          promise1.then(v1 ->
-                                                           promise2.then(v2 ->
-                                                            promise3.then(v3 ->
-                                                             promise4.then(v4 ->
-                                                              promise5.then(v5 ->
-                                                               promise6.then(v6 ->
-                                                                promise7.then(v7 ->resolve(Tuple.with(v1, v2, v3, v4, v5, v6, v7))))))))));
-            promise1.then($ -> threshold.registerEvent());
-            promise2.then($ -> threshold.registerEvent());
-            promise3.then($ -> threshold.registerEvent());
-            promise4.then($ -> threshold.registerEvent());
-            promise5.then($ -> threshold.registerEvent());
-            promise6.then($ -> threshold.registerEvent());
-            promise7.then($ -> threshold.registerEvent());
-        }
-    }
-
-    class PromiseAll8<T1, T2, T3, T4, T5, T6, T7, T8> extends PromiseImpl<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> {
-        private PromiseAll8(final Promise<T1> promise1,
-                            final Promise<T2> promise2,
-                            final Promise<T3> promise3,
-                            final Promise<T4> promise4,
-                            final Promise<T5> promise5,
-                            final Promise<T6> promise6,
-                            final Promise<T7> promise7,
-                            final Promise<T8> promise8) {
-            final var threshold = ActionableThreshold.of(Tuple8.size(),
-                                                         () ->
-                                                          promise1.then(v1 ->
-                                                           promise2.then(v2 ->
-                                                            promise3.then(v3 ->
-                                                             promise4.then(v4 ->
-                                                              promise5.then(v5 ->
-                                                               promise6.then(v6 ->
-                                                                promise7.then(v7 ->
-                                                                 promise8.then(v8 ->resolve(Tuple.with(v1, v2, v3, v4, v5, v6, v7, v8)))))))))));
-            promise1.then($ -> threshold.registerEvent());
-            promise2.then($ -> threshold.registerEvent());
-            promise3.then($ -> threshold.registerEvent());
-            promise4.then($ -> threshold.registerEvent());
-            promise5.then($ -> threshold.registerEvent());
-            promise6.then($ -> threshold.registerEvent());
-            promise7.then($ -> threshold.registerEvent());
-            promise8.then($ -> threshold.registerEvent());
-        }
-    }
-
-    class PromiseAll9<T1, T2, T3, T4, T5, T6, T7, T8, T9> extends PromiseImpl<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> {
-        private PromiseAll9(final Promise<T1> promise1,
-                            final Promise<T2> promise2,
-                            final Promise<T3> promise3,
-                            final Promise<T4> promise4,
-                            final Promise<T5> promise5,
-                            final Promise<T6> promise6,
-                            final Promise<T7> promise7,
-                            final Promise<T8> promise8,
-                            final Promise<T9> promise9) {
-            final var threshold = ActionableThreshold.of(Tuple9.size(),
-                                                               () ->
-                                                                promise1.then(v1 ->
-                                                                 promise2.then(v2 ->
-                                                                  promise3.then(v3 ->
-                                                                   promise4.then(v4 ->
-                                                                    promise5.then(v5 ->
-                                                                     promise6.then(v6 ->
-                                                                      promise7.then(v7 ->
-                                                                       promise8.then(v8 ->
-                                                                        promise9.then(v9 -> resolve(Tuple.with(v1, v2, v3, v4, v5, v6, v7, v8, v9))))))))))));
-            promise1.then($ -> threshold.registerEvent());
-            promise2.then($ -> threshold.registerEvent());
-            promise3.then($ -> threshold.registerEvent());
-            promise4.then($ -> threshold.registerEvent());
-            promise5.then($ -> threshold.registerEvent());
-            promise6.then($ -> threshold.registerEvent());
-            promise7.then($ -> threshold.registerEvent());
-            promise8.then($ -> threshold.registerEvent());
-            promise9.then($ -> threshold.registerEvent());
-        }
+    static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Result<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> zip(final Result<T1> value1,
+                                                                                                       final Result<T2> value2,
+                                                                                                       final Result<T3> value3,
+                                                                                                       final Result<T4> value4,
+                                                                                                       final Result<T5> value5,
+                                                                                                       final Result<T6> value6,
+                                                                                                       final Result<T7> value7,
+                                                                                                       final Result<T8> value8,
+                                                                                                       final Result<T9> value9) {
+        return value1.flatMap(vv1 ->
+                 value2.flatMap(vv2 ->
+                   value3.flatMap(vv3 ->
+                     value4.flatMap(vv4 ->
+                       value5.flatMap(vv5 ->
+                         value6.flatMap(vv6 ->
+                           value7.flatMap(vv7 ->
+                             value8.flatMap(vv8 ->
+                               value9.flatMap(vv9 -> success(with(vv1, vv2, vv3, vv4, vv5, vv6, vv7, vv8, vv9)))))))))));
     }
 }
