@@ -1,7 +1,7 @@
 package org.reactivetoolbox.core.scheduler.impl;
 
 import org.junit.jupiter.api.Test;
-import org.reactivetoolbox.core.async.PromiseResult;
+import org.reactivetoolbox.core.async.Promise;
 import org.reactivetoolbox.core.scheduler.Timeout;
 
 import java.util.List;
@@ -38,9 +38,9 @@ class TimeoutSchedulerTest {
                 .forEach((n) -> executor.execute(() -> {
                     counters[n] = new AtomicLong();
                     range(0, N_ITEMS_PER_TASK).forEach((k) -> {
-                        PromiseResult.result()
-                                     .on(Timeout.timeout(nextTaskDelay()).millis(), TIMEOUT.asFailure())
-                                     .then(v -> counters[n].incrementAndGet());
+                        Promise.promise()
+                               .when(Timeout.timeout(nextTaskDelay()).millis(), TIMEOUT.asFailure())
+                               .onResult(v -> counters[n].incrementAndGet());
                     });
                 }));
 

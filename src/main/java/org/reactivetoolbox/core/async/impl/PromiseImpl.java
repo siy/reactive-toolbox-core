@@ -18,6 +18,7 @@ package org.reactivetoolbox.core.async.impl;
 
 import org.reactivetoolbox.core.async.Promise;
 import org.reactivetoolbox.core.lang.Option;
+import org.reactivetoolbox.core.lang.Result;
 import org.reactivetoolbox.core.meta.AppMetaRepository;
 import org.reactivetoolbox.core.scheduler.TaskScheduler;
 import org.reactivetoolbox.core.scheduler.Timeout;
@@ -34,24 +35,18 @@ import java.util.function.Consumer;
  * Implementation of {@link Promise}
  */
 public class PromiseImpl<T> implements Promise<T> {
-    private final AtomicMarkableReference<T> value = new AtomicMarkableReference<>(null, false);
-    private final BlockingQueue<Consumer<T>> thenActions = new LinkedBlockingQueue<>();
+    private final AtomicMarkableReference<Result<T>> value = new AtomicMarkableReference<>(null, false);
+    private final BlockingQueue<Consumer<Result<T>>> thenActions = new LinkedBlockingQueue<>();
 
     public PromiseImpl() {
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Option<T> value() {
+    @Deprecated
+    public Option<Result<T>> value() {
         return Option.of(value.getReference());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
+    @Deprecated
     public boolean ready() {
         return value.isMarked();
     }
@@ -60,7 +55,7 @@ public class PromiseImpl<T> implements Promise<T> {
      * {@inheritDoc}
      */
     @Override
-    public Promise<T> resolve(final T result) {
+    public Promise<T> resolve(final Result<T> result) {
         if (value.compareAndSet(null, result, false, true)) {
             thenActions.forEach(action -> {
                 try {
@@ -77,15 +72,7 @@ public class PromiseImpl<T> implements Promise<T> {
      * {@inheritDoc}
      */
     @Override
-    public Promise<T> resolveAsync(final T result) {
-        return async(promise -> promise.resolve(result));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Promise<T> then(final Consumer<T> action) {
+    public Promise<T> onResult(final Consumer<Result<T>> action) {
         if (value.isMarked()) {
             try {
                 action.accept(value.getReference());
@@ -104,7 +91,7 @@ public class PromiseImpl<T> implements Promise<T> {
     @Override
     public Promise<T> syncWait() {
         final var latch = new CountDownLatch(1);
-        then(value -> latch.countDown());
+        onResult(value -> latch.countDown());
 
         try {
             latch.await();
@@ -120,7 +107,7 @@ public class PromiseImpl<T> implements Promise<T> {
     @Override
     public Promise<T> syncWait(final Timeout timeout) {
         final var latch = new CountDownLatch(1);
-        then(value -> latch.countDown());
+        onResult(value -> latch.countDown());
 
         try {
             latch.await(timeout.timeout(), TimeUnit.MILLISECONDS);

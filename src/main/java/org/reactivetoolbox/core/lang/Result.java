@@ -114,7 +114,7 @@ public interface Result<T> extends Either<Failure, T> {
      *
      * @return current instance for fluent call chaining
      */
-    default Result<T> whenSuccess(final Consumer<T> consumer) {
+    default Result<T> onSuccess(final Consumer<T> consumer) {
         return map(t1 -> this, t1 -> { consumer.accept(t1); return this; });
     }
 
@@ -126,7 +126,7 @@ public interface Result<T> extends Either<Failure, T> {
      *
      * @return current instance for fluent call chaining
      */
-    default Result<T> whenFailure(final Consumer<? super Failure> consumer) {
+    default Result<T> onFailure(final Consumer<? super Failure> consumer) {
         return map(t1 -> { consumer.accept(t1); return this; }, t1 -> this);
     }
 

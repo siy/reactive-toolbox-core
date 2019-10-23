@@ -16,12 +16,12 @@ class PromiseTest {
     @Test
     void multipleResolutionsAreIgnored() {
         final var holder = new AtomicInteger(-1);
-        final var promise = Promise.<Integer>give().then(holder::set);
+        final var promise = Promise.<Integer>promise().onSuccess(holder::set);
 
-        promise.resolve(1);
-        promise.resolve(2);
-        promise.resolve(3);
-        promise.resolve(4);
+        promise.ok(1);
+        promise.ok(2);
+        promise.ok(3);
+        promise.ok(4);
 
         assertEquals(1, holder.get());
     }
@@ -29,7 +29,7 @@ class PromiseTest {
     @Test
     void fulfilledPromiseIsAlreadyResolved() {
         final var holder = new AtomicInteger(-1);
-        Promise.fulfilled(123).then(holder::set);
+        Promise.fulfilled(123).onSuccess(holder::set);
 
         assertEquals(123, holder.get());
     }
@@ -37,9 +37,9 @@ class PromiseTest {
     @Test
     void thenActionsAreExecuted() {
         final var holder = new AtomicInteger(-1);
-        final var promise = Promise.<Integer>give().then(holder::set);
+        final var promise = Promise.<Integer>promise().onSuccess(holder::set);
 
-        promise.resolve(1);
+        promise.ok(1);
 
         assertEquals(1, holder.get());
     }
@@ -47,10 +47,10 @@ class PromiseTest {
     @Test
     void thenActionsAreExecutedEvenIfAddedAfterPromiseResolution() {
         final var holder = new AtomicInteger(-1);
-        final var promise = Promise.<Integer>give();
+        final var promise = Promise.<Integer>promise();
 
-        promise.resolve(1);
-        promise.then(holder::set);
+        promise.ok(1);
+        promise.onSuccess(holder::set);
 
         assertEquals(1, holder.get());
     }
@@ -58,9 +58,9 @@ class PromiseTest {
     @Test
     void syncWaitIsWaitingForResolution() {
         final var holder = new AtomicInteger(-1);
-        final var promise = Promise.<Integer>give().then(holder::set);
+        final var promise = Promise.<Integer>promise().onSuccess(holder::set);
 
-        executor.execute(() -> {safeSleep(20); promise.resolve(1);});
+        executor.execute(() -> {safeSleep(20); promise.ok(1);});
 
         promise.syncWait();
 
@@ -70,11 +70,11 @@ class PromiseTest {
     @Test
     void syncWaitDoesNotWaitForAlreadyResolved() {
         final var holder = new AtomicInteger(-1);
-        final var promise = Promise.<Integer>give().then(holder::set);
+        final var promise = Promise.<Integer>promise().onSuccess(holder::set);
 
         assertEquals(-1, holder.get());
 
-        promise.resolve(1);
+        promise.ok(1);
 
         promise.syncWait();
 
@@ -84,11 +84,11 @@ class PromiseTest {
     @Test
     void syncWaitWithTimeoutIsWaitingForResolution() {
         final var holder = new AtomicInteger(-1);
-        final var promise = Promise.<Integer>give().then(holder::set);
+        final var promise = Promise.<Integer>promise().onSuccess(holder::set);
 
         assertEquals(-1, holder.get());
 
-        executor.execute(() -> {safeSleep(20); promise.resolve(1);});
+        executor.execute(() -> {safeSleep(20); promise.ok(1);});
 
         assertEquals(-1, holder.get());
 
@@ -100,11 +100,11 @@ class PromiseTest {
     @Test
     void syncWaitWithTimeoutIsWaitingForTimeout() {
         final var holder = new AtomicInteger(-1);
-        final var promise = Promise.<Integer>give().then(holder::set);
+        final var promise = Promise.<Integer>promise().onSuccess(holder::set);
 
         assertEquals(-1, holder.get());
 
-        executor.execute(() -> {safeSleep(200); promise.resolve(1);});
+        executor.execute(() -> {safeSleep(200); promise.ok(1);});
 
         promise.syncWait(timeout(10).millis());
 
@@ -114,7 +114,7 @@ class PromiseTest {
     @Test
     void promiseIsResolvedWhenTimeoutExpires() {
         final var holder = new AtomicInteger(-1);
-        final var promise = Promise.<Integer>give().then(holder::set).async(timeout(100).millis(), task -> task.resolve(123));
+        final var promise = Promise.<Integer>promise().onSuccess(holder::set).async(timeout(100).millis(), task -> task.ok(123));
 
         assertEquals(-1, holder.get());
 
@@ -126,13 +126,13 @@ class PromiseTest {
     @Test
     void taskCanBeExecuted() {
         final var holder = new AtomicInteger(-1);
-        final var promise = Promise.<Integer>give()
-                .then(holder::set)
-                .async(timeout(100).millis(), task -> task.resolve(123));
+        final var promise = Promise.<Integer>promise()
+                .onSuccess(holder::set)
+                .async(timeout(100).millis(), task -> task.ok(123));
 
         assertEquals(-1, holder.get());
 
-        promise.async(p -> p.resolve(345)).syncWait();
+        promise.async(p -> p.ok(345)).syncWait();
 
         assertEquals(345, holder.get());
     }
@@ -140,14 +140,14 @@ class PromiseTest {
     @Test
     void anyResolvedPromiseResolvesResultForFirstPromise() {
         final var holder = new AtomicInteger(-1);
-        final var promise1 = Promise.<Integer>give();
-        final var promise2 = Promise.<Integer>give();
+        final var promise1 = Promise.<Integer>promise();
+        final var promise2 = Promise.<Integer>promise();
 
-        Promise.any(promise1, promise2).then(holder::set);
+        Promise.any(promise1, promise2).onSuccess(holder::set);
 
         assertEquals(-1, holder.get());
 
-        promise1.resolve(1);
+        promise1.ok(1);
 
         assertEquals(1, holder.get());
     }
@@ -155,13 +155,13 @@ class PromiseTest {
     @Test
     void anyResolvedPromiseResolvesResultForSecondPromise() {
         final var holder = new AtomicInteger(-1);
-        final var promise1 = Promise.<Integer>give();
-        final var promise2 = Promise.<Integer>give();
-        Promise.any(promise1, promise2).then(holder::set);
+        final var promise1 = Promise.<Integer>promise();
+        final var promise2 = Promise.<Integer>promise();
+        Promise.any(promise1, promise2).onSuccess(holder::set);
 
         assertEquals(-1, holder.get());
 
-        promise2.resolve(1);
+        promise2.ok(1);
 
         assertEquals(1, holder.get());
     }

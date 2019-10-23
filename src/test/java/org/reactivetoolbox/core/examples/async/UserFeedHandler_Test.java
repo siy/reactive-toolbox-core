@@ -1,6 +1,6 @@
 package org.reactivetoolbox.core.examples.async;
 
-import org.reactivetoolbox.core.async.PromiseResult;
+import org.reactivetoolbox.core.async.Promise;
 import org.reactivetoolbox.core.examples.async.domain.Article;
 import org.reactivetoolbox.core.examples.async.domain.Order;
 import org.reactivetoolbox.core.examples.async.domain.Topic;
@@ -22,10 +22,10 @@ public class UserFeedHandler_Test {
     private TopicService topicService;
     private UserService userService;
 
-    public PromiseResult<List<Article>> userFeedHandler(final User.Id userId) {
+    public Promise<List<Article>> userFeedHandler(final User.Id userId) {
         return all(topicService.topicsByUser(userId, Order.ANY),
                    userService.followers(userId))
                 .chainMap(tuple -> tuple.map((topics, users) -> articleService.userFeed(map(topics, Topic::id), map(users, User::id))))
-                .on(timeout(30).seconds(), failure(Errors.TIMEOUT));
+                .when(timeout(30).seconds(), failure(Errors.TIMEOUT));
     }
 }

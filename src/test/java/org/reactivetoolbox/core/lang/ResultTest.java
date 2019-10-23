@@ -33,14 +33,14 @@ class ResultTest {
     @Test
     void ifSuccessCalledForSuccessResult() {
         final Integer[] result = new Integer[1];
-        success(5).whenSuccess(v -> result[0] = v);
+        success(5).onSuccess(v -> result[0] = v);
         assertEquals(5, result[0]);
     }
 
     @Test
     void ifFailureCalledForSuccessResult() {
         final Failure[] result = new Failure[1];
-        failure(TEST_FAILURE).whenFailure(v -> result[0] = v);
+        failure(TEST_FAILURE).onFailure(v -> result[0] = v);
         assertEquals(TEST_FAILURE, result[0]);
     }
 
@@ -48,19 +48,19 @@ class ResultTest {
     void rangeValidatorTest() {
         validateBetween(19, 20, 100)
                 .map(Objects::toString)
-                .whenSuccess(val -> fail());
+                .onSuccess(val -> fail());
         validateBetween(101, 20, 100)
                 .map(Objects::toString)
-                .whenSuccess(val -> fail());
+                .onSuccess(val -> fail());
         validateBetween(20, 20, 100)
                 .map(Objects::toString)
-                .whenFailure(val -> fail());
+                .onFailure(val -> fail());
         validateBetween(100, 20, 100)
                 .map(Objects::toString)
-                .whenFailure(val -> fail());
+                .onFailure(val -> fail());
         validateBetween(60, 20, 100)
                 .map(Objects::toString)
-                .whenFailure(val -> fail());
+                .onFailure(val -> fail());
     }
 
     private Result<Integer> validateBetween(final int value, final int min, final int max) {
