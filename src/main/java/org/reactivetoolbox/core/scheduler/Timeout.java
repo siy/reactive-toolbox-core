@@ -28,7 +28,7 @@ public final class Timeout {
         this.timeout = timeout;
     }
 
-    public static TimeoutBuilder of(final long value) {
+    public static TimeoutBuilder timeout(final long value) {
         return new TimeoutBuilder(value);
     }
 

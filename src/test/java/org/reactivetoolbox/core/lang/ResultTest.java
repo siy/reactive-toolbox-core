@@ -1,7 +1,6 @@
 package org.reactivetoolbox.core.lang;
 
 import org.junit.jupiter.api.Test;
-import org.reactivetoolbox.core.lang.Result.Result1;
 import org.reactivetoolbox.core.lang.support.WebFailureTypes;
 import org.reactivetoolbox.core.scheduler.Errors;
 
@@ -12,17 +11,10 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.reactivetoolbox.core.lang.Result.failure;
 import static org.reactivetoolbox.core.lang.Result.success;
-import static org.reactivetoolbox.core.lang.Tuple.with;
 import static org.reactivetoolbox.core.lang.support.WebFailureTypes.INTERNAL_SERVER_ERROR;
 
 class ResultTest {
     static final Failure TEST_FAILURE = Failure.of(INTERNAL_SERVER_ERROR, "Test error");
-
-    @Test
-    void flatMapIsSafeInRegardToTypes() {
-        Result1.from(success(1).flatMap(vv11 -> success(with(vv11))));
-        Result1.from(failure(TEST_FAILURE).flatMap(vv1 -> success(with(vv1))));
-    }
 
     @Test
     void equalsFollowsContract() {

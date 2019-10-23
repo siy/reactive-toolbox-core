@@ -8,11 +8,14 @@ import org.reactivetoolbox.core.examples.async.domain.User;
 import org.reactivetoolbox.core.examples.async.services.ArticleService;
 import org.reactivetoolbox.core.examples.async.services.TopicService;
 import org.reactivetoolbox.core.examples.async.services.UserService;
+import org.reactivetoolbox.core.scheduler.Errors;
 
 import java.util.List;
 
 import static org.reactivetoolbox.core.CollectionUtil.map;
-import static org.reactivetoolbox.core.async.PromiseAll.resultsOf;
+import static org.reactivetoolbox.core.async.PromiseAll.all;
+import static org.reactivetoolbox.core.lang.Result.failure;
+import static org.reactivetoolbox.core.scheduler.Timeout.timeout;
 
 public class UserFeedHandler_Test {
     private ArticleService articleService;
@@ -20,10 +23,9 @@ public class UserFeedHandler_Test {
     private UserService userService;
 
     public PromiseResult<List<Article>> userFeedHandler(final User.Id userId) {
-        return resultsOf(topicService.topicsByUser(userId, Order.ANY),
-                         userService.followers(userId))
+        return all(topicService.topicsByUser(userId, Order.ANY),
+                   userService.followers(userId))
                 .chainMap(tuple -> tuple.map((topics, users) -> articleService.userFeed(map(topics, Topic::id), map(users, User::id))))
-                //.with(Timeout.of(30).seconds(), Result.failure(Error.with()));
-        ;
+                .on(timeout(30).seconds(), failure(Errors.TIMEOUT));
     }
 }

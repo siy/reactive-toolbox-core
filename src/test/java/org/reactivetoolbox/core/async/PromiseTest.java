@@ -1,13 +1,13 @@
 package org.reactivetoolbox.core.async;
 
 import org.junit.jupiter.api.Test;
-import org.reactivetoolbox.core.scheduler.Timeout;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.reactivetoolbox.core.scheduler.Timeout.timeout;
 
 
 class PromiseTest {
@@ -92,7 +92,7 @@ class PromiseTest {
 
         assertEquals(-1, holder.get());
 
-        promise.syncWait(Timeout.of(100).millis());
+        promise.syncWait(timeout(100).millis());
 
         assertEquals(1, holder.get());
     }
@@ -106,7 +106,7 @@ class PromiseTest {
 
         executor.execute(() -> {safeSleep(200); promise.resolve(1);});
 
-        promise.syncWait(Timeout.of(10).millis());
+        promise.syncWait(timeout(10).millis());
 
         assertEquals(-1, holder.get());
     }
@@ -114,7 +114,7 @@ class PromiseTest {
     @Test
     void promiseIsResolvedWhenTimeoutExpires() {
         final var holder = new AtomicInteger(-1);
-        final var promise = Promise.<Integer>give().then(holder::set).async(Timeout.of(100).millis(), task -> task.resolve(123));
+        final var promise = Promise.<Integer>give().then(holder::set).async(timeout(100).millis(), task -> task.resolve(123));
 
         assertEquals(-1, holder.get());
 
@@ -126,12 +126,13 @@ class PromiseTest {
     @Test
     void taskCanBeExecuted() {
         final var holder = new AtomicInteger(-1);
-        final var promise = Promise.<Integer>give().then(holder::set).async(Timeout.of(100).millis(), task -> task.resolve(123));
+        final var promise = Promise.<Integer>give()
+                .then(holder::set)
+                .async(timeout(100).millis(), task -> task.resolve(123));
 
         assertEquals(-1, holder.get());
 
-        promise.async((p) -> p.resolve(345))
-               .then(val -> assertEquals(345, val));
+        promise.async(p -> p.resolve(345)).syncWait();
 
         assertEquals(345, holder.get());
     }
@@ -141,7 +142,8 @@ class PromiseTest {
         final var holder = new AtomicInteger(-1);
         final var promise1 = Promise.<Integer>give();
         final var promise2 = Promise.<Integer>give();
-        final var anyPromise = Promise.any(promise1, promise2).then(holder::set);
+
+        Promise.any(promise1, promise2).then(holder::set);
 
         assertEquals(-1, holder.get());
 
@@ -155,7 +157,7 @@ class PromiseTest {
         final var holder = new AtomicInteger(-1);
         final var promise1 = Promise.<Integer>give();
         final var promise2 = Promise.<Integer>give();
-        final var anyPromise = Promise.any(promise1, promise2).then(holder::set);
+        Promise.any(promise1, promise2).then(holder::set);
 
         assertEquals(-1, holder.get());
 

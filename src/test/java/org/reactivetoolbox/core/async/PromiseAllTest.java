@@ -4,332 +4,337 @@ import org.junit.jupiter.api.Test;
 import org.reactivetoolbox.core.lang.Tuple;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.reactivetoolbox.core.async.PromiseAll.all;
+import static org.reactivetoolbox.core.lang.Result.failure;
+import static org.reactivetoolbox.core.lang.Result.success;
+import static org.reactivetoolbox.core.scheduler.Errors.CANCELLED;
+import static org.reactivetoolbox.core.scheduler.Errors.TIMEOUT;
+import static org.reactivetoolbox.core.scheduler.Timeout.timeout;
 
 class PromiseAllTest {
 
     @Test
-    void allResolvesWhenAllPromisesAreResolvedForOnePromise() {
-        final var promise1 = Promise.<Integer>give();
-        final var allPromise = PromiseAll.allOf(promise1);
+    void allResolvesWhenAllPromisesAreResolvedFor1Promise() {
+        final var promise1 = PromiseResult.<Integer>result();
 
-        assertFalse(allPromise.ready());
+        all(promise1)
+                .onFailure(f -> fail())
+                .onSuccess(v -> assertEquals(Tuple.with(1), v))
+                .on(timeout(100).millis(), failure(TIMEOUT));
 
-        promise1.resolve(1);
-
-        assertTrue(allPromise.ready());
-        assertEquals(Tuple.with(1), allPromise.value().otherwise(Tuple.with(0)));
+        promise1.resolve(success(1));
     }
 
     @Test
     void allResolvesWhenAllPromisesAreResolvedFor2Promises() {
-        final var promise1 = Promise.<Integer>give();
-        final var promise2 = Promise.<Integer>give();
-        final var allPromise = PromiseAll.allOf(promise1, promise2);
+        final var promise1 = PromiseResult.<Integer>result();
+        final var promise2 = PromiseResult.<Integer>result();
 
-        assertFalse(allPromise.ready());
+        all(promise1, promise2)
+                .onFailure(f -> fail())
+                .onSuccess(v -> assertEquals(Tuple.with(1, 2), v))
+                .on(timeout(100).millis(), failure(TIMEOUT));
 
-        promise1.resolve(1);
-
-        assertFalse(allPromise.ready());
-
-        promise2.resolve(2);
-
-        assertTrue(allPromise.ready());
-        assertEquals(Tuple.with(1, 2), allPromise.value().otherwise(Tuple.with(0, 0)));
+        promise1.resolve(success(1));
+        promise2.resolve(success(2));
     }
 
     @Test
     void allResolvesWhenAllPromisesAreResolvedFor3Promises() {
-        final var promise1 = Promise.<Integer>give();
-        final var promise2 = Promise.<Integer>give();
-        final var promise3 = Promise.<Integer>give();
-        final var allPromise = PromiseAll.allOf(promise1, promise2, promise3);
+        final var promise1 = PromiseResult.<Integer>result();
+        final var promise2 = PromiseResult.<Integer>result();
+        final var promise3 = PromiseResult.<Integer>result();
 
-        assertFalse(allPromise.ready());
+        all(promise1, promise2, promise3)
+                .onFailure(f -> fail())
+                .onSuccess(v -> assertEquals(Tuple.with(1, 2, 3), v))
+                .on(timeout(100).millis(), failure(TIMEOUT));
 
-        promise1.resolve(1);
-
-        assertFalse(allPromise.ready());
-
-        promise2.resolve(2);
-
-        assertFalse(allPromise.ready());
-
-        promise3.resolve(3);
-
-        assertTrue(allPromise.ready());
-
-        assertEquals(Tuple.with(1, 2, 3), allPromise.value().otherwise(Tuple.with(0, 0, 0)));
+        promise1.resolve(success(1));
+        promise2.resolve(success(2));
+        promise3.resolve(success(3));
     }
 
     @Test
     void allResolvesWhenAllPromisesAreResolvedFor4Promises() {
-        final var promise1 = Promise.<Integer>give();
-        final var promise2 = Promise.<Integer>give();
-        final var promise3 = Promise.<Integer>give();
-        final var promise4 = Promise.<Integer>give();
-        final var allPromise = PromiseAll.allOf(promise1, promise2, promise3, promise4);
+        final var promise1 = PromiseResult.<Integer>result();
+        final var promise2 = PromiseResult.<Integer>result();
+        final var promise3 = PromiseResult.<Integer>result();
+        final var promise4 = PromiseResult.<Integer>result();
 
-        assertFalse(allPromise.ready());
+        all(promise1, promise2, promise3, promise4)
+                .onFailure(f -> fail())
+                .onSuccess(v -> assertEquals(Tuple.with(1, 2, 3, 4), v))
+                .on(timeout(100).millis(), failure(TIMEOUT));
 
-        promise1.resolve(1);
-
-        assertFalse(allPromise.ready());
-
-        promise2.resolve(2);
-
-        assertFalse(allPromise.ready());
-
-        promise3.resolve(3);
-
-        assertFalse(allPromise.ready());
-
-        promise4.resolve(4);
-
-        assertTrue(allPromise.ready());
-
-        assertEquals(Tuple.with(1, 2, 3, 4), allPromise.value().otherwise(Tuple.with(0, 0, 0, 0)));
+        promise1.resolve(success(1));
+        promise2.resolve(success(2));
+        promise3.resolve(success(3));
+        promise4.resolve(success(4));
     }
 
     @Test
     void allResolvesWhenAllPromisesAreResolvedFor5Promises() {
-        final var promise1 = Promise.<Integer>give();
-        final var promise2 = Promise.<Integer>give();
-        final var promise3 = Promise.<Integer>give();
-        final var promise4 = Promise.<Integer>give();
-        final var promise5 = Promise.<Integer>give();
-        final var allPromise = PromiseAll.allOf(promise1, promise2, promise3, promise4, promise5);
+        final var promise1 = PromiseResult.<Integer>result();
+        final var promise2 = PromiseResult.<Integer>result();
+        final var promise3 = PromiseResult.<Integer>result();
+        final var promise4 = PromiseResult.<Integer>result();
+        final var promise5 = PromiseResult.<Integer>result();
 
-        assertFalse(allPromise.ready());
+        all(promise1, promise2, promise3, promise4, promise5)
+                .onFailure(f -> fail())
+                .onSuccess(v -> assertEquals(Tuple.with(1, 2, 3, 4, 5), v))
+                .on(timeout(100).millis(), failure(TIMEOUT));
 
-        promise1.resolve(1);
-
-        assertFalse(allPromise.ready());
-
-        promise2.resolve(2);
-
-        assertFalse(allPromise.ready());
-
-        promise3.resolve(3);
-
-        assertFalse(allPromise.ready());
-
-        promise4.resolve(4);
-
-        assertFalse(allPromise.ready());
-
-        promise5.resolve(5);
-
-        assertTrue(allPromise.ready());
-
-        assertEquals(Tuple.with(1, 2, 3, 4, 5), allPromise.value().otherwise(Tuple.with(0, 0, 0, 0, 0)));
+        promise1.resolve(success(1));
+        promise2.resolve(success(2));
+        promise3.resolve(success(3));
+        promise4.resolve(success(4));
+        promise5.resolve(success(5));
     }
 
     @Test
     void allResolvesWhenAllPromisesAreResolvedFor6Promises() {
-        final var promise1 = Promise.<Integer>give();
-        final var promise2 = Promise.<Integer>give();
-        final var promise3 = Promise.<Integer>give();
-        final var promise4 = Promise.<Integer>give();
-        final var promise5 = Promise.<Integer>give();
-        final var promise6 = Promise.<Integer>give();
-        final var allPromise = PromiseAll.allOf(promise1, promise2, promise3, promise4, promise5, promise6);
+        final var promise1 = PromiseResult.<Integer>result();
+        final var promise2 = PromiseResult.<Integer>result();
+        final var promise3 = PromiseResult.<Integer>result();
+        final var promise4 = PromiseResult.<Integer>result();
+        final var promise5 = PromiseResult.<Integer>result();
+        final var promise6 = PromiseResult.<Integer>result();
 
-        assertFalse(allPromise.ready());
+        all(promise1, promise2, promise3, promise4, promise5, promise6)
+                .onFailure(f -> fail())
+                .onSuccess(v -> assertEquals(Tuple.with(1, 2, 3, 4, 5, 6), v))
+                .on(timeout(100).millis(), failure(TIMEOUT));
 
-        promise1.resolve(1);
-
-        assertFalse(allPromise.ready());
-
-        promise2.resolve(2);
-
-        assertFalse(allPromise.ready());
-
-        promise3.resolve(3);
-
-        assertFalse(allPromise.ready());
-
-        promise4.resolve(4);
-
-        assertFalse(allPromise.ready());
-
-        promise5.resolve(5);
-
-        assertFalse(allPromise.ready());
-
-        promise6.resolve(6);
-
-        assertTrue(allPromise.ready());
-
-        assertEquals(Tuple.with(1, 2, 3, 4, 5, 6), allPromise.value().otherwise(Tuple.with(0, 0, 0, 0, 0, 0)));
+        promise1.resolve(success(1));
+        promise2.resolve(success(2));
+        promise3.resolve(success(3));
+        promise4.resolve(success(4));
+        promise5.resolve(success(5));
+        promise6.resolve(success(6));
     }
 
     @Test
     void allResolvesWhenAllPromisesAreResolvedFor7Promises() {
-        final var promise1 = Promise.<Integer>give();
-        final var promise2 = Promise.<Integer>give();
-        final var promise3 = Promise.<Integer>give();
-        final var promise4 = Promise.<Integer>give();
-        final var promise5 = Promise.<Integer>give();
-        final var promise6 = Promise.<Integer>give();
-        final var promise7 = Promise.<Integer>give();
-        final var allPromise = PromiseAll.allOf(promise1, promise2, promise3, promise4, promise5, promise6, promise7);
+        final var promise1 = PromiseResult.<Integer>result();
+        final var promise2 = PromiseResult.<Integer>result();
+        final var promise3 = PromiseResult.<Integer>result();
+        final var promise4 = PromiseResult.<Integer>result();
+        final var promise5 = PromiseResult.<Integer>result();
+        final var promise6 = PromiseResult.<Integer>result();
+        final var promise7 = PromiseResult.<Integer>result();
 
-        assertFalse(allPromise.ready());
+        all(promise1, promise2, promise3, promise4, promise5, promise6, promise7)
+                .onFailure(f -> fail())
+                .onSuccess(v -> assertEquals(Tuple.with(1, 2, 3, 4, 5, 6, 7), v))
+                .on(timeout(100).millis(), failure(TIMEOUT));
 
-        promise1.resolve(1);
-
-        assertFalse(allPromise.ready());
-
-        promise2.resolve(2);
-
-        assertFalse(allPromise.ready());
-
-        promise3.resolve(3);
-
-        assertFalse(allPromise.ready());
-
-        promise4.resolve(4);
-
-        assertFalse(allPromise.ready());
-
-        promise5.resolve(5);
-
-        assertFalse(allPromise.ready());
-
-        promise6.resolve(6);
-
-        assertFalse(allPromise.ready());
-
-        promise7.resolve(7);
-
-        assertTrue(allPromise.ready());
-
-        assertEquals(Tuple.with(1, 2, 3, 4, 5, 6, 7), allPromise.value().otherwise(Tuple.with(0, 0, 0, 0, 0, 0, 0)));
+        promise1.resolve(success(1));
+        promise2.resolve(success(2));
+        promise3.resolve(success(3));
+        promise4.resolve(success(4));
+        promise5.resolve(success(5));
+        promise6.resolve(success(6));
+        promise7.resolve(success(7));
     }
 
     @Test
     void allResolvesWhenAllPromisesAreResolvedFor8Promises() {
-        final var promise1 = Promise.<Integer>give();
-        final var promise2 = Promise.<Integer>give();
-        final var promise3 = Promise.<Integer>give();
-        final var promise4 = Promise.<Integer>give();
-        final var promise5 = Promise.<Integer>give();
-        final var promise6 = Promise.<Integer>give();
-        final var promise7 = Promise.<Integer>give();
-        final var promise8 = Promise.<Integer>give();
-        final var allPromise = PromiseAll.allOf(promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8);
+        final var promise1 = PromiseResult.<Integer>result();
+        final var promise2 = PromiseResult.<Integer>result();
+        final var promise3 = PromiseResult.<Integer>result();
+        final var promise4 = PromiseResult.<Integer>result();
+        final var promise5 = PromiseResult.<Integer>result();
+        final var promise6 = PromiseResult.<Integer>result();
+        final var promise7 = PromiseResult.<Integer>result();
+        final var promise8 = PromiseResult.<Integer>result();
 
-        assertFalse(allPromise.ready());
+        all(promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8)
+                .onFailure(f -> fail())
+                .onSuccess(v -> assertEquals(Tuple.with(1, 2, 3, 4, 5, 6, 7, 8), v))
+                .on(timeout(100).millis(), failure(TIMEOUT));
 
-        promise1.resolve(1);
-
-        assertFalse(allPromise.ready());
-
-        promise2.resolve(2);
-
-        assertFalse(allPromise.ready());
-
-        promise3.resolve(3);
-
-        assertFalse(allPromise.ready());
-
-        promise4.resolve(4);
-
-        assertFalse(allPromise.ready());
-
-        promise5.resolve(5);
-
-        assertFalse(allPromise.ready());
-
-        promise6.resolve(6);
-
-        assertFalse(allPromise.ready());
-
-        promise7.resolve(7);
-
-        assertFalse(allPromise.ready());
-
-        promise8.resolve(8);
-
-        assertTrue(allPromise.ready());
-
-        assertEquals(Tuple.with(1, 2, 3, 4, 5, 6, 7, 8), allPromise.value().otherwise(Tuple.with(0, 0, 0, 0, 0, 0, 0, 0)));
+        promise1.resolve(success(1));
+        promise2.resolve(success(2));
+        promise3.resolve(success(3));
+        promise4.resolve(success(4));
+        promise5.resolve(success(5));
+        promise6.resolve(success(6));
+        promise7.resolve(success(7));
+        promise8.resolve(success(8));
     }
 
     @Test
     void allResolvesWhenAllPromisesAreResolvedFor9Promises() {
-        final var promise1 = Promise.<Integer>give();
-        final var promise2 = Promise.<Integer>give();
-        final var promise3 = Promise.<Integer>give();
-        final var promise4 = Promise.<Integer>give();
-        final var promise5 = Promise.<Integer>give();
-        final var promise6 = Promise.<Integer>give();
-        final var promise7 = Promise.<Integer>give();
-        final var promise8 = Promise.<Integer>give();
-        final var promise9 = Promise.<Integer>give();
-        final var  allPromise = PromiseAll.allOf(promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8, promise9);
+        final var promise1 = PromiseResult.<Integer>result();
+        final var promise2 = PromiseResult.<Integer>result();
+        final var promise3 = PromiseResult.<Integer>result();
+        final var promise4 = PromiseResult.<Integer>result();
+        final var promise5 = PromiseResult.<Integer>result();
+        final var promise6 = PromiseResult.<Integer>result();
+        final var promise7 = PromiseResult.<Integer>result();
+        final var promise8 = PromiseResult.<Integer>result();
+        final var promise9 = PromiseResult.<Integer>result();
 
-        assertFalse(allPromise.ready());
+        all(promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8, promise9)
+                .onFailure(f -> fail())
+                .onSuccess(v -> assertEquals(Tuple.with(1, 2, 3, 4, 5, 6, 7, 8, 9), v))
+                .on(timeout(100).millis(), failure(TIMEOUT));
 
-        promise1.resolve(1);
-
-        assertFalse(allPromise.ready());
-
-        promise2.resolve(2);
-
-        assertFalse(allPromise.ready());
-
-        promise3.resolve(3);
-
-        assertFalse(allPromise.ready());
-
-        promise4.resolve(4);
-
-        assertFalse(allPromise.ready());
-
-        promise5.resolve(5);
-
-        assertFalse(allPromise.ready());
-
-        promise6.resolve(6);
-
-        assertFalse(allPromise.ready());
-
-        promise7.resolve(7);
-
-        assertFalse(allPromise.ready());
-
-        promise8.resolve(8);
-
-        assertFalse(allPromise.ready());
-
-        promise9.resolve(9);
-
-        assertTrue(allPromise.ready());
-
-        assertEquals(Tuple.with(1, 2, 3, 4, 5, 6, 7, 8, 9), allPromise.value().otherwise(Tuple.with(0, 0, 0, 0, 0, 0, 0, 0, 0)));
+        promise1.resolve(success(1));
+        promise2.resolve(success(2));
+        promise3.resolve(success(3));
+        promise4.resolve(success(4));
+        promise5.resolve(success(5));
+        promise6.resolve(success(6));
+        promise7.resolve(success(7));
+        promise8.resolve(success(8));
+        promise9.resolve(success(9));
     }
 
     @Test
-    void subsequentResolutionsAreIgnoreByAll() {
-        final var promise1 = Promise.<Integer>give();
-        final var promise2 = Promise.<Integer>give();
-        final var allPromise = PromiseAll.allOf(promise1, promise2);
+    void anyErrorResolvesToFailureImmediatelyFor1Promise() {
+        final var promise1 = PromiseResult.<Integer>result();
 
-        assertFalse(allPromise.ready());
+        all(promise1)
+                .onFailure(f -> assertEquals(CANCELLED, f))
+                .onSuccess(v -> fail())
+                .on(timeout(100).millis(), failure(TIMEOUT));
 
-        promise1.resolve(1);
-        promise2.resolve(2);
-
-        assertTrue(allPromise.ready());
-
-        promise1.resolve(3);
-        promise2.resolve(4);
-
-        assertEquals(Tuple.with(1, 2), allPromise.value().otherwise(Tuple.with(0, 0)));
+        promise1.resolve(failure(CANCELLED));
     }
 
+    @Test
+    void anyErrorResolvesToFailureImmediatelyFor2Promises() {
+        final var promise1 = PromiseResult.<Integer>result();
+        final var promise2 = PromiseResult.<Integer>result();
+
+        all(promise1, promise2)
+                .onFailure(f -> assertEquals(CANCELLED, f))
+                .onSuccess(v -> fail())
+                .on(timeout(100).millis(), failure(TIMEOUT));
+
+        promise1.resolve(failure(CANCELLED));
+    }
+
+    @Test
+    void anyErrorResolvesToFailureImmediatelyFor3Promises() {
+        final var promise1 = PromiseResult.<Integer>result();
+        final var promise2 = PromiseResult.<Integer>result();
+        final var promise3 = PromiseResult.<Integer>result();
+
+        all(promise1, promise2, promise3)
+                .onFailure(f -> assertEquals(CANCELLED, f))
+                .onSuccess(v -> fail())
+                .on(timeout(100).millis(), failure(TIMEOUT));
+
+        promise1.resolve(failure(CANCELLED));
+    }
+
+    @Test
+    void anyErrorResolvesToFailureImmediatelyFor4Promises() {
+        final var promise1 = PromiseResult.<Integer>result();
+        final var promise2 = PromiseResult.<Integer>result();
+        final var promise3 = PromiseResult.<Integer>result();
+        final var promise4 = PromiseResult.<Integer>result();
+
+        all(promise1, promise2, promise3, promise4)
+                .onFailure(f -> assertEquals(CANCELLED, f))
+                .onSuccess(v -> fail())
+                .on(timeout(100).millis(), failure(TIMEOUT));
+
+        promise1.resolve(failure(CANCELLED));
+    }
+
+    @Test
+    void anyErrorResolvesToFailureImmediatelyFor5Promises() {
+        final var promise1 = PromiseResult.<Integer>result();
+        final var promise2 = PromiseResult.<Integer>result();
+        final var promise3 = PromiseResult.<Integer>result();
+        final var promise4 = PromiseResult.<Integer>result();
+        final var promise5 = PromiseResult.<Integer>result();
+
+        all(promise1, promise2, promise3, promise4, promise5)
+                .onFailure(f -> assertEquals(CANCELLED, f))
+                .onSuccess(v -> fail())
+                .on(timeout(100).millis(), failure(TIMEOUT));
+
+        promise1.resolve(failure(CANCELLED));
+    }
+
+    @Test
+    void anyErrorResolvesToFailureImmediatelyFor6Promises() {
+        final var promise1 = PromiseResult.<Integer>result();
+        final var promise2 = PromiseResult.<Integer>result();
+        final var promise3 = PromiseResult.<Integer>result();
+        final var promise4 = PromiseResult.<Integer>result();
+        final var promise5 = PromiseResult.<Integer>result();
+        final var promise6 = PromiseResult.<Integer>result();
+
+        all(promise1, promise2, promise3, promise4, promise5, promise6)
+                .onFailure(f -> assertEquals(CANCELLED, f))
+                .onSuccess(v -> fail())
+                .on(timeout(100).millis(), failure(TIMEOUT));
+
+        promise1.resolve(failure(CANCELLED));
+    }
+
+    @Test
+    void anyErrorResolvesToFailureImmediatelyFor7Promises() {
+        final var promise1 = PromiseResult.<Integer>result();
+        final var promise2 = PromiseResult.<Integer>result();
+        final var promise3 = PromiseResult.<Integer>result();
+        final var promise4 = PromiseResult.<Integer>result();
+        final var promise5 = PromiseResult.<Integer>result();
+        final var promise6 = PromiseResult.<Integer>result();
+        final var promise7 = PromiseResult.<Integer>result();
+
+        all(promise1, promise2, promise3, promise4, promise5, promise6, promise7)
+                .onFailure(f -> assertEquals(CANCELLED, f))
+                .onSuccess(v -> fail())
+                .on(timeout(100).millis(), failure(TIMEOUT));
+
+        promise1.resolve(failure(CANCELLED));
+    }
+
+    @Test
+    void anyErrorResolvesToFailureImmediatelyFor8Promises() {
+        final var promise1 = PromiseResult.<Integer>result();
+        final var promise2 = PromiseResult.<Integer>result();
+        final var promise3 = PromiseResult.<Integer>result();
+        final var promise4 = PromiseResult.<Integer>result();
+        final var promise5 = PromiseResult.<Integer>result();
+        final var promise6 = PromiseResult.<Integer>result();
+        final var promise7 = PromiseResult.<Integer>result();
+        final var promise8 = PromiseResult.<Integer>result();
+
+        all(promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8)
+                .onFailure(f -> assertEquals(CANCELLED, f))
+                .onSuccess(v -> fail())
+                .on(timeout(100).millis(), failure(TIMEOUT));
+
+        promise1.resolve(failure(CANCELLED));
+    }
+
+    @Test
+    void anyErrorResolvesToFailureImmediatelyFor9Promises() {
+        final var promise1 = PromiseResult.<Integer>result();
+        final var promise2 = PromiseResult.<Integer>result();
+        final var promise3 = PromiseResult.<Integer>result();
+        final var promise4 = PromiseResult.<Integer>result();
+        final var promise5 = PromiseResult.<Integer>result();
+        final var promise6 = PromiseResult.<Integer>result();
+        final var promise7 = PromiseResult.<Integer>result();
+        final var promise8 = PromiseResult.<Integer>result();
+        final var promise9 = PromiseResult.<Integer>result();
+
+        all(promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8, promise9)
+                .onFailure(f -> assertEquals(CANCELLED, f))
+                .onSuccess(v -> fail())
+                .on(timeout(100).millis(), failure(TIMEOUT));
+
+        promise1.resolve(failure(CANCELLED));
+    }
 }

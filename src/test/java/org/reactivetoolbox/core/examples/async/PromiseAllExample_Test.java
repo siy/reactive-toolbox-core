@@ -1,11 +1,11 @@
 package org.reactivetoolbox.core.examples.async;
 
 import org.junit.jupiter.api.Test;
-import org.reactivetoolbox.core.async.PromiseAll;
-import org.reactivetoolbox.core.scheduler.Timeout;
 
-import static org.reactivetoolbox.core.async.PromiseAll.resultsOf;
+import static org.reactivetoolbox.core.async.PromiseAll.all;
+import static org.reactivetoolbox.core.lang.Result.failure;
 import static org.reactivetoolbox.core.scheduler.Errors.TIMEOUT;
+import static org.reactivetoolbox.core.scheduler.Timeout.timeout;
 
 public class PromiseAllExample_Test {
     private final AsyncService service = new AsyncService();
@@ -20,27 +20,17 @@ public class PromiseAllExample_Test {
     @Test
     void simpleAsyncTaskWithTimeout() {
         service.slowRetrieveInteger(4242)
-               .on(Timeout.of(10).seconds(), TIMEOUT.asFailure())
+               .on(timeout(10).seconds(), failure(TIMEOUT))
                .then(result -> result.whenSuccess(System.out::println))
                .syncWait();
     }
 
     @Test
     void waitForAllResults1() {
-        resultsOf(service.slowRetrieveInteger(123),
-              service.slowRetrieveString("text 1"),
-              service.slowRetrieveUuid())
+        all(service.slowRetrieveInteger(123),
+            service.slowRetrieveString("text 1"),
+            service.slowRetrieveUuid())
                 .then(result -> result.whenSuccess(System.out::println))
                 .syncWait();
-    }
-
-    @Test
-    void waitForAllResults3() {
-        //Using PromiseResult.resultOf
-        PromiseAll.resultsOf(service.slowRetrieveInteger(345),
-                             service.slowRetrieveString("text 3"),
-                             service.slowRetrieveUuid())
-                  .then(result -> result.whenSuccess(System.out::println))
-                  .syncWait();
     }
 }

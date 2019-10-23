@@ -62,7 +62,13 @@ public class PromiseImpl<T> implements Promise<T> {
     @Override
     public Promise<T> resolve(final T result) {
         if (value.compareAndSet(null, result, false, true)) {
-            thenActions.forEach(action -> action.accept(value.getReference()));
+            thenActions.forEach(action -> {
+                try {
+                    action.accept(value.getReference());
+                } catch (final Throwable t) {
+                    //TODO: add logging
+                }
+            });
         }
         return this;
     }
@@ -81,7 +87,11 @@ public class PromiseImpl<T> implements Promise<T> {
     @Override
     public Promise<T> then(final Consumer<T> action) {
         if (value.isMarked()) {
-            action.accept(value.getReference());
+            try {
+                action.accept(value.getReference());
+            } catch (final Throwable t) {
+                //TODO: add logging
+            }
         } else {
             thenActions.offer(action);
         }

@@ -9,7 +9,7 @@ import org.reactivetoolbox.core.scheduler.Timeout;
 import java.util.UUID;
 
 public class AsyncService {
-    private static final Timeout DEFAULT_DELAY = Timeout.of(50).millis();
+    private static final Timeout DEFAULT_DELAY = Timeout.timeout(50).millis();
 
     public PromiseResult<Integer> slowRetrieveInteger(final Integer value) {
         return slowRetrieveInteger(DEFAULT_DELAY, value);
