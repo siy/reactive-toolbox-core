@@ -86,15 +86,15 @@ public interface List<E> {
 
     @SuppressWarnings("unchecked")
     static <T> List<T> from(final java.util.List<T> source) {
-        return (List<T>) of(source.toArray());
+        return (List<T>) list(source.toArray());
     }
 
     @SuppressWarnings("unchecked")
-    static <T> List<T> of() {
+    static <T> List<T> list() {
         return (List<T>) EMPTY_LIST;
     }
 
-    static <T> List<T> of(final T... elements) {
+    static <T> List<T> list(final T... elements) {
         return new List<T>() {
             @Override
             public <R> List<R> mapN(final FN2<R, Integer, T> mapper) {
@@ -125,7 +125,7 @@ public interface List<E> {
 
             @Override
             public List<T> first(final int n) {
-                return of(Arrays.copyOf(elements, max(0, min(elements.length, n))));
+                return list(Arrays.copyOf(elements, max(0, min(elements.length, n))));
             }
 
             @Override

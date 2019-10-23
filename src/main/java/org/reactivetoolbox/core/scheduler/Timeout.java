@@ -45,9 +45,11 @@ public final class Timeout {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+
+        if (!(o instanceof Timeout)) {
             return false;
         }
+
         final Timeout timeout1 = (Timeout) o;
         return timeout == timeout1.timeout;
     }

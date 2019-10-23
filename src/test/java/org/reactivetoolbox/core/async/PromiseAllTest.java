@@ -34,7 +34,7 @@ class PromiseAllTest {
         all(promise1, promise2)
                 .onFailure(f -> fail())
                 .onSuccess(v -> assertEquals(Tuple.with(1, 2), v))
-                .when(timeout(100).millis(), failure(TIMEOUT));
+                .when(timeout(100).millis(), TIMEOUT::asFailure);
 
         promise1.resolve(success(1));
         promise2.resolve(success(2));

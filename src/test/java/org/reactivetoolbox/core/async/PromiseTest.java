@@ -2,11 +2,15 @@ package org.reactivetoolbox.core.async;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.reactivetoolbox.core.scheduler.Errors.TIMEOUT;
 import static org.reactivetoolbox.core.scheduler.Timeout.timeout;
 
 
@@ -51,6 +55,48 @@ class PromiseTest {
 
         promise.ok(1);
         promise.onSuccess(holder::set);
+
+        assertEquals(1, holder.get());
+    }
+
+    @Test
+    void mapTransformsValue() {
+        final var holder = new AtomicReference<String>();
+        final var promise = Promise.<Integer>promise();
+
+        promise.map(Objects::toString).onSuccess(holder::set);
+
+        promise.ok(1234);
+
+        assertEquals("1234", holder.get());
+    }
+
+    @Test
+    void promiseCanBeResolvedAsynchronouslyWithSuccess() {
+        final var currentTid = Thread.currentThread().getId();
+        final var holder = new AtomicInteger(-1);
+        final var promise = Promise.<Integer>promise()
+                .onSuccess(val -> assertNotEquals(currentTid, Thread.currentThread().getId()))
+                .onSuccess(holder::set);
+
+        promise.asyncOk(1).syncWait(timeout(1).seconds());
+
+        safeSleep(20);
+
+        assertEquals(1, holder.get());
+    }
+
+    @Test
+    void promiseCanBeResolvedAsynchronouslyWithFailure() {
+        final var currentTid = Thread.currentThread().getId();
+        final var holder = new AtomicInteger(-1);
+        final var promise = Promise.<Integer>promise()
+                .onFailure(f -> assertNotEquals(currentTid, Thread.currentThread().getId()))
+                .onFailure(f -> holder.set(1));
+
+        promise.asyncFail(TIMEOUT).syncWait(timeout(1).seconds());
+
+        safeSleep(20);
 
         assertEquals(1, holder.get());
     }
@@ -164,6 +210,58 @@ class PromiseTest {
         promise2.ok(1);
 
         assertEquals(1, holder.get());
+    }
+
+    @Test
+    void onlySuccessResolvesAnySuccess() {
+        final var holder = new AtomicInteger(-1);
+        final var promise1 = Promise.<Integer>promise();
+        final var promise2 = Promise.<Integer>promise();
+        Promise.anySuccess(promise1, promise2).onSuccess(holder::set);
+
+        assertEquals(-1, holder.get());
+
+        promise1.fail(TIMEOUT);
+
+        assertEquals(-1, holder.get());
+
+        promise2.ok(1);
+
+        assertEquals(1, holder.get());
+    }
+
+    @Test
+    void chainMapResolvesToFailureIfBasePromiseIsResolvedToFailure() {
+        final var holder = new AtomicInteger(-1);
+        final var stringHolder = new AtomicReference<String>();
+        final var promise = Promise.<Integer>promise().onSuccess(s -> holder.set(1))
+                                                      .onFailure(f -> holder.set(2));
+
+        final var chain = promise.chainMap(val -> Promise.fulfilled(val.toString()))
+                                 .onSuccess(s -> stringHolder.set("success"))
+                                 .onFailure(f -> stringHolder.set("failure"));
+
+        promise.fail(TIMEOUT);
+
+        assertEquals(2, holder.get());
+        assertEquals("failure", stringHolder.get());
+    }
+
+    @Test
+    void chainMapResolvesToSuccessIfBasePromiseIsResolvedToSuccess() {
+        final var holder = new AtomicInteger(-1);
+        final var stringHolder = new AtomicReference<String>();
+        final var promise = Promise.<Integer>promise().onSuccess(s -> holder.set(1))
+                                                      .onFailure(f -> holder.set(2));
+
+        final var chain = promise.chainMap(val -> Promise.fulfilled(val.toString()))
+                                 .onSuccess(s -> stringHolder.set("success"))
+                                 .onFailure(f -> stringHolder.set("failure"));
+
+        promise.ok(123);
+
+        assertEquals(1, holder.get());
+        assertEquals("success", stringHolder.get());
     }
 
     private static void safeSleep(final long delay) {

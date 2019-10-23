@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import static org.reactivetoolbox.core.async.ActionableThreshold.threshold;
 import static org.reactivetoolbox.core.lang.Result.failure;
 import static org.reactivetoolbox.core.lang.Result.success;
 
@@ -73,6 +74,8 @@ public interface Promise<T> {
      *     <li>Synchronous waiting blocks the current thread</li>
      *     <li>If current thread will be {@link Thread#interrupt() interrupted} with other thread, then method may
      *     return non-resolved instance. This may lead to subtle and hard to debug issues.</li>
+     *     <li>If promise is resolved asynchronously, there is an inherent race condition which may cause this method return
+     *     before all actions attached to promise are executed.</li>
      * </ul>
      *
      * @return Current instance
@@ -89,6 +92,8 @@ public interface Promise<T> {
      *     <li>Synchronous waiting blocks the current thread</li>
      *     <li>If current thread will be {@link Thread#interrupt() interrupted} with other thread or timeout
      *     expires, then method may return non-resolved instance. This may lead to subtle and hard to debug issues.</li>
+     *     <li>If promise is resolved asynchronously, there is an inherent race condition which may cause this method return
+     *     before all actions attached to promise are executed.</li>
      * </ul>
      *
      * @param timeout
@@ -118,7 +123,7 @@ public interface Promise<T> {
      *
      * @return Current instance
      */
-    default Promise<T> resolveAsync(final Result<T> result) {
+    default Promise<T> asyncResolve(final Result<T> result) {
         return async(promise -> promise.resolve(result));
     }
 
@@ -135,6 +140,18 @@ public interface Promise<T> {
     }
 
     /**
+     * Resolve current instance with successful result asynchronously.
+     *
+     * @param result
+     *        Successful result value
+     *
+     * @return Current instance
+     */
+    default Promise<T> asyncOk(final T result) {
+        return asyncResolve(Result.success(result));
+    }
+
+    /**
      * Resolve current instance with failure result.
      *
      * @param failure
@@ -144,6 +161,18 @@ public interface Promise<T> {
      */
     default Promise<T> fail(final Failure failure) {
         return resolve(failure(failure));
+    }
+
+    /**
+     * Resolve current instance with failure result asynchronously.
+     *
+     * @param failure
+     *        Failure result value
+     *
+     * @return Current instance
+     */
+    default Promise<T> asyncFail(final Failure failure) {
+        return asyncResolve(failure(failure));
     }
 
     /**
@@ -209,7 +238,7 @@ public interface Promise<T> {
 
     /**
      * This method enables chaining of calls to functions which return {@link Promise} and require unwrapped
-     * results successful previous calls. If current instance is resolved to {@link Result#failure(Failure)}, then
+     * results of successful previous calls. If current instance is resolved to {@link Result#failure(Failure)}, then
      * function passes as parameter is not invoked and resolved instance of {@link Promise} is returned instead.
      *
      * @param mapper
@@ -260,7 +289,7 @@ public interface Promise<T> {
      * @return Created instance
      */
     static <T> Promise<T> fulfilled(final T result) {
-        return Promise.<T>promise().resolve(success(result));
+        return fulfilled(success(result));
     }
 
     /**
@@ -276,11 +305,8 @@ public interface Promise<T> {
     }
 
     /**
-     * Create instance which will be resolved once any of the promises
-     * provided as a parameters will be resolved.
-     * <br/>
-     * Note: unlike {@link Promise#any(Promise[])} this method cancels all remaining
-     * instances once one is resolved.
+     * Create instance which will be resolved once any of the promises provided as a parameters will be resolved.
+     * Remaining promises are cancelled upon resolution of any promises.
      *
      * @param promises
      *        Input promises
@@ -321,14 +347,12 @@ public interface Promise<T> {
      * @return Created instance
      */
     static <T> Promise<T> anySuccess(final Result<T> failureResult, final Promise<T>... promises) {
-        final var result = Promise.<T>promise();
-        final var counter = ActionableThreshold.threshold(promises.length, () -> resolveAll(failureResult, promises));
-
-        List.of(promises)
-            .forEach(promise -> promise.onResult($ -> counter.registerEvent())
-                                       .onResult(res -> res.onSuccess(t -> { result.resolve(res); resolveAll(failureResult, promises); })));
-
-        return result;
+        return Promise.<T>promise(anySuccess -> threshold(promises.length,
+                                                          (at) -> List.of(promises)
+                                                                      .forEach(promise -> promise.onResult($ -> at.registerEvent())
+                                                                                                 .onResult(res -> res.onSuccess(t -> { anySuccess.resolve(res);
+                                                                                                                                       resolveAll(failureResult, promises); }))),
+                                                          () -> resolveAll(failureResult, promises)));
     }
 
     /**
@@ -338,7 +362,7 @@ public interface Promise<T> {
      *        Promises to cancel.
      */
     static <T> void cancelAll(final Promise<T>... promises) {
-        resolveAll(failure(Errors.CANCELLED), promises);
+        List.of(promises).forEach(Promise::cancel);
     }
 
     /**
@@ -350,6 +374,7 @@ public interface Promise<T> {
      *        Promises to resolve
      */
     static <T> void resolveAll(final Result<T> result, final Promise<T>... promises) {
-        List.of(promises).forEach(promise -> promise.resolve(result));
+        List.of(promises)
+            .forEach(promise -> promise.resolve(result));
     }
 }
