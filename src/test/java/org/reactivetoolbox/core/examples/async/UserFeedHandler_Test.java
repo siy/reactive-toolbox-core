@@ -13,7 +13,7 @@ import org.reactivetoolbox.core.scheduler.Errors;
 import java.util.List;
 
 import static org.reactivetoolbox.core.CollectionUtil.map;
-import static org.reactivetoolbox.core.async.PromiseAll.all;
+import static org.reactivetoolbox.core.async.Promise.all;
 import static org.reactivetoolbox.core.lang.Result.failure;
 import static org.reactivetoolbox.core.scheduler.Timeout.timeout;
 

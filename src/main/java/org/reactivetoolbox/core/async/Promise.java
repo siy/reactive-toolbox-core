@@ -20,6 +20,11 @@ import org.reactivetoolbox.core.async.impl.PromiseImpl;
 import org.reactivetoolbox.core.lang.Failure;
 import org.reactivetoolbox.core.lang.Functions.FN1;
 import org.reactivetoolbox.core.lang.Result;
+import org.reactivetoolbox.core.lang.Tuple.Tuple5;
+import org.reactivetoolbox.core.lang.Tuple.Tuple6;
+import org.reactivetoolbox.core.lang.Tuple.Tuple7;
+import org.reactivetoolbox.core.lang.Tuple.Tuple8;
+import org.reactivetoolbox.core.lang.Tuple.Tuple9;
 import org.reactivetoolbox.core.scheduler.Errors;
 import org.reactivetoolbox.core.scheduler.Timeout;
 
@@ -30,6 +35,11 @@ import java.util.function.Supplier;
 import static org.reactivetoolbox.core.async.ActionableThreshold.threshold;
 import static org.reactivetoolbox.core.lang.Result.failure;
 import static org.reactivetoolbox.core.lang.Result.success;
+import static org.reactivetoolbox.core.lang.Tuple.Tuple1;
+import static org.reactivetoolbox.core.lang.Tuple.Tuple2;
+import static org.reactivetoolbox.core.lang.Tuple.Tuple3;
+import static org.reactivetoolbox.core.lang.Tuple.Tuple4;
+import static org.reactivetoolbox.core.lang.Tuple.with;
 
 /**
  * Extended {@link Promise} implementation which works with {@link Result} values.
@@ -198,7 +208,7 @@ public interface Promise<T> {
      * @return Current instance
      */
     default Promise<T> when(final Timeout timeout, final Result<T> timeoutResult) {
-        return async(timeout, promise -> promise.resolve(timeoutResult));
+        return when(timeout, () -> timeoutResult);
     }
 
     /**
@@ -266,7 +276,7 @@ public interface Promise<T> {
     }
 
     /**
-     * Create new unresolved instance.
+     * Create new unresolved instance.om
      *
      * @return Created instance
      */
@@ -377,4 +387,167 @@ public interface Promise<T> {
         List.of(promises)
             .forEach(promise -> promise.resolve(result));
     }
+
+    static <T1> Promise<Tuple1<T1>> all(final Promise<T1> promise1) {
+        return promise(promise -> threshold(Tuple1.size(),
+                                            (at) -> promise1.onResult($ -> at.registerEvent()),
+                                            () -> promise1.onResult(v1 -> promise.resolve(with(v1).map(Result::zip)))));
+    }
+
+    static <T1, T2> Promise<Tuple2<T1, T2>> all(final Promise<T1> promise1,
+                                                final Promise<T2> promise2) {
+        return promise(promise -> threshold(Tuple2.size(),
+                                            (at) -> { promise1.onResult($ -> at.registerEvent());
+                                                      promise2.onResult($ -> at.registerEvent()); },
+                                            () -> promise1.onResult(v1 ->
+                                                    promise2.onResult(v2 -> promise.resolve(with(v1, v2).map(Result::zip))))));
+    }
+
+    static <T1, T2, T3> Promise<Tuple3<T1, T2, T3>> all(final Promise<T1> promise1,
+                                                        final Promise<T2> promise2,
+                                                        final Promise<T3> promise3) {
+        return promise(promise -> threshold(Tuple3.size(),
+                                            (at) -> { promise1.onResult($ -> at.registerEvent());
+                                                      promise2.onResult($ -> at.registerEvent());
+                                                      promise3.onResult($ -> at.registerEvent()); },
+                                            () -> promise1.onResult(v1 ->
+                                                    promise2.onResult(v2 ->
+                                                      promise3.onResult(v3 -> promise.resolve(with(v1, v2, v3).map(Result::zip)))))));
+    }
+
+    static <T1, T2, T3, T4> Promise<Tuple4<T1, T2, T3, T4>> all(final Promise<T1> promise1,
+                                                                final Promise<T2> promise2,
+                                                                final Promise<T3> promise3,
+                                                                final Promise<T4> promise4) {
+        return promise(promise -> threshold(Tuple4.size(),
+                                            (at) -> { promise1.onResult($ -> at.registerEvent());
+                                                      promise2.onResult($ -> at.registerEvent());
+                                                      promise3.onResult($ -> at.registerEvent());
+                                                      promise4.onResult($ -> at.registerEvent()); },
+                                            () -> promise1.onResult(v1 ->
+                                                    promise2.onResult(v2 ->
+                                                      promise3.onResult(v3 ->
+                                                        promise4.onResult(v4 -> promise.resolve(with(v1, v2, v3, v4).map(Result::zip))))))));
+    }
+
+    static <T1, T2, T3, T4, T5> Promise<Tuple5<T1, T2, T3, T4, T5>> all(final Promise<T1> promise1,
+                                                                        final Promise<T2> promise2,
+                                                                        final Promise<T3> promise3,
+                                                                        final Promise<T4> promise4,
+                                                                        final Promise<T5> promise5) {
+        return promise(promise -> threshold(Tuple5.size(),
+                                            (at) -> { promise1.onResult($ -> at.registerEvent());
+                                                      promise2.onResult($ -> at.registerEvent());
+                                                      promise3.onResult($ -> at.registerEvent());
+                                                      promise4.onResult($ -> at.registerEvent());
+                                                      promise5.onResult($ -> at.registerEvent()); },
+                                            () -> promise1.onResult(v1 ->
+                                                    promise2.onResult(v2 ->
+                                                      promise3.onResult(v3 ->
+                                                        promise4.onResult(v4 ->
+                                                          promise5.onResult(v5 -> promise.resolve(with(v1, v2, v3, v4, v5).map(Result::zip)))))))));
+    }
+
+    static <T1, T2, T3, T4, T5, T6> Promise<Tuple6<T1, T2, T3, T4, T5, T6>> all(final Promise<T1> promise1,
+                                                                                final Promise<T2> promise2,
+                                                                                final Promise<T3> promise3,
+                                                                                final Promise<T4> promise4,
+                                                                                final Promise<T5> promise5,
+                                                                                final Promise<T6> promise6) {
+        return promise(promise -> threshold(Tuple6.size(),
+                                            (at) -> { promise1.onResult($ -> at.registerEvent());
+                                                      promise2.onResult($ -> at.registerEvent());
+                                                      promise3.onResult($ -> at.registerEvent());
+                                                      promise4.onResult($ -> at.registerEvent());
+                                                      promise5.onResult($ -> at.registerEvent());
+                                                      promise6.onResult($ -> at.registerEvent()); },
+                                            () -> promise1.onResult(v1 ->
+                                                    promise2.onResult(v2 ->
+                                                      promise3.onResult(v3 ->
+                                                        promise4.onResult(v4 ->
+                                                          promise5.onResult(v5 ->
+                                                            promise6.onResult(v6 -> promise.resolve(with(v1, v2, v3, v4, v5, v6).map(Result::zip))))))))));
+    }
+
+    static <T1, T2, T3, T4, T5, T6, T7> Promise<Tuple7<T1, T2, T3, T4, T5, T6, T7>> all(final Promise<T1> promise1,
+                                                                                        final Promise<T2> promise2,
+                                                                                        final Promise<T3> promise3,
+                                                                                        final Promise<T4> promise4,
+                                                                                        final Promise<T5> promise5,
+                                                                                        final Promise<T6> promise6,
+                                                                                        final Promise<T7> promise7) {
+        return promise(promise -> threshold(Tuple7.size(),
+                                            (at) -> { promise1.onResult($ -> at.registerEvent());
+                                                      promise2.onResult($ -> at.registerEvent());
+                                                      promise3.onResult($ -> at.registerEvent());
+                                                      promise4.onResult($ -> at.registerEvent());
+                                                      promise5.onResult($ -> at.registerEvent());
+                                                      promise6.onResult($ -> at.registerEvent());
+                                                      promise7.onResult($ -> at.registerEvent()); },
+                                            () -> promise1.onResult(v1 ->
+                                                    promise2.onResult(v2 ->
+                                                      promise3.onResult(v3 ->
+                                                        promise4.onResult(v4 ->
+                                                          promise5.onResult(v5 ->
+                                                            promise6.onResult(v6 ->
+                                                              promise7.onResult(v7 -> promise.resolve(with(v1, v2, v3, v4, v5, v6, v7).map(Result::zip)))))))))));
+    }
+
+    static <T1, T2, T3, T4, T5, T6, T7, T8> Promise<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> all(final Promise<T1> promise1,
+                                                                                                final Promise<T2> promise2,
+                                                                                                final Promise<T3> promise3,
+                                                                                                final Promise<T4> promise4,
+                                                                                                final Promise<T5> promise5,
+                                                                                                final Promise<T6> promise6,
+                                                                                                final Promise<T7> promise7,
+                                                                                                final Promise<T8> promise8) {
+        return promise(promise -> threshold(Tuple8.size(),
+                                            (at) -> { promise1.onResult($ -> at.registerEvent());
+                                                      promise2.onResult($ -> at.registerEvent());
+                                                      promise3.onResult($ -> at.registerEvent());
+                                                      promise4.onResult($ -> at.registerEvent());
+                                                      promise5.onResult($ -> at.registerEvent());
+                                                      promise6.onResult($ -> at.registerEvent());
+                                                      promise7.onResult($ -> at.registerEvent());
+                                                      promise8.onResult($ -> at.registerEvent()); },
+                                            () -> promise1.onResult(v1 ->
+                                                    promise2.onResult(v2 ->
+                                                      promise3.onResult(v3 ->
+                                                        promise4.onResult(v4 ->
+                                                          promise5.onResult(v5 ->
+                                                            promise6.onResult(v6 ->
+                                                              promise7.onResult(v7 ->
+                                                                promise8.onResult(v8 -> promise.resolve(with(v1, v2, v3, v4, v5, v6, v7, v8).map(Result::zip))))))))))));
+    }
+
+    static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Promise<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> all(final Promise<T1> promise1,
+                                                                                                        final Promise<T2> promise2,
+                                                                                                        final Promise<T3> promise3,
+                                                                                                        final Promise<T4> promise4,
+                                                                                                        final Promise<T5> promise5,
+                                                                                                        final Promise<T6> promise6,
+                                                                                                        final Promise<T7> promise7,
+                                                                                                        final Promise<T8> promise8,
+                                                                                                        final Promise<T9> promise9) {
+        return promise(promise -> threshold(Tuple9.size(),
+                                            (at) -> { promise1.onResult($ -> at.registerEvent());
+                                                      promise2.onResult($ -> at.registerEvent());
+                                                      promise3.onResult($ -> at.registerEvent());
+                                                      promise4.onResult($ -> at.registerEvent());
+                                                      promise5.onResult($ -> at.registerEvent());
+                                                      promise6.onResult($ -> at.registerEvent());
+                                                      promise7.onResult($ -> at.registerEvent());
+                                                      promise8.onResult($ -> at.registerEvent());
+                                                      promise9.onResult($ -> at.registerEvent()); },
+                                            () -> promise1.onResult(v1 ->
+                                                    promise2.onResult(v2 ->
+                                                      promise3.onResult(v3 ->
+                                                        promise4.onResult(v4 ->
+                                                          promise5.onResult(v5 ->
+                                                            promise6.onResult(v6 ->
+                                                              promise7.onResult(v7 ->
+                                                                promise8.onResult(v8 ->
+                                                                  promise9.onResult(v9 -> promise.resolve(with(v1, v2, v3, v4, v5, v6, v7, v8, v9).map(Result::zip)))))))))))));
+    }
+
 }

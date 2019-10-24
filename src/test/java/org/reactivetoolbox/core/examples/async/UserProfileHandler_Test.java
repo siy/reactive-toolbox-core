@@ -8,7 +8,7 @@ import org.reactivetoolbox.core.examples.async.services.ArticleService;
 import org.reactivetoolbox.core.examples.async.services.CommentService;
 import org.reactivetoolbox.core.examples.async.services.UserService;
 
-import static org.reactivetoolbox.core.async.PromiseAll.all;
+import static org.reactivetoolbox.core.async.Promise.all;
 
 public class UserProfileHandler_Test {
     private UserService userService;

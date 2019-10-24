@@ -2,7 +2,7 @@ package org.reactivetoolbox.core.examples.async;
 
 import org.junit.jupiter.api.Test;
 
-import static org.reactivetoolbox.core.async.PromiseAll.all;
+import static org.reactivetoolbox.core.async.Promise.all;
 import static org.reactivetoolbox.core.lang.Result.failure;
 import static org.reactivetoolbox.core.scheduler.Errors.TIMEOUT;
 import static org.reactivetoolbox.core.scheduler.Timeout.timeout;

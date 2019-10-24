@@ -5,7 +5,7 @@ import org.reactivetoolbox.core.lang.Tuple;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.reactivetoolbox.core.async.PromiseAll.all;
+import static org.reactivetoolbox.core.async.Promise.all;
 import static org.reactivetoolbox.core.lang.Result.failure;
 import static org.reactivetoolbox.core.lang.Result.success;
 import static org.reactivetoolbox.core.scheduler.Errors.CANCELLED;
