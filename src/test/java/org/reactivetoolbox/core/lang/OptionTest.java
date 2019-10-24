@@ -3,7 +3,10 @@ package org.reactivetoolbox.core.lang;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -12,14 +15,13 @@ class OptionTest {
     @Test
     void emptyOptionCanBeCreated() {
         Option.empty()
-              .whenPresent(v -> fail());
+              .apply(() -> {}, v -> fail());
     }
 
     @Test
     void optionWithDataCanBeCreated() {
         Option.with("not empty")
-              .whenPresent(v -> assertEquals("not empty", v))
-              .whenEmpty(Assertions::fail);
+              .apply(Assertions::fail, v -> assertEquals("not empty", v));
     }
 
     @Test
@@ -110,7 +112,14 @@ class OptionTest {
               .whenEmpty(Assertions::fail)
               .filter(val -> val > 1)
               .whenEmpty(Assertions::fail)
+              .notNull()
+              .whenEmpty(Assertions::fail)
               .filter(val -> val < 100)
+              .whenPresent(val -> fail());
+
+        Option.with(null)
+              .whenEmpty(Assertions::fail)
+              .notNull()
               .whenPresent(val -> fail());
     }
 
@@ -120,5 +129,25 @@ class OptionTest {
               .whenPresent(v -> fail())
               .filter(v -> true)
               .whenPresent(v -> fail());
+    }
+
+    @Test
+    void emptyInstancesAreEqual() {
+        assertFalse(Option.empty().equals(""));
+        assertEquals(Option.empty(), Option.of(null));
+    }
+
+    @Test
+    void nonEmptyInstancesAreEqual() {
+        assertFalse(Option.with(1).equals(1));
+        assertEquals(Option.with(1), Option.of(1));
+    }
+
+    @Test
+    void optionCanBePutInMap() {
+        final var map = Map.of(1, Option.with(1), 2, Option.with(2));
+
+        assertEquals(Option.of(1), map.get(1));
+        assertEquals(Option.of(2), map.get(2));
     }
 }

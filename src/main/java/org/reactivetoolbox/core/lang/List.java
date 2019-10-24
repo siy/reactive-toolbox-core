@@ -162,7 +162,12 @@ public interface List<E> {
                     return true;
                 }
 
-                return (obj instanceof List) && (((List) obj).equals(elements));
+                if(obj instanceof List) {
+                    final var list = (List) obj;
+                    return list.size() == size() && list.equals(elements);
+                }
+
+                return false;
             }
 
             @Override
@@ -267,7 +272,15 @@ public interface List<E> {
 
         @Override
         public boolean equals(final Object obj) {
-            return (obj instanceof List) && (((List) obj).size() == 0);
+            if (obj == this) {
+                return true;
+            }
+
+            if (obj instanceof List && ((List) obj).size() == 0) {
+                return true;
+            }
+
+            return false;
         }
 
         @Override

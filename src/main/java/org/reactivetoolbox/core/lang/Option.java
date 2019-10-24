@@ -53,14 +53,18 @@ public abstract class Option<T> implements Either<Void, T>{
      *
      * @return Created instance
      */
+    @SuppressWarnings("unchecked")
     public static <R> Option<R> empty() {
-        return new Option<>() {
-            @Override
-            public <T> T map(final FN1<? extends T, ? super Void> leftMapper, final FN1<? extends T, ? super R> rightMapper) {
-                return leftMapper.apply(null);
-            }
-        };
+        return (Option<R>) EMPTY_OPTION;
     }
+
+    private static final Option EMPTY_OPTION = new Option() {
+        @SuppressWarnings("unchecked")
+        @Override
+        public Object map(final FN1 leftMapper, final FN1 rightMapper) {
+            return leftMapper.apply(null);
+        }
+    };
 
     /**
      * Create a present or empty instance depending on the passed value.
