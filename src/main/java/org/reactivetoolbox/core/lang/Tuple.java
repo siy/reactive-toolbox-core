@@ -114,31 +114,33 @@ public interface Tuple<S extends Tuple> {
         }
     }
 
-    static Tuple0 with() {
-        return new Tuple0() {
-            @Override
-            public <T> T map(final FN0<T> mapper) {
-                return mapper.apply();
-            }
+    Tuple0 TUPLE_0 = new Tuple0() {
+        @Override
+        public <T> T map(final FN0<T> mapper) {
+            return mapper.apply();
+        }
 
-            @Override
-            public boolean equals(final Object obj) {
-                return this == obj || obj instanceof Tuple0;
-            }
+        @Override
+        public boolean equals(final Object obj) {
+            return this == obj || obj instanceof Tuple0;
+        }
 
-            @Override
-            public int hashCode() {
-                return super.hashCode();
-            }
+        @Override
+        public int hashCode() {
+            return super.hashCode();
+        }
 
-            @Override
-            public String toString() {
-                return "Tuple0[]";
-            }
-        };
+        @Override
+        public String toString() {
+            return "Tuple0()";
+        }
+    };
+
+    static Tuple0 tuple() {
+        return TUPLE_0;
     }
 
-    static <T1> Tuple1<T1> with(final T1 param1) {
+    static <T1> Tuple1<T1> tuple(final T1 param1) {
         return new Tuple1<>() {
             @Override
             public <T> T map(final FN1<T, T1> mapper) {
@@ -161,14 +163,14 @@ public interface Tuple<S extends Tuple> {
 
             @Override
             public String toString() {
-                return new StringJoiner(", ", "Tuple1(", ")")
+                return new StringJoiner(", ", "Tuple(", ")")
                         .add(param1.toString())
                         .toString();
             }
         };
     }
 
-    static <T1, T2> Tuple2<T1, T2> with(final T1 param1, final T2 param2) {
+    static <T1, T2> Tuple2<T1, T2> tuple(final T1 param1, final T2 param2) {
         return new Tuple2<>() {
             @Override
             public <T> T map(final FN2<T, T1, T2> mapper) {
@@ -193,7 +195,7 @@ public interface Tuple<S extends Tuple> {
 
             @Override
             public String toString() {
-                return new StringJoiner(", ", "Tuple2(", ")")
+                return new StringJoiner(", ", "Tuple(", ")")
                         .add(param1.toString())
                         .add(param2.toString())
                         .toString();
@@ -201,7 +203,7 @@ public interface Tuple<S extends Tuple> {
         };
     }
 
-    static <T1, T2, T3> Tuple3<T1, T2, T3> with(final T1 param1, final T2 param2, final T3 param3) {
+    static <T1, T2, T3> Tuple3<T1, T2, T3> tuple(final T1 param1, final T2 param2, final T3 param3) {
         return new Tuple3<>() {
             @Override
             public <T> T map(final FN3<T, T1, T2, T3> mapper) {
@@ -227,7 +229,7 @@ public interface Tuple<S extends Tuple> {
 
             @Override
             public String toString() {
-                return new StringJoiner(", ", "Tuple3(", ")")
+                return new StringJoiner(", ", "Tuple(", ")")
                         .add(param1.toString())
                         .add(param2.toString())
                         .add(param3.toString())
@@ -236,8 +238,8 @@ public interface Tuple<S extends Tuple> {
         };
     }
 
-    static <T1, T2, T3, T4> Tuple4<T1, T2, T3, T4> with(final T1 param1, final T2 param2, final T3 param3,
-                                                        final T4 param4) {
+    static <T1, T2, T3, T4> Tuple4<T1, T2, T3, T4> tuple(final T1 param1, final T2 param2, final T3 param3,
+                                                         final T4 param4) {
         return new Tuple4<>() {
             @Override
             public <T> T map(final FN4<T, T1, T2, T3, T4> mapper) {
@@ -264,7 +266,7 @@ public interface Tuple<S extends Tuple> {
 
             @Override
             public String toString() {
-                return new StringJoiner(", ", "Tuple4(", ")")
+                return new StringJoiner(", ", "Tuple(", ")")
                         .add(param1.toString())
                         .add(param2.toString())
                         .add(param3.toString())
@@ -274,8 +276,8 @@ public interface Tuple<S extends Tuple> {
         };
     }
 
-    static <T1, T2, T3, T4, T5> Tuple5<T1, T2, T3, T4, T5> with(final T1 param1, final T2 param2, final T3 param3,
-                                                                final T4 param4, final T5 param5) {
+    static <T1, T2, T3, T4, T5> Tuple5<T1, T2, T3, T4, T5> tuple(final T1 param1, final T2 param2, final T3 param3,
+                                                                 final T4 param4, final T5 param5) {
         return new Tuple5<>() {
             @Override
             public <T> T map(final FN5<T, T1, T2, T3, T4, T5> mapper) {
@@ -303,7 +305,7 @@ public interface Tuple<S extends Tuple> {
 
             @Override
             public String toString() {
-                return new StringJoiner(", ", "Tuple5(", ")")
+                return new StringJoiner(", ", "Tuple(", ")")
                         .add(param1.toString())
                         .add(param2.toString())
                         .add(param3.toString())
@@ -314,8 +316,8 @@ public interface Tuple<S extends Tuple> {
         };
     }
 
-    static <T1, T2, T3, T4, T5, T6> Tuple6<T1, T2, T3, T4, T5, T6> with(final T1 param1, final T2 param2, final T3 param3,
-                                                                        final T4 param4, final T5 param5, final T6 param6) {
+    static <T1, T2, T3, T4, T5, T6> Tuple6<T1, T2, T3, T4, T5, T6> tuple(final T1 param1, final T2 param2, final T3 param3,
+                                                                         final T4 param4, final T5 param5, final T6 param6) {
         return new Tuple6<>() {
             @Override
             public <T> T map(final FN6<T, T1, T2, T3, T4, T5, T6> mapper) {
@@ -344,7 +346,7 @@ public interface Tuple<S extends Tuple> {
 
             @Override
             public String toString() {
-                return new StringJoiner(", ", "Tuple6(", ")")
+                return new StringJoiner(", ", "Tuple(", ")")
                         .add(param1.toString())
                         .add(param2.toString())
                         .add(param3.toString())
@@ -356,9 +358,9 @@ public interface Tuple<S extends Tuple> {
         };
     }
 
-    static <T1, T2, T3, T4, T5, T6, T7> Tuple7<T1, T2, T3, T4, T5, T6, T7> with(final T1 param1, final T2 param2, final T3 param3,
-                                                                                final T4 param4, final T5 param5, final T6 param6,
-                                                                                final T7 param7) {
+    static <T1, T2, T3, T4, T5, T6, T7> Tuple7<T1, T2, T3, T4, T5, T6, T7> tuple(final T1 param1, final T2 param2, final T3 param3,
+                                                                                 final T4 param4, final T5 param5, final T6 param6,
+                                                                                 final T7 param7) {
         return new Tuple7<>() {
             @Override
             public <T> T map(final FN7<T, T1, T2, T3, T4, T5, T6, T7> mapper) {
@@ -388,7 +390,7 @@ public interface Tuple<S extends Tuple> {
 
             @Override
             public String toString() {
-                return new StringJoiner(", ", "Tuple7(", ")")
+                return new StringJoiner(", ", "Tuple(", ")")
                         .add(param1.toString())
                         .add(param2.toString())
                         .add(param3.toString())
@@ -401,9 +403,9 @@ public interface Tuple<S extends Tuple> {
         };
     }
 
-    static <T1, T2, T3, T4, T5, T6, T7, T8> Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> with(final T1 param1, final T2 param2, final T3 param3,
-                                                                                        final T4 param4, final T5 param5, final T6 param6,
-                                                                                        final T7 param7, final T8 param8) {
+    static <T1, T2, T3, T4, T5, T6, T7, T8> Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> tuple(final T1 param1, final T2 param2, final T3 param3,
+                                                                                         final T4 param4, final T5 param5, final T6 param6,
+                                                                                         final T7 param7, final T8 param8) {
         return new Tuple8<>() {
             @Override
             public <T> T map(final FN8<T, T1, T2, T3, T4, T5, T6, T7, T8> mapper) {
@@ -434,7 +436,7 @@ public interface Tuple<S extends Tuple> {
 
             @Override
             public String toString() {
-                return new StringJoiner(", ", "Tuple8(", ")")
+                return new StringJoiner(", ", "Tuple(", ")")
                         .add(param1.toString())
                         .add(param2.toString())
                         .add(param3.toString())
@@ -448,9 +450,9 @@ public interface Tuple<S extends Tuple> {
         };
     }
 
-    static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9> with(final T1 param1, final T2 param2, final T3 param3,
-                                                                                                final T4 param4, final T5 param5, final T6 param6,
-                                                                                                final T7 param7, final T8 param8, final T9 param9) {
+    static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9> tuple(final T1 param1, final T2 param2, final T3 param3,
+                                                                                                 final T4 param4, final T5 param5, final T6 param6,
+                                                                                                 final T7 param7, final T8 param8, final T9 param9) {
         return new Tuple9<>() {
             @Override
             public <T> T map(final FN9<T, T1, T2, T3, T4, T5, T6, T7, T8, T9> mapper) {
@@ -482,7 +484,7 @@ public interface Tuple<S extends Tuple> {
 
             @Override
             public String toString() {
-                return new StringJoiner(", ", "Tuple9(", ")")
+                return new StringJoiner(", ", "Tuple(", ")")
                         .add(param1.toString())
                         .add(param2.toString())
                         .add(param3.toString())

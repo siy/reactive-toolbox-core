@@ -20,6 +20,7 @@ import org.reactivetoolbox.core.async.impl.PromiseImpl;
 import org.reactivetoolbox.core.lang.Failure;
 import org.reactivetoolbox.core.lang.Functions.FN1;
 import org.reactivetoolbox.core.lang.Result;
+import org.reactivetoolbox.core.lang.Tuple;
 import org.reactivetoolbox.core.lang.Tuple.Tuple5;
 import org.reactivetoolbox.core.lang.Tuple.Tuple6;
 import org.reactivetoolbox.core.lang.Tuple.Tuple7;
@@ -39,7 +40,7 @@ import static org.reactivetoolbox.core.lang.Tuple.Tuple1;
 import static org.reactivetoolbox.core.lang.Tuple.Tuple2;
 import static org.reactivetoolbox.core.lang.Tuple.Tuple3;
 import static org.reactivetoolbox.core.lang.Tuple.Tuple4;
-import static org.reactivetoolbox.core.lang.Tuple.with;
+import static org.reactivetoolbox.core.lang.Tuple.tuple;
 
 /**
  * Extended {@link Promise} implementation which works with {@link Result} values.
@@ -391,7 +392,7 @@ public interface Promise<T> {
     static <T1> Promise<Tuple1<T1>> all(final Promise<T1> promise1) {
         return promise(promise -> threshold(Tuple1.size(),
                                             (at) -> promise1.onResult($ -> at.registerEvent()),
-                                            () -> promise1.onResult(v1 -> promise.resolve(with(v1).map(Result::zip)))));
+                                            () -> promise1.onResult(v1 -> promise.resolve(Tuple.tuple(v1).map(Result::zip)))));
     }
 
     static <T1, T2> Promise<Tuple2<T1, T2>> all(final Promise<T1> promise1,
@@ -400,7 +401,7 @@ public interface Promise<T> {
                                             (at) -> { promise1.onResult($ -> at.registerEvent());
                                                       promise2.onResult($ -> at.registerEvent()); },
                                             () -> promise1.onResult(v1 ->
-                                                    promise2.onResult(v2 -> promise.resolve(with(v1, v2).map(Result::zip))))));
+                                                    promise2.onResult(v2 -> promise.resolve(Tuple.tuple(v1, v2).map(Result::zip))))));
     }
 
     static <T1, T2, T3> Promise<Tuple3<T1, T2, T3>> all(final Promise<T1> promise1,
@@ -412,7 +413,7 @@ public interface Promise<T> {
                                                       promise3.onResult($ -> at.registerEvent()); },
                                             () -> promise1.onResult(v1 ->
                                                     promise2.onResult(v2 ->
-                                                      promise3.onResult(v3 -> promise.resolve(with(v1, v2, v3).map(Result::zip)))))));
+                                                      promise3.onResult(v3 -> promise.resolve(Tuple.tuple(v1, v2, v3).map(Result::zip)))))));
     }
 
     static <T1, T2, T3, T4> Promise<Tuple4<T1, T2, T3, T4>> all(final Promise<T1> promise1,
@@ -427,7 +428,7 @@ public interface Promise<T> {
                                             () -> promise1.onResult(v1 ->
                                                     promise2.onResult(v2 ->
                                                       promise3.onResult(v3 ->
-                                                        promise4.onResult(v4 -> promise.resolve(with(v1, v2, v3, v4).map(Result::zip))))))));
+                                                        promise4.onResult(v4 -> promise.resolve(Tuple.tuple(v1, v2, v3, v4).map(Result::zip))))))));
     }
 
     static <T1, T2, T3, T4, T5> Promise<Tuple5<T1, T2, T3, T4, T5>> all(final Promise<T1> promise1,
@@ -445,7 +446,7 @@ public interface Promise<T> {
                                                     promise2.onResult(v2 ->
                                                       promise3.onResult(v3 ->
                                                         promise4.onResult(v4 ->
-                                                          promise5.onResult(v5 -> promise.resolve(with(v1, v2, v3, v4, v5).map(Result::zip)))))))));
+                                                          promise5.onResult(v5 -> promise.resolve(Tuple.tuple(v1, v2, v3, v4, v5).map(Result::zip)))))))));
     }
 
     static <T1, T2, T3, T4, T5, T6> Promise<Tuple6<T1, T2, T3, T4, T5, T6>> all(final Promise<T1> promise1,
@@ -466,7 +467,7 @@ public interface Promise<T> {
                                                       promise3.onResult(v3 ->
                                                         promise4.onResult(v4 ->
                                                           promise5.onResult(v5 ->
-                                                            promise6.onResult(v6 -> promise.resolve(with(v1, v2, v3, v4, v5, v6).map(Result::zip))))))))));
+                                                            promise6.onResult(v6 -> promise.resolve(Tuple.tuple(v1, v2, v3, v4, v5, v6).map(Result::zip))))))))));
     }
 
     static <T1, T2, T3, T4, T5, T6, T7> Promise<Tuple7<T1, T2, T3, T4, T5, T6, T7>> all(final Promise<T1> promise1,
@@ -490,7 +491,7 @@ public interface Promise<T> {
                                                         promise4.onResult(v4 ->
                                                           promise5.onResult(v5 ->
                                                             promise6.onResult(v6 ->
-                                                              promise7.onResult(v7 -> promise.resolve(with(v1, v2, v3, v4, v5, v6, v7).map(Result::zip)))))))))));
+                                                              promise7.onResult(v7 -> promise.resolve(Tuple.tuple(v1, v2, v3, v4, v5, v6, v7).map(Result::zip)))))))))));
     }
 
     static <T1, T2, T3, T4, T5, T6, T7, T8> Promise<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> all(final Promise<T1> promise1,
@@ -517,7 +518,7 @@ public interface Promise<T> {
                                                           promise5.onResult(v5 ->
                                                             promise6.onResult(v6 ->
                                                               promise7.onResult(v7 ->
-                                                                promise8.onResult(v8 -> promise.resolve(with(v1, v2, v3, v4, v5, v6, v7, v8).map(Result::zip))))))))))));
+                                                                promise8.onResult(v8 -> promise.resolve(Tuple.tuple(v1, v2, v3, v4, v5, v6, v7, v8).map(Result::zip))))))))))));
     }
 
     static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Promise<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> all(final Promise<T1> promise1,
@@ -547,7 +548,7 @@ public interface Promise<T> {
                                                             promise6.onResult(v6 ->
                                                               promise7.onResult(v7 ->
                                                                 promise8.onResult(v8 ->
-                                                                  promise9.onResult(v9 -> promise.resolve(with(v1, v2, v3, v4, v5, v6, v7, v8, v9).map(Result::zip)))))))))))));
+                                                                  promise9.onResult(v9 -> promise.resolve(tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9).map(Result::zip)))))))))))));
     }
 
 }

@@ -20,7 +20,7 @@ class PromiseAllTest {
 
         all(promise1)
                 .onFailure(f -> fail())
-                .onSuccess(v -> assertEquals(Tuple.with(1), v))
+                .onSuccess(v -> assertEquals(Tuple.tuple(1), v))
                 .when(timeout(100).millis(), failure(TIMEOUT));
 
         promise1.resolve(success(1));
@@ -33,7 +33,7 @@ class PromiseAllTest {
 
         all(promise1, promise2)
                 .onFailure(f -> fail())
-                .onSuccess(v -> assertEquals(Tuple.with(1, 2), v))
+                .onSuccess(v -> assertEquals(Tuple.tuple(1, 2), v))
                 .when(timeout(100).millis(), TIMEOUT::asFailure);
 
         promise1.resolve(success(1));
@@ -48,7 +48,7 @@ class PromiseAllTest {
 
         all(promise1, promise2, promise3)
                 .onFailure(f -> fail())
-                .onSuccess(v -> assertEquals(Tuple.with(1, 2, 3), v))
+                .onSuccess(v -> assertEquals(Tuple.tuple(1, 2, 3), v))
                 .when(timeout(100).millis(), failure(TIMEOUT));
 
         promise1.resolve(success(1));
@@ -65,7 +65,7 @@ class PromiseAllTest {
 
         all(promise1, promise2, promise3, promise4)
                 .onFailure(f -> fail())
-                .onSuccess(v -> assertEquals(Tuple.with(1, 2, 3, 4), v))
+                .onSuccess(v -> assertEquals(Tuple.tuple(1, 2, 3, 4), v))
                 .when(timeout(100).millis(), failure(TIMEOUT));
 
         promise1.resolve(success(1));
@@ -84,7 +84,7 @@ class PromiseAllTest {
 
         all(promise1, promise2, promise3, promise4, promise5)
                 .onFailure(f -> fail())
-                .onSuccess(v -> assertEquals(Tuple.with(1, 2, 3, 4, 5), v))
+                .onSuccess(v -> assertEquals(Tuple.tuple(1, 2, 3, 4, 5), v))
                 .when(timeout(100).millis(), failure(TIMEOUT));
 
         promise1.resolve(success(1));
@@ -105,7 +105,7 @@ class PromiseAllTest {
 
         all(promise1, promise2, promise3, promise4, promise5, promise6)
                 .onFailure(f -> fail())
-                .onSuccess(v -> assertEquals(Tuple.with(1, 2, 3, 4, 5, 6), v))
+                .onSuccess(v -> assertEquals(Tuple.tuple(1, 2, 3, 4, 5, 6), v))
                 .when(timeout(100).millis(), failure(TIMEOUT));
 
         promise1.resolve(success(1));
@@ -128,7 +128,7 @@ class PromiseAllTest {
 
         all(promise1, promise2, promise3, promise4, promise5, promise6, promise7)
                 .onFailure(f -> fail())
-                .onSuccess(v -> assertEquals(Tuple.with(1, 2, 3, 4, 5, 6, 7), v))
+                .onSuccess(v -> assertEquals(Tuple.tuple(1, 2, 3, 4, 5, 6, 7), v))
                 .when(timeout(100).millis(), failure(TIMEOUT));
 
         promise1.resolve(success(1));
@@ -153,7 +153,7 @@ class PromiseAllTest {
 
         all(promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8)
                 .onFailure(f -> fail())
-                .onSuccess(v -> assertEquals(Tuple.with(1, 2, 3, 4, 5, 6, 7, 8), v))
+                .onSuccess(v -> assertEquals(Tuple.tuple(1, 2, 3, 4, 5, 6, 7, 8), v))
                 .when(timeout(100).millis(), failure(TIMEOUT));
 
         promise1.resolve(success(1));
@@ -180,7 +180,7 @@ class PromiseAllTest {
 
         all(promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8, promise9)
                 .onFailure(f -> fail())
-                .onSuccess(v -> assertEquals(Tuple.with(1, 2, 3, 4, 5, 6, 7, 8, 9), v))
+                .onSuccess(v -> assertEquals(Tuple.tuple(1, 2, 3, 4, 5, 6, 7, 8, 9), v))
                 .when(timeout(100).millis(), failure(TIMEOUT));
 
         promise1.resolve(success(1));

@@ -56,7 +56,31 @@ public interface Pair<L, R> {
      * @return Transformed instance
      */
     default <NL, NR> Pair<NL, NR> map(final FN1<? extends NL, ? super L> leftMapper, final FN1<? extends NR, ? super R> rightMapper) {
-        return map((l, r) -> with(leftMapper.apply(l), rightMapper.apply(r)));
+        return map((l, r) -> pair(leftMapper.apply(l), rightMapper.apply(r)));
+    }
+
+    /**
+     * Transform pair into another pair by applying functions to left element of pair.
+     *
+     * @param leftMapper
+     *        Function to apply to left value
+     *
+     * @return Transformed instance
+     */
+    default <NL> Pair<NL, R> mapLeft(final FN1<? extends NL, ? super L> leftMapper) {
+        return map((l, r) -> pair(leftMapper.apply(l),r));
+    }
+
+    /**
+     * Transform pair into another pair by applying functions to right element of pair.
+     *
+     * @param rightMapper
+     *        Function to apply to right value
+     *
+     * @return Transformed instance
+     */
+    default <NR> Pair<L, NR> mapRight(final FN1<? extends NR, ? super R> rightMapper) {
+        return map((l, r) -> pair(l, rightMapper.apply(r)));
     }
 
     /**
@@ -69,7 +93,7 @@ public interface Pair<L, R> {
      *
      * @return created instance
      */
-    static <L, R> Pair<L, R> with(final L left, final R right) {
+    static <L, R> Pair<L, R> pair(final L left, final R right) {
         return new Pair<L, R>() {
             @Override
             public <V> V map(final FN2<V, L, R> mapper) {
@@ -106,30 +130,12 @@ public interface Pair<L, R> {
     }
 
     /**
-     * Factory method for creation of instances of {@link Pair} with given values.
-     *
-     * @param left
-     *        Left value
-     * @param right
-     *        Right value
-     * @param <L>
-     *        type of left value
-     * @param <R>
-     *        type of right value
-     *
-     * @return created instance
-     */
-    static <L, R> Pair<L, R> pair(final L left, final R right) {
-        return with(left, right);
-    }
-
-    /**
      * Swap left and right values.
      *
      * @return Transformed pair
      */
     default Pair<R, L> swap() {
-        return map((l, r) -> with(r, l));
+        return map((l, r) -> pair(r, l));
     }
 
     /**
@@ -154,7 +160,7 @@ public interface Pair<L, R> {
      * @return current instance
      */
     default Pair<L, R> applyLeft(final Consumer<L> consumer) {
-        map((l, r) -> { consumer.accept(l); return null; });
+        mapLeft(l -> { consumer.accept(l); return null; });
         return this;
     }
 
@@ -167,7 +173,7 @@ public interface Pair<L, R> {
      * @return current instance
      */
     default Pair<L, R> applyRight(final Consumer<R> consumer) {
-        map((l, r) -> { consumer.accept(r); return null; });
+        mapRight(r -> { consumer.accept(r); return null; });
         return this;
     }
 }

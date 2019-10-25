@@ -32,7 +32,7 @@ import java.util.StringJoiner;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static org.reactivetoolbox.core.lang.Tuple.with;
+import static org.reactivetoolbox.core.lang.Tuple.tuple;
 
 /**
  * Representation of the operation result. The result can be either success or failure.
@@ -219,17 +219,17 @@ public interface Result<T> extends Either<Failure, T> {
     }
 
     static <T1> Result<Tuple1<T1>> zip(final Result<T1> value) {
-        return value.flatMap(vv1 -> success(Tuple.with(vv1)));
+        return value.flatMap(vv1 -> success(Tuple.tuple(vv1)));
     }
 
     static <T1, T2> Result<Tuple2<T1, T2>> zip(final Result<T1> value1, final Result<T2> value2) {
-        return value1.flatMap(vv1 -> value2.flatMap(vv2 -> success(with(vv1, vv2))));
+        return value1.flatMap(vv1 -> value2.flatMap(vv2 -> success(Tuple.tuple(vv1, vv2))));
     }
 
     static <T1, T2, T3> Result<Tuple3<T1, T2, T3>> zip(final Result<T1> value1, final Result<T2> value2, final Result<T3> value3) {
         return value1.flatMap(vv1 ->
                  value2.flatMap(vv2 ->
-                   value3.flatMap(vv3 -> success(with(vv1, vv2, vv3)))));
+                   value3.flatMap(vv3 -> success(Tuple.tuple(vv1, vv2, vv3)))));
     }
 
     static <T1, T2, T3, T4> Result<Tuple4<T1, T2, T3, T4>> zip(final Result<T1> value1,
@@ -239,7 +239,7 @@ public interface Result<T> extends Either<Failure, T> {
         return value1.flatMap(vv1 ->
                  value2.flatMap(vv2 ->
                    value3.flatMap(vv3 ->
-                     value4.flatMap(vv4 -> success(with(vv1, vv2, vv3, vv4))))));
+                     value4.flatMap(vv4 -> success(Tuple.tuple(vv1, vv2, vv3, vv4))))));
     }
 
     static <T1, T2, T3, T4, T5> Result<Tuple5<T1, T2, T3, T4, T5>> zip(final Result<T1> value1,
@@ -251,7 +251,7 @@ public interface Result<T> extends Either<Failure, T> {
                  value2.flatMap(vv2 ->
                    value3.flatMap(vv3 ->
                      value4.flatMap(vv4 ->
-                       value5.flatMap(vv5 -> success(with(vv1, vv2, vv3, vv4, vv5)))))));
+                       value5.flatMap(vv5 -> success(Tuple.tuple(vv1, vv2, vv3, vv4, vv5)))))));
     }
 
     static <T1, T2, T3, T4, T5, T6> Result<Tuple6<T1, T2, T3, T4, T5, T6>> zip(final Result<T1> value1,
@@ -265,7 +265,7 @@ public interface Result<T> extends Either<Failure, T> {
                    value3.flatMap(vv3 ->
                      value4.flatMap(vv4 ->
                        value5.flatMap(vv5 ->
-                         value6.flatMap(vv6 -> success(with(vv1, vv2, vv3, vv4, vv5, vv6))))))));
+                         value6.flatMap(vv6 -> success(Tuple.tuple(vv1, vv2, vv3, vv4, vv5, vv6))))))));
     }
 
     static <T1, T2, T3, T4, T5, T6, T7> Result<Tuple7<T1, T2, T3, T4, T5, T6, T7>> zip(final Result<T1> value1,
@@ -281,7 +281,7 @@ public interface Result<T> extends Either<Failure, T> {
                      value4.flatMap(vv4 ->
                        value5.flatMap(vv5 ->
                          value6.flatMap(vv6 ->
-                           value7.flatMap(vv7 -> success(with(vv1, vv2, vv3, vv4, vv5, vv6, vv7)))))))));
+                           value7.flatMap(vv7 -> success(Tuple.tuple(vv1, vv2, vv3, vv4, vv5, vv6, vv7)))))))));
     }
 
     static <T1, T2, T3, T4, T5, T6, T7, T8> Result<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> zip(final Result<T1> value1,
@@ -299,7 +299,7 @@ public interface Result<T> extends Either<Failure, T> {
                        value5.flatMap(vv5 ->
                          value6.flatMap(vv6 ->
                            value7.flatMap(vv7 ->
-                             value8.flatMap(vv8 -> success(with(vv1, vv2, vv3, vv4, vv5, vv6, vv7, vv8))))))))));
+                             value8.flatMap(vv8 -> success(Tuple.tuple(vv1, vv2, vv3, vv4, vv5, vv6, vv7, vv8))))))))));
     }
 
     static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Result<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> zip(final Result<T1> value1,
@@ -319,6 +319,6 @@ public interface Result<T> extends Either<Failure, T> {
                          value6.flatMap(vv6 ->
                            value7.flatMap(vv7 ->
                              value8.flatMap(vv8 ->
-                               value9.flatMap(vv9 -> success(with(vv1, vv2, vv3, vv4, vv5, vv6, vv7, vv8, vv9)))))))))));
+                               value9.flatMap(vv9 -> success(tuple(vv1, vv2, vv3, vv4, vv5, vv6, vv7, vv8, vv9)))))))))));
     }
 }

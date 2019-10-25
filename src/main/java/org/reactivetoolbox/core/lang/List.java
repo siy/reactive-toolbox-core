@@ -21,7 +21,6 @@ import org.reactivetoolbox.core.lang.Functions.FN2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.function.BiConsumer;
@@ -31,13 +30,10 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
-import java.util.stream.Collector.Characteristics;
 import java.util.stream.Stream;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static java.util.Collections.unmodifiableSet;
-import static java.util.stream.Collector.Characteristics.IDENTITY_FINISH;
 
 /**
  * Immutable List
@@ -289,41 +285,35 @@ public interface List<E> {
         }
     };
 
-    Set<Characteristics> CH_ID = unmodifiableSet(EnumSet.of(IDENTITY_FINISH));
-    Collector toListCollector = new Collector() {
-        @Override
-        public Supplier<java.util.List> supplier() {
-            return ArrayList::new;
-        }
+    static <T> Collector<T, ListBuilder<T>, List<T>> toList() {
+        return new Collector<>() {
+            @Override
+            public Supplier<ListBuilder<T>> supplier() {
+                return () -> new ListBuilder<T>(16);
+            }
 
-        @SuppressWarnings("unchecked")
-        @Override
-        public BiConsumer<java.util.List, ?> accumulator() {
-            return java.util.List::add;
-        }
+            @Override
+            public BiConsumer<ListBuilder<T>, T> accumulator() {
+                return ListBuilder::append;
+            }
 
-        @SuppressWarnings("unchecked")
-        @Override
-        public BinaryOperator<java.util.List> combiner() {
-            return (left, right) -> {
-                left.addAll(right);
-                return left;
-            };
-        }
+            @Override
+            public BinaryOperator<ListBuilder<T>> combiner() {
+                return (left, right) -> {
+                    left.append(right.toList());
+                    return left;
+                };
+            }
 
-        @Override
-        public Function<java.util.List, List> finisher() {
-            return List::from;
-        }
+            @Override
+            public Function<ListBuilder<T>, List<T>> finisher() {
+                return ListBuilder::toList;
+            }
 
-        @Override
-        public Set<Characteristics> characteristics() {
-            return CH_ID;
-        }
-    };
-
-    @SuppressWarnings("unchecked")
-    static <T> Collector<T, ?, List<T>> toList() {
-        return (Collector<T, java.util.List<T>, List<T>>) toListCollector;
+            @Override
+            public Set<Characteristics> characteristics() {
+                return Set.of();
+            }
+        };
     }
 }

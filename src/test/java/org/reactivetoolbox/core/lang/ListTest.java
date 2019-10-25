@@ -8,37 +8,57 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.reactivetoolbox.core.lang.List.list;
 
 class ListTest {
     @Test
     void listCanBeCreated() {
         final ArrayList<Integer> arrayList = new ArrayList<>();
-        final var list = List.list(1, 2, 3);
+        final var list = list(1, 2, 3);
 
         list.apply(arrayList::add);
 
         assertEquals(Arrays.asList(1, 2, 3), arrayList);
+        assertTrue(list.equals(list));
+        assertFalse(list.equals(null));
+        assertEquals(list(1, 2, 3), list);
+        assertEquals("List(1,2,3)", list.toString());
+        assertEquals(list(1, 2, 3).hashCode(), list.hashCode());
+        assertNotEquals(0, list.hashCode());
+        assertFalse(arrayList.equals(""));
+    }
+
+    @Test
+    void listCanBeStreamedAndCollected() {
+        final var list = list(1, 2, 3, 4).stream()
+                                         .map(v -> v * 2)
+                                         .collect(List.toList());
+
+        assertEquals(list(2, 4, 6, 8), list);
     }
 
     @Test
     void listsCanBeMerged() {
-        final var list1 = List.list(1, 2, 3);
-        final var list2 = List.list(4, 5, 6);
+        final var list1 = list(1, 2, 3);
+        final var list2 = list(4, 5, 6);
 
-        assertEquals(List.list(1, 2, 3, 4, 5, 6), list1.append(list2));
-        assertEquals(List.list(1, 2, 3, 4, 5, 6), list2.prepend(list1));
+        assertEquals(list(1, 2, 3, 4, 5, 6), list1.append(list2));
+        assertEquals(list(1, 2, 3, 4, 5, 6), list2.prepend(list1));
     }
 
     @Test
     void mapNProvidesIndexes() {
-        final var list = List.list(3, 2, 1).mapN(Integer::sum);
+        final var list = list(3, 2, 1).mapN(Integer::sum);
 
-        assertEquals(List.list(3, 3, 3), list);
+        assertEquals(list(3, 3, 3), list);
     }
 
     @Test
     void applyNProvidesIndexes() {
-        final var list = List.list(3, 2, 1);
+        final var list = list(3, 2, 1);
         final int[] values = new int[list.size()];
 
         list.applyN((n, v) -> values[n] = v);
@@ -50,24 +70,24 @@ class ListTest {
 
     @Test
     void mapIsApplied() {
-        final var list = List.list(3, 2, 1).map(v -> v + 1);
+        final var list = list(3, 2, 1).map(v -> v + 1);
 
-        assertEquals(List.list(4, 3, 2), list);
+        assertEquals(list(4, 3, 2), list);
     }
 
     @Test
     void emptyListIsEmpty() {
         final var counter = new AtomicInteger(0);
 
-        List.list().apply(v -> counter.incrementAndGet());
-        List.list().applyN((n, v) -> counter.incrementAndGet());
+        list().apply(v -> counter.incrementAndGet());
+        list().applyN((n, v) -> counter.incrementAndGet());
 
         assertEquals(0, counter.get());
     }
 
     @Test
     void firstAndLastElementsCanBeRetrieved() {
-        final var list = List.list(1, 2, 3);
+        final var list = list(1, 2, 3);
 
         list.first()
             .whenPresent(v -> assertEquals(1, v))
@@ -79,30 +99,30 @@ class ListTest {
 
     @Test
     void sublistCanBeObtained() {
-        final var list = List.list(1, 2, 3);
+        final var list = list(1, 2, 3);
 
-        assertEquals(List.list(1), list.first(1));
-        assertEquals(List.list(1, 2), list.first(2));
-        assertEquals(List.list(1, 2, 3), list.first(3));
-        assertEquals(List.list(1, 2, 3), list.first(4));
-        assertEquals(List.list(), list.first(-1));
+        assertEquals(list(1), list.first(1));
+        assertEquals(list(1, 2), list.first(2));
+        assertEquals(list(1, 2, 3), list.first(3));
+        assertEquals(list(1, 2, 3), list.first(4));
+        assertEquals(list(), list.first(-1));
     }
 
     @Test
     void emptyListRemainsEmpty() {
-        assertEquals(List.list(), List.list().first(1));
-        assertEquals(List.list(), List.list().filter(v -> true));
-        assertEquals(Option.empty(), List.list().first());
+        assertEquals(list(), list().first(1));
+        assertEquals(list(), list().filter(v -> true));
+        assertEquals(Option.empty(), list().first());
     }
 
     @Test
     void listCanBeFiltered() {
-        final var list = List.list(1, 2, 3);
+        final var list = list(1, 2, 3);
 
-        assertEquals(List.list(1), list.filter(v -> v < 2));
-        assertEquals(List.list(1, 2), list.filter(v -> v < 3));
-        assertEquals(List.list(1, 2, 3), list.filter(v -> v < 4));
-        assertEquals(List.list(1, 2, 3), list.filter(v -> v > 0));
-        assertEquals(List.list(), list.filter(v -> v < 0));
+        assertEquals(list(1), list.filter(v -> v < 2));
+        assertEquals(list(1, 2), list.filter(v -> v < 3));
+        assertEquals(list(1, 2, 3), list.filter(v -> v < 4));
+        assertEquals(list(1, 2, 3), list.filter(v -> v > 0));
+        assertEquals(list(), list.filter(v -> v < 0));
     }
 }
