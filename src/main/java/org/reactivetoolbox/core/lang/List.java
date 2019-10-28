@@ -21,6 +21,7 @@ import org.reactivetoolbox.core.lang.Functions.FN2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.function.BiConsumer;
@@ -57,6 +58,8 @@ public interface List<E> {
     int size();
 
     boolean equals(final E ... elements);
+
+    List<E> sort(final Comparator<E> comparator);
 
     default <R> List<R> map(final FN1<R, E> mapper) {
         return mapN((n, e) -> mapper.apply(e));
@@ -144,6 +147,13 @@ public interface List<E> {
             @Override
             public boolean equals(final T... other) {
                 return Arrays.equals(elements, other);
+            }
+
+            @Override
+            public List<T> sort(final Comparator<T> comparator) {
+                final var nelements = Arrays.copyOf(elements, elements.length);
+                Arrays.sort(nelements, comparator);
+                return list(nelements);
             }
 
             @Override
@@ -259,6 +269,11 @@ public interface List<E> {
         @Override
         public boolean equals(final Object[] elements) {
             return elements.length == 0;
+        }
+
+        @Override
+        public List sort(final Comparator comparator) {
+            return this;
         }
 
         @Override

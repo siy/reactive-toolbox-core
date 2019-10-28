@@ -50,6 +50,13 @@ class ListTest {
     }
 
     @Test
+    void listCanBeSorted() {
+        final var list1 = list(3, 2, 1);
+
+        assertEquals(list(1, 2, 3), list1.sort((a, b) -> a - b));
+    }
+
+    @Test
     void mapNProvidesIndexes() {
         final var list = list(3, 2, 1).mapN(Integer::sum);
 
