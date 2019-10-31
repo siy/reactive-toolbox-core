@@ -15,6 +15,8 @@ package org.reactivetoolbox.core.meta;
  * limitations under the License.
  */
 
+import org.reactivetoolbox.core.log.CoreLogger;
+import org.reactivetoolbox.core.log.impl.JdkLogger;
 import org.reactivetoolbox.core.scheduler.TaskScheduler;
 
 import java.util.HashMap;
@@ -113,6 +115,7 @@ public final class AppMetaRepository {
             final int workerSchedulerSize = Runtime.getRuntime().availableProcessors();
 
             INSTANCE.put(TaskScheduler.class, TaskScheduler.with(workerSchedulerSize));
+            INSTANCE.put(CoreLogger.class, new JdkLogger());
         }
     }
 }

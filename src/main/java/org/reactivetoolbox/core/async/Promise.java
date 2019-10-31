@@ -26,6 +26,7 @@ import org.reactivetoolbox.core.lang.Tuple.Tuple6;
 import org.reactivetoolbox.core.lang.Tuple.Tuple7;
 import org.reactivetoolbox.core.lang.Tuple.Tuple8;
 import org.reactivetoolbox.core.lang.Tuple.Tuple9;
+import org.reactivetoolbox.core.log.CoreLogger;
 import org.reactivetoolbox.core.scheduler.Errors;
 import org.reactivetoolbox.core.scheduler.Timeout;
 
@@ -275,6 +276,13 @@ public interface Promise<T> {
     default <R> Promise<R> map(final FN1<R, T> mapper) {
         return promise(promise -> onResult(result -> promise.resolve(result.map(mapper))));
     }
+
+    /**
+     * Get internal logger instance.
+     *
+     * @return logger instance used to log {@link Promise} internal events
+     */
+    CoreLogger logger();
 
     /**
      * Create new unresolved instance.om
@@ -550,5 +558,4 @@ public interface Promise<T> {
                                                                 promise8.onResult(v8 ->
                                                                   promise9.onResult(v9 -> promise.resolve(tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9).map(Result::zip)))))))))))));
     }
-
 }

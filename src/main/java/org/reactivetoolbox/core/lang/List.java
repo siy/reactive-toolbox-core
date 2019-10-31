@@ -22,6 +22,7 @@ import org.reactivetoolbox.core.lang.Functions.FN2;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Random;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.function.BiConsumer;
@@ -41,50 +42,172 @@ import static java.lang.Math.min;
  */
 //TODO: experimental, requires more considerations and, most likely, more efficient implementation
 public interface List<E> {
-    <R> List<R> mapN(final FN2<R, Integer, E> mapper);
-
-    List<E> applyN(final BiConsumer<Integer, E> consumer);
-
+    /**
+     * Return first element from list.
+     *
+     * @return First element wrapped into {@link Option} if element is present or {@link Option#empty()} otherwise
+     */
     Option<E> first();
 
-    Option<E> last();
-
+    /**
+     * Return first {@code N} elements from the list. If there are less elements than requested, then avalable
+     * elements returned.
+     * @param n
+     *        Number of elements to return.
+     *
+     * @return New list with at most requested number of elements
+     */
     List<E> first(final int n);
 
+    /**
+     * Return last element from list.
+     *
+     * @return Last element wrapped into {@link Option} if element is present or {@link Option#empty()} otherwise
+     */
+    Option<E> last();
+
+    /**
+     * Return list which contains elements from current list followed by elements from list provided as parameter.
+     *
+     * @param other
+     *        List to append
+     *
+     * @return List with elements from current list followed by elements from {@code other} list
+     */
     List<E> append(final List<E> other);
 
-    Stream<E> stream();
-
-    int size();
-
-    boolean equals(final E ... elements);
-
-    List<E> sort(final Comparator<E> comparator);
-
-    default <R> List<R> map(final FN1<R, E> mapper) {
-        return mapN((n, e) -> mapper.apply(e));
-    }
-
-    default List<E> filter(final Predicate<E> predicate) {
-        return ListBuilder.<E>builder(size())
-                .then(builder -> apply(e -> {
-                    if (predicate.test(e)) {
-                        builder.append(e);
-                    }
-                }))
-                .toList();
-    }
-
-    default List<E> apply(final Consumer<E> consumer) {
-        return applyN((n, e) -> consumer.accept(e));
-    }
-
+    /**
+     * Return list which contains elements from list provided as parameter followed by elements of current list.
+     *
+     * @param other
+     *        List to append to
+     *
+     * @return List with elements from {@code other} list followed by elements from current list
+     */
     default List<E> prepend(final List<E> other) {
         return other.append(this);
     }
 
+    /**
+     * Return list consisting of elements obtained from elements of current list with applied
+     * transformation function.
+     *
+     * @param mapper
+     *        Transformation function
+     *
+     * @return New list with transformed elements
+     */
+    default <R> List<R> map(final FN1<R, E> mapper) {
+        return mapN((n, e) -> mapper.apply(e));
+    }
+
+    /**
+     * Return list consisting of elements obtained from elements of current list with applied
+     * transformation function. Unlike {@link #map(FN1)} this method passes index of element
+     * along with element to transformation function.
+     *
+     * @param mapper
+     *        Transformation function
+     *
+     * @return New list with transformed elements
+     */
+    <R> List<R> mapN(final FN2<R, Integer, E> mapper);
+
+    /**
+     * Applies specified consumer to elements of current list.
+     *
+     * @param consumer
+     *        Consumer for elements
+     *
+     * @return Current list
+     */
+    default List<E> apply(final Consumer<E> consumer) {
+        return applyN((n, e) -> consumer.accept(e));
+    }
+
+    /**
+     * Applies specified consumer to elements of current list.
+     * Unlike {@link #apply(Consumer)} element index is passed along with element to consumer.
+     *
+     * @param consumer
+     *        Consumer for elements
+     *
+     * @return Current list
+     */
+    List<E> applyN(final BiConsumer<Integer, E> consumer);
+
+    /**
+     * Create {@link Stream} from list elements.
+     *
+     * @return Created stream
+     */
+    Stream<E> stream();
+
+    /**
+     * Return list size.
+     *
+     * @return number of elements in list
+     */
+    int size();
+
+    /**
+     * Create new list which will hold the same elements but sorted according to
+     * provided comparator.
+     *
+     * @param comparator
+     *        Element comparator
+     *
+     * @return Sorted list
+     */
+    List<E> sort(final Comparator<E> comparator);
+
+    /**
+     * Create new list which contains same elements reordered using given source of random numbers.
+     *
+     * @param random
+     *        Random number source
+     *
+     * @return Shuffled list
+     */
+    List<E> shuffle(final Random random);
+
+    /**
+     * Create new list which will hold only elements which satisfy provided predicate.
+     *
+     * @param predicate
+     *        Predicate to apply to elements
+     *
+     * @return List of elements for which predicate returned {@code true}
+     */
+    default List<E> filter(final Predicate<E> predicate) {
+        return ListBuilder.<E>builder(size())
+                .then(builder -> mapN((n, e) -> predicate.test(e) ? builder.append(e) : null))
+                .toList();
+    }
+
+    /**
+     * Split current list into two using provided predicate. Result is a pair of lists. Left element of pair
+     * contains list with elements evaluated to {@code false} by predicate. Right element of pair contains
+     * list with elements evaluated to {@code true} by predicate.
+     *
+     * @param predicate
+     *        Predicate to apply to elements
+     *
+     * @return Pair of lists with results
+     */
+    default Pair<List<E>, List<E>> splitBy(final Predicate<E> predicate) {
+        final var listFalse = ListBuilder.<E>builder(size());
+        final var listTrue = ListBuilder.<E>builder(size());
+
+        mapN((n, e) -> (predicate.test(e) ? listTrue.append(e) : listFalse.append(e)));
+
+        return Pair.pair(listFalse.toList(), listTrue.toList());
+    }
+
+    boolean equals(final E ... elements);
+
     @SuppressWarnings("unchecked")
-    static <T> List<T> from(final java.util.List<T> source) {
+    static <T> List<T> from(final java.util.Collection<T> source) {
         return (List<T>) list(source.toArray());
     }
 
@@ -93,6 +216,7 @@ public interface List<E> {
         return (List<T>) EMPTY_LIST;
     }
 
+    //TODO: more efficient implementation
     static <T> List<T> list(final T... elements) {
         return new List<T>() {
             @Override
@@ -153,6 +277,19 @@ public interface List<E> {
             public List<T> sort(final Comparator<T> comparator) {
                 final var nelements = Arrays.copyOf(elements, elements.length);
                 Arrays.sort(nelements, comparator);
+                return list(nelements);
+            }
+
+            @Override
+            public List<T> shuffle(final Random random) {
+                final var nelements = Arrays.copyOf(elements, elements.length);
+
+                for(int i = 0; i < nelements.length; i++) {
+                    final var pos = random.nextInt(nelements.length);
+                    final var element = nelements[pos];
+                    nelements[pos] = nelements[i];
+                    nelements[i] = element;
+                }
                 return list(nelements);
             }
 
@@ -273,6 +410,11 @@ public interface List<E> {
 
         @Override
         public List sort(final Comparator comparator) {
+            return this;
+        }
+
+        @Override
+        public List shuffle(final Random random) {
             return this;
         }
 

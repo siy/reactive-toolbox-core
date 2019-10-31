@@ -19,6 +19,7 @@ package org.reactivetoolbox.core.async.impl;
 import org.reactivetoolbox.core.async.Promise;
 import org.reactivetoolbox.core.lang.Option;
 import org.reactivetoolbox.core.lang.Result;
+import org.reactivetoolbox.core.log.CoreLogger;
 import org.reactivetoolbox.core.meta.AppMetaRepository;
 import org.reactivetoolbox.core.scheduler.TaskScheduler;
 import org.reactivetoolbox.core.scheduler.Timeout;
@@ -61,7 +62,7 @@ public class PromiseImpl<T> implements Promise<T> {
                 try {
                     action.accept(value.getReference());
                 } catch (final Throwable t) {
-                    //TODO: add logging
+                    logger().debug("Exception in resolve()", t);
                 }
             });
         }
@@ -77,7 +78,7 @@ public class PromiseImpl<T> implements Promise<T> {
             try {
                 action.accept(value.getReference());
             } catch (final Throwable t) {
-                //TODO: add logging
+                logger().debug("Exception in onResult()", t);
             }
         } else {
             thenActions.offer(action);
@@ -96,7 +97,7 @@ public class PromiseImpl<T> implements Promise<T> {
         try {
             latch.await();
         } catch (final InterruptedException e) {
-            // Ignore exception
+            logger().debug("Exception in syncWait()", e);
         }
         return this;
     }
@@ -112,7 +113,7 @@ public class PromiseImpl<T> implements Promise<T> {
         try {
             latch.await(timeout.timeout(), TimeUnit.MILLISECONDS);
         } catch (final InterruptedException e) {
-            // Ignore exception
+            logger().debug("Exception in syncWait(timeout)", e);
         }
         return this;
     }
@@ -122,13 +123,13 @@ public class PromiseImpl<T> implements Promise<T> {
      */
     @Override
     public Promise<T> async(final Consumer<Promise<T>> task) {
-        TaskSchedulerHolder.instance().submit(() -> task.accept(this));
+        SingletonHolder.scheduler().submit(() -> task.accept(this));
         return this;
     }
 
     @Override
     public Promise<T> async(final Timeout timeout, final Consumer<Promise<T>> task) {
-        TaskSchedulerHolder.instance().submit(timeout, () -> task.accept(this));
+        SingletonHolder.scheduler().submit(timeout, () -> task.accept(this));
         return this;
     }
 
@@ -139,11 +140,20 @@ public class PromiseImpl<T> implements Promise<T> {
                 .toString();
     }
 
-    private static final class TaskSchedulerHolder {
-        private static final TaskScheduler taskScheduler = AppMetaRepository.instance().seal().get(TaskScheduler.class);
+    @Override
+    public CoreLogger logger() {
+        return SingletonHolder.logger();
+    }
 
-        static TaskScheduler instance() {
-            return taskScheduler;
+    private static final class SingletonHolder {
+        private static final TaskScheduler SCHEDULER = AppMetaRepository.instance().seal().get(TaskScheduler.class);
+
+        static TaskScheduler scheduler() {
+            return SCHEDULER;
+        }
+
+        static CoreLogger logger() {
+            return SCHEDULER.logger();
         }
     }
 }

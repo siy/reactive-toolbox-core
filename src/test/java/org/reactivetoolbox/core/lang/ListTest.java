@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -51,9 +52,25 @@ class ListTest {
 
     @Test
     void listCanBeSorted() {
-        final var list1 = list(3, 2, 1);
+        final var list = list(3, 2, 1);
 
-        assertEquals(list(1, 2, 3), list1.sort((a, b) -> a - b));
+        assertEquals(list(1, 2, 3), list.sort((a, b) -> a - b));
+    }
+
+    @Test
+    void listCanBeSplitByPredicate() {
+        final var result = list(4, 3, 2, 1).splitBy(e -> e >= 3);
+
+        result.applyLeft(left -> assertEquals(list(2, 1), left))
+              .applyRight(right -> assertEquals(list(4, 3), right));
+    }
+
+    @Test
+    void elementsCanBeShuffled() {
+        final var result = list(1, 2, 3, 4, 5, 6, 7);
+
+        assertEquals(list(1, 3, 7, 5, 2, 6, 4), result.shuffle(new Random(0)));
+        assertEquals(list(6, 3, 1, 5, 7, 2, 4), result.shuffle(new Random(1)));
     }
 
     @Test

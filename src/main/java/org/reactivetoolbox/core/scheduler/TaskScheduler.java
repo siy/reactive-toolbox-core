@@ -16,7 +16,10 @@ package org.reactivetoolbox.core.scheduler;
  * limitations under the License.
  */
 
+import org.reactivetoolbox.core.log.CoreLogger;
 import org.reactivetoolbox.core.scheduler.impl.DoubleQueueTaskScheduler;
+
+import java.util.concurrent.Executor;
 
 /**
  * General purpose task scheduler for executing arbitrary functions.
@@ -26,7 +29,7 @@ import org.reactivetoolbox.core.scheduler.impl.DoubleQueueTaskScheduler;
  *
  * @see RunnablePredicate
  */
-public interface TaskScheduler {
+public interface TaskScheduler extends Executor {
     /**
      * Low-level method which accepts {@link RunnablePredicate} and processes it as many times, as {@link RunnablePredicate#isDone(long)}
      * returns false.
@@ -38,6 +41,13 @@ public interface TaskScheduler {
     TaskScheduler submit(final RunnablePredicate predicate);
 
     /**
+     * Get internal logger instance.
+     *
+     * @return logger instance used to log {@link TaskScheduler} internal events
+     */
+    CoreLogger logger();
+
+    /**
      * Submit task which will be executed exactly once and as soon as possible.
      *
      * @param runnable
@@ -46,6 +56,23 @@ public interface TaskScheduler {
      */
     default TaskScheduler submit(final Runnable runnable) {
         return submit((nanoTime) -> { runnable.run(); return true;});
+    }
+
+    /**
+     * Implementation of {@link Executor} interface
+     *
+     * @param task
+     *        Task to run
+     */
+    @Override
+    default void execute(final Runnable task) {
+        submit(() -> {
+            try {
+                task.run();
+            } catch (final Throwable t) {
+                logger().debug("Error while running task submitted via Executor.execute() interface", t);
+            }
+        });
     }
 
     /**

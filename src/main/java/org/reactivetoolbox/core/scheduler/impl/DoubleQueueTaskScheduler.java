@@ -16,6 +16,8 @@ package org.reactivetoolbox.core.scheduler.impl;
  * limitations under the License.
  */
 
+import org.reactivetoolbox.core.log.CoreLogger;
+import org.reactivetoolbox.core.meta.AppMetaRepository;
 import org.reactivetoolbox.core.scheduler.RunnablePredicate;
 import org.reactivetoolbox.core.scheduler.TaskScheduler;
 
@@ -44,7 +46,7 @@ public class DoubleQueueTaskScheduler implements TaskScheduler {
                     try {
                         Thread.sleep(0);
                     } catch (final InterruptedException e){
-                        //Ignore it
+                        logger().debug("Exception in scheduler processing loop", e);
                     }
                 }
             });
@@ -67,5 +69,19 @@ public class DoubleQueueTaskScheduler implements TaskScheduler {
     @Override
     public void shutdown() {
         executor.shutdown();
+    }
+
+
+    @Override
+    public CoreLogger logger() {
+        return SingletonHolder.logger();
+    }
+
+    private static final class SingletonHolder {
+        private static final CoreLogger LOGGER = AppMetaRepository.instance().seal().get(CoreLogger.class);
+
+        static CoreLogger logger() {
+            return LOGGER;
+        }
     }
 }
