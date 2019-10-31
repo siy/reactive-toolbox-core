@@ -16,6 +16,7 @@ package org.reactivetoolbox.core.lang;
  * limitations under the License.
  */
 
+import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.function.Supplier;
@@ -43,7 +44,7 @@ public interface Failure {
     }
 
     static Failure with(final FailureType type, final String format, final Object ... params) {
-        return of(type, String.format(format, params));
+        return of(type, MessageFormat.format(format, params));
     }
 
     static Failure of(final FailureType type, final String message) {
