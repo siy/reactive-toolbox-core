@@ -20,6 +20,7 @@ import org.reactivetoolbox.core.lang.Failure;
 import org.reactivetoolbox.core.lang.FailureType;
 
 import java.io.IOException;
+import java.security.cert.CertificateException;
 import java.util.NoSuchElementException;
 
 /**
@@ -52,7 +53,8 @@ public class DefaultExceptionTranslator {
             throwable instanceof IndexOutOfBoundsException ||
             throwable instanceof ClassCastException ||
             throwable instanceof NoSuchElementException ||
-            throwable instanceof ReflectiveOperationException) {
+            throwable instanceof ReflectiveOperationException ||
+            throwable instanceof CertificateException) {
             return WebFailureTypes.INTERNAL_SERVER_ERROR;
         }
 

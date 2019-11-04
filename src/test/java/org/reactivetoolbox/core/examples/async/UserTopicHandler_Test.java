@@ -7,10 +7,7 @@ import org.reactivetoolbox.core.examples.async.domain.Topic;
 import org.reactivetoolbox.core.examples.async.domain.User;
 import org.reactivetoolbox.core.examples.async.services.ArticleService;
 import org.reactivetoolbox.core.examples.async.services.TopicService;
-
-import java.util.List;
-
-import static org.reactivetoolbox.core.CollectionUtil.map;
+import org.reactivetoolbox.core.lang.List;
 
 public class UserTopicHandler_Test {
     private ArticleService articleService;
@@ -18,6 +15,6 @@ public class UserTopicHandler_Test {
 
     public Promise<List<Article>> userTopicHandler(final User.Id userId) {
         return topicService.topicsByUser(userId, Order.ANY)
-                           .chainMap(topicsList -> articleService.articlesByUserTopics(userId, map(topicsList, Topic::id)));
+                           .chainMap(topicsList -> articleService.articlesByUserTopics(userId, topicsList.map(Topic::id)));
     }
 }

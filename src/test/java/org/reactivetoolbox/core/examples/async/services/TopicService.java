@@ -4,8 +4,7 @@ import org.reactivetoolbox.core.async.Promise;
 import org.reactivetoolbox.core.examples.async.domain.Order;
 import org.reactivetoolbox.core.examples.async.domain.Topic;
 import org.reactivetoolbox.core.examples.async.domain.User;
-
-import java.util.List;
+import org.reactivetoolbox.core.lang.List;
 
 public interface TopicService {
     Promise<List<Topic>> topicsByUser(final User.Id userId, final Order order);

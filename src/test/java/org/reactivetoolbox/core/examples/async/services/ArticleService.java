@@ -5,8 +5,7 @@ import org.reactivetoolbox.core.examples.async.domain.Article;
 import org.reactivetoolbox.core.examples.async.domain.Order;
 import org.reactivetoolbox.core.examples.async.domain.Topic;
 import org.reactivetoolbox.core.examples.async.domain.User;
-
-import java.util.List;
+import org.reactivetoolbox.core.lang.List;
 
 public interface ArticleService {
     Promise<List<Article>> articlesByUser(final User.Id userId, final Order order);

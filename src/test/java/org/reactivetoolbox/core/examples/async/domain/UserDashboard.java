@@ -1,6 +1,6 @@
 package org.reactivetoolbox.core.examples.async.domain;
 
-import java.util.List;
+import org.reactivetoolbox.core.lang.List;
 
 public class UserDashboard {
     private final UserProfile user;
