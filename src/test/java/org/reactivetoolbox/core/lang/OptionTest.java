@@ -43,13 +43,6 @@ class OptionTest {
     }
 
     @Test
-    void nonEmptyCanContainNull() {
-        Option.option(null)
-              .whenEmpty(Assertions::fail)
-              .whenPresent(Assertions::assertNull);
-    }
-
-    @Test
     void nonEmptyOptionCanBeFlatMappedIntoOtherOption() {
         Option.option(345)
               .whenEmpty(Assertions::fail)
@@ -115,11 +108,6 @@ class OptionTest {
               .notNull()
               .whenEmpty(Assertions::fail)
               .filter(val -> val < 100)
-              .whenPresent(val -> fail());
-
-        Option.option(null)
-              .whenEmpty(Assertions::fail)
-              .notNull()
               .whenPresent(val -> fail());
     }
 
