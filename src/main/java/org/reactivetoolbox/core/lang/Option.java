@@ -29,7 +29,7 @@ import java.util.stream.Stream;
  * Note that unlike {@link java.util.Optional} this implementation does not treat {@code null}
  * as {@code empty} value. The {@code null} value is a completely valid content of non-empty
  * instance. The {@code empty} instance actually does not contain anything.
- * For convenience there is a static factory method {@link #of(Object)} which creates
+ * For convenience there is a static factory method {@link #option(Object)} which creates
  * empty instance for {@code null} values and non-empty instance for other values.
  *
  * @param <T>
@@ -44,7 +44,7 @@ public abstract class Option<T> implements Either<Void, T>{
      *        Value to convert.
      * @return created instance.
      */
-    public static <T> Option<T> of(final T value) {
+    public static <T> Option<T> option(final T value) {
          return value == null ? Option.empty() : Option.with(value);
     }
 
@@ -73,7 +73,7 @@ public abstract class Option<T> implements Either<Void, T>{
      *        Value to be stored in the created instance
      * @return Created instance
      */
-    public static <R> Option<R> with(final R value) {
+    private static <R> Option<R> with(final R value) {
         return new Option<>() {
             @Override
             public <T> T map(final FN1<? extends T, ? super Void> leftMapper, final FN1<? extends T, ? super R> rightMapper) {
@@ -124,7 +124,7 @@ public abstract class Option<T> implements Either<Void, T>{
      * @return transformed instance
      */
     public  <U> Option<U> map(final FN1<U, ? super T> mapper) {
-        return flatMap(t -> with(mapper.apply(t)));
+        return flatMap(t -> option(mapper.apply(t)));
     }
 
     /**

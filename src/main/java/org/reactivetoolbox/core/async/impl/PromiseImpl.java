@@ -17,7 +17,6 @@ package org.reactivetoolbox.core.async.impl;
  */
 
 import org.reactivetoolbox.core.async.Promise;
-import org.reactivetoolbox.core.lang.Option;
 import org.reactivetoolbox.core.lang.Result;
 import org.reactivetoolbox.core.log.CoreLogger;
 import org.reactivetoolbox.core.meta.AppMetaRepository;
@@ -40,16 +39,6 @@ public class PromiseImpl<T> implements Promise<T> {
     private final BlockingQueue<Consumer<Result<T>>> thenActions = new LinkedBlockingQueue<>();
 
     public PromiseImpl() {
-    }
-
-    @Deprecated
-    public Option<Result<T>> value() {
-        return Option.of(value.getReference());
-    }
-
-    @Deprecated
-    public boolean ready() {
-        return value.isMarked();
     }
 
     /**
@@ -136,7 +125,7 @@ public class PromiseImpl<T> implements Promise<T> {
     @Override
     public String toString() {
         return new StringJoiner(", ", "Promise(", ")")
-                .add(ready() ? value.getReference().toString() : "")
+                .add(value.isMarked() ? value.getReference().toString() : "<pending>")
                 .toString();
     }
 

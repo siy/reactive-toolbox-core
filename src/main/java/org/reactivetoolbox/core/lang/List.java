@@ -238,12 +238,12 @@ public interface List<E> {
 
             @Override
             public Option<T> first() {
-                return elements.length > 0 ? Option.of(elements[0]) : Option.empty();
+                return elements.length > 0 ? Option.option(elements[0]) : Option.empty();
             }
 
             @Override
             public Option<T> last() {
-                return elements.length > 0 ? Option.of(elements[elements.length - 1]) : Option.empty();
+                return elements.length > 0 ? Option.option(elements[elements.length - 1]) : Option.empty();
             }
 
             @Override

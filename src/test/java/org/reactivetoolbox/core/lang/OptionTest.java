@@ -20,13 +20,13 @@ class OptionTest {
 
     @Test
     void optionWithDataCanBeCreated() {
-        Option.with("not empty")
+        Option.option("not empty")
               .apply(Assertions::fail, v -> assertEquals("not empty", v));
     }
 
     @Test
     void nonEmptyOptionCanBeMappedToOtherOption() {
-        Option.with(123)
+        Option.option(123)
                 .whenEmpty(Assertions::fail)
                 .whenPresent(v -> assertEquals(123, v))
                 .map(Object::toString)
@@ -44,17 +44,17 @@ class OptionTest {
 
     @Test
     void nonEmptyCanContainNull() {
-        Option.with(null)
+        Option.option(null)
               .whenEmpty(Assertions::fail)
               .whenPresent(Assertions::assertNull);
     }
 
     @Test
     void nonEmptyOptionCanBeFlatMappedIntoOtherOption() {
-        Option.with(345)
+        Option.option(345)
               .whenEmpty(Assertions::fail)
               .whenPresent(v -> assertEquals(345, v))
-              .flatMap(val -> Option.with(val + 2))
+              .flatMap(val -> Option.option(val + 2))
               .whenEmpty(Assertions::fail)
               .whenPresent(v -> assertEquals(347, v));
     }
@@ -63,14 +63,14 @@ class OptionTest {
     void emptyOptionRemainsEmptyAndNotFlatMapped() {
         Option.empty()
               .whenPresent(v -> fail())
-              .flatMap(val -> Option.with("not empty"))
+              .flatMap(val -> Option.option("not empty"))
               .whenPresent(v -> fail());
     }
 
     @Test
     void logicalOrChoosesFirsNonEmptyOption1() {
-        final var firstNonEmpty = Option.with("1");
-        final var secondNonEmpty = Option.with("2");
+        final var firstNonEmpty = Option.option("1");
+        final var secondNonEmpty = Option.option("2");
         final var firstEmpty = Option.<String>empty();
         final var secondEmpty = Option.<String>empty();
 
@@ -82,8 +82,8 @@ class OptionTest {
 
     @Test
     void logicalOrChoosesFirsNonEmptyOption2() {
-        final var firstNonEmpty = Option.with("1");
-        final var secondNonEmpty = Option.with("2");
+        final var firstNonEmpty = Option.option("1");
+        final var secondNonEmpty = Option.option("2");
         final var firstEmpty = Option.<String>empty();
         final var secondEmpty = Option.<String>empty();
 
@@ -103,12 +103,12 @@ class OptionTest {
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     void optionCanBeStreamed() {
         assertTrue(Option.empty().stream().findFirst().isEmpty());
-        assertEquals(123, Option.with(123).stream().findFirst().get());
+        assertEquals(123, Option.option(123).stream().findFirst().get());
     }
 
     @Test
     void nonEmptyInstanceCanBeFiltered() {
-        Option.with(123)
+        Option.option(123)
               .whenEmpty(Assertions::fail)
               .filter(val -> val > 1)
               .whenEmpty(Assertions::fail)
@@ -117,7 +117,7 @@ class OptionTest {
               .filter(val -> val < 100)
               .whenPresent(val -> fail());
 
-        Option.with(null)
+        Option.option(null)
               .whenEmpty(Assertions::fail)
               .notNull()
               .whenPresent(val -> fail());
@@ -134,20 +134,20 @@ class OptionTest {
     @Test
     void emptyInstancesAreEqual() {
         assertFalse(Option.empty().equals(""));
-        assertEquals(Option.empty(), Option.of(null));
+        assertEquals(Option.empty(), Option.option(null));
     }
 
     @Test
     void nonEmptyInstancesAreEqual() {
-        assertFalse(Option.with(1).equals(1));
-        assertEquals(Option.with(1), Option.of(1));
+        assertFalse(Option.option(1).equals(1));
+        assertEquals(Option.option(1), Option.option(1));
     }
 
     @Test
     void optionCanBePutInMap() {
-        final var map = Map.of(1, Option.with(1), 2, Option.with(2));
+        final var map = Map.of(1, Option.option(1), 2, Option.option(2));
 
-        assertEquals(Option.of(1), map.get(1));
-        assertEquals(Option.of(2), map.get(2));
+        assertEquals(Option.option(1), map.get(1));
+        assertEquals(Option.option(2), map.get(2));
     }
 }
