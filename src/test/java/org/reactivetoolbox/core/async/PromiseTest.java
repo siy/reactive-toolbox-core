@@ -34,7 +34,7 @@ class PromiseTest {
     @Test
     void fulfilledPromiseIsAlreadyResolved() {
         final var holder = new AtomicInteger(-1);
-        Promise.fulfilled(123).onSuccess(holder::set);
+        Promise.readyOk(123).onSuccess(holder::set);
 
         assertEquals(123, holder.get());
     }
@@ -238,7 +238,7 @@ class PromiseTest {
         final var promise = Promise.<Integer>promise().onSuccess(s -> holder.set(1))
                                                       .onFailure(f -> holder.set(2));
 
-        final var chain = promise.chainMap(val -> Promise.fulfilled(val.toString()))
+        final var chain = promise.chainMap(val -> Promise.readyOk(val.toString()))
                                  .onSuccess(s -> stringHolder.set("success"))
                                  .onFailure(f -> stringHolder.set("failure"));
 
@@ -255,7 +255,7 @@ class PromiseTest {
         final var promise = Promise.<Integer>promise().onSuccess(s -> holder.set(1))
                                                       .onFailure(f -> holder.set(2));
 
-        final var chain = promise.chainMap(val -> Promise.fulfilled(val.toString()))
+        final var chain = promise.chainMap(val -> Promise.readyOk(val.toString()))
                                  .onSuccess(s -> stringHolder.set("success"))
                                  .onFailure(f -> stringHolder.set("failure"));
 

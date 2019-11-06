@@ -298,7 +298,7 @@ public interface Promise<T> {
      *
      * @return Created instance
      */
-    static <T> Promise<T> fulfilled(final Result<T> result) {
+    static <T> Promise<T> ready(final Result<T> result) {
         return Promise.<T>promise().resolve(result);
     }
 
@@ -307,8 +307,17 @@ public interface Promise<T> {
      *
      * @return Created instance
      */
-    static <T> Promise<T> fulfilled(final T result) {
-        return fulfilled(success(result));
+    static <T> Promise<T> readyOk(final T result) {
+        return ready(success(result));
+    }
+
+    /**
+     * Create new resolved instance.
+     *
+     * @return Created instance
+     */
+    static <T> Promise<T> readyFail(final Failure failure) {
+        return ready(failure(failure));
     }
 
     /**
