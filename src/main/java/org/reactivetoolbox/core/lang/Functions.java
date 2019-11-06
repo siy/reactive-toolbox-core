@@ -52,6 +52,10 @@ public interface Functions {
         default FN0<R> bind(final T1 param) {
             return () -> apply(param);
         }
+
+        default <N> FN1<N, T1> then(final FN1<N, R> function) {
+            return v1 -> function.apply(apply(v1));
+        }
     }
 
     @FunctionalInterface
@@ -64,6 +68,10 @@ public interface Functions {
 
         default FN1<R, T2> bind(final T1 param) {
             return (v2) -> apply(param, v2);
+        }
+
+        default <N> FN2<N, T1, T2> then(final FN1<N, R> function) {
+            return (v1, v2) -> function.apply(apply(v1, v2));
         }
     }
 
@@ -78,6 +86,10 @@ public interface Functions {
         default FN2<R, T2, T3> bind(final T1 param) {
             return (v2, v3) -> apply(param, v2, v3);
         }
+
+        default <N> FN3<N, T1, T2, T3> then(final FN1<N, R> function) {
+            return (v1, v2, v3) -> function.apply(apply(v1, v2, v3));
+        }
     }
 
     @FunctionalInterface
@@ -90,6 +102,10 @@ public interface Functions {
 
         default FN3<R, T2, T3, T4> bind(final T1 param) {
             return (v2, v3, v4) -> apply(param, v2, v3, v4);
+        }
+
+        default <N> FN4<N, T1, T2, T3, T4> then(final FN1<N, R> function) {
+            return (v1, v2, v3, v4) -> function.apply(apply(v1, v2, v3, v4));
         }
     }
 
@@ -104,6 +120,10 @@ public interface Functions {
         default FN4<R, T2, T3, T4, T5> bind(final T1 param) {
             return (v2, v3, v4, v5) -> apply(param, v2, v3, v4, v5);
         }
+
+        default <N> FN5<N, T1, T2, T3, T4, T5> then(final FN1<N, R> function) {
+            return (v1, v2, v3, v4, v5) -> function.apply(apply(v1, v2, v3, v4, v5));
+        }
     }
 
     @FunctionalInterface
@@ -116,6 +136,10 @@ public interface Functions {
 
         default FN5<R, T2, T3, T4, T5, T6> bind(final T1 param) {
             return (v2, v3, v4, v5, v6) -> apply(param, v2, v3, v4, v5, v6);
+        }
+
+        default <N> FN6<N, T1, T2, T3, T4, T5, T6> then(final FN1<N, R> function) {
+            return (v1, v2, v3, v4, v5, v6) -> function.apply(apply(v1, v2, v3, v4, v5, v6));
         }
     }
 
@@ -130,6 +154,10 @@ public interface Functions {
         default FN6<R, T2, T3, T4, T5, T6, T7> bind(final T1 param) {
             return (v2, v3, v4, v5, v6, v7) -> apply(param, v2, v3, v4, v5, v6, v7);
         }
+
+        default <N> FN7<N, T1, T2, T3, T4, T5, T6, T7> then(final FN1<N, R> function) {
+            return (v1, v2, v3, v4, v5, v6, v7) -> function.apply(apply(v1, v2, v3, v4, v5, v6, v7));
+        }
     }
 
     @FunctionalInterface
@@ -143,6 +171,10 @@ public interface Functions {
         default FN7<R, T2, T3, T4, T5, T6, T7, T8> bind(final T1 param) {
             return (v2, v3, v4, v5, v6, v7, v8) -> apply(param, v2, v3, v4, v5, v6, v7, v8);
         }
+
+        default <N> FN8<N, T1, T2, T3, T4, T5, T6, T7, T8> then(final FN1<N, R> function) {
+            return (v1, v2, v3, v4, v5, v6, v7, v8) -> function.apply(apply(v1, v2, v3, v4, v5, v6, v7, v8));
+        }
     }
 
     @FunctionalInterface
@@ -155,6 +187,10 @@ public interface Functions {
 
         default FN8<R, T2, T3, T4, T5, T6, T7, T8, T9> bind(final T1 param) {
             return (v2, v3, v4, v5, v6, v7, v8, v9) -> apply(param, v2, v3, v4, v5, v6, v7, v8, v9);
+        }
+
+        default <N> FN9<N, T1, T2, T3, T4, T5, T6, T7, T8, T9> then(final FN1<N, R> function) {
+            return (v1, v2, v3, v4, v5, v6, v7, v8, v9) -> function.apply(apply(v1, v2, v3, v4, v5, v6, v7, v8, v9));
         }
     }
 }
