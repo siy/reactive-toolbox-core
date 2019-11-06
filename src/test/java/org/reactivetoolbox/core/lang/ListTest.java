@@ -24,7 +24,7 @@ class ListTest {
 
         assertEquals(Arrays.asList(1, 2, 3), arrayList);
         assertTrue(list.equals(list));
-        assertFalse(list.equals(null));
+        assertFalse(list.equals((Object) null));
         assertEquals(list(1, 2, 3), list);
         assertEquals("List(1,2,3)", list.toString());
         assertEquals(list(1, 2, 3).hashCode(), list.hashCode());

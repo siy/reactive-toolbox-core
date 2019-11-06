@@ -36,8 +36,8 @@ public interface Functions {
     interface FN0<R> {
         R apply();
 
-        default R forTuple(final Tuple0 input) {
-            return input.map(this);
+        default FN1<R, Tuple0> bindTuple() {
+            return input -> input.map(this);
         }
     }
 
@@ -45,8 +45,8 @@ public interface Functions {
     interface FN1<R, T1> {
         R apply(T1 param1);
 
-        default R forTuple(final Tuple1<T1> input) {
-            return input.map(this);
+        default FN1<R, Tuple1<T1>> bindTuple() {
+            return input -> input.map(this);
         }
 
         default FN0<R> bind(final T1 param) {
@@ -62,8 +62,8 @@ public interface Functions {
     interface FN2<R, T1, T2> {
         R apply(T1 param1, T2 param2);
 
-        default R forTuple(final Tuple2<T1,T2> input) {
-            return input.map(this);
+        default FN1<R, Tuple2<T1,T2>> bindTuple() {
+            return input -> input.map(this);
         }
 
         default FN1<R, T2> bind(final T1 param) {
@@ -79,8 +79,8 @@ public interface Functions {
     interface FN3<R, T1, T2, T3> {
         R apply(T1 param1, T2 param2, T3 param3);
 
-        default R forTuple(final Tuple3<T1, T2, T3> input) {
-            return input.map(this);
+        default FN1<R, Tuple3<T1, T2, T3>> bindTuple() {
+            return input -> input.map(this);
         }
 
         default FN2<R, T2, T3> bind(final T1 param) {
@@ -96,8 +96,8 @@ public interface Functions {
     interface FN4<R, T1, T2, T3, T4> {
         R apply(T1 param1, T2 param2, T3 param3, T4 param4);
 
-        default R forTuple(final Tuple4<T1, T2, T3, T4> input) {
-            return input.map(this);
+        default FN1<R, Tuple4<T1, T2, T3, T4>> bindTuple() {
+            return input -> input.map(this);
         }
 
         default FN3<R, T2, T3, T4> bind(final T1 param) {
@@ -113,8 +113,8 @@ public interface Functions {
     interface FN5<R, T1, T2, T3, T4, T5> {
         R apply(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5);
 
-        default R forTuple(final Tuple5<T1, T2, T3, T4, T5> input) {
-            return input.map(this);
+        default FN1<R, Tuple5<T1, T2, T3, T4, T5>> bindTuple() {
+            return input -> input.map(this);
         }
 
         default FN4<R, T2, T3, T4, T5> bind(final T1 param) {
@@ -130,8 +130,8 @@ public interface Functions {
     interface FN6<R, T1, T2, T3, T4, T5, T6> {
         R apply(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6);
 
-        default R forTuple(final Tuple6<T1, T2, T3, T4, T5, T6> input) {
-            return input.map(this);
+        default FN1<R, Tuple6<T1, T2, T3, T4, T5, T6>> bindTuple() {
+            return input -> input.map(this);
         }
 
         default FN5<R, T2, T3, T4, T5, T6> bind(final T1 param) {
@@ -147,8 +147,8 @@ public interface Functions {
     interface FN7<R, T1, T2, T3, T4, T5, T6, T7> {
         R apply(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7);
 
-        default R forTuple(final Tuple7<T1, T2, T3, T4, T5, T6, T7> input) {
-            return input.map(this);
+        default FN1<R, Tuple7<T1, T2, T3, T4, T5, T6, T7>> bindTuple() {
+            return input -> input.map(this);
         }
 
         default FN6<R, T2, T3, T4, T5, T6, T7> bind(final T1 param) {
@@ -164,8 +164,8 @@ public interface Functions {
     interface FN8<R, T1, T2, T3, T4, T5, T6, T7, T8> {
         R apply(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8);
 
-        default R forTuple(final Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> input) {
-            return input.map(this);
+        default FN1<R, Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>>  bindTuple() {
+            return input -> input.map(this);
         }
 
         default FN7<R, T2, T3, T4, T5, T6, T7, T8> bind(final T1 param) {
@@ -181,8 +181,8 @@ public interface Functions {
     interface FN9<R, T1, T2, T3, T4, T5, T6, T7, T8, T9> {
         R apply(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8, T9 param9);
 
-        default R forTuple(final Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9> input) {
-            return input.map(this);
+        default FN1<R, Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>>  bindTuple() {
+            return input -> input.map(this);
         }
 
         default FN8<R, T2, T3, T4, T5, T6, T7, T8, T9> bind(final T1 param) {
