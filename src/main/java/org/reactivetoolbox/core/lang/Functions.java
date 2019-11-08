@@ -56,6 +56,10 @@ public interface Functions {
         default <N> FN1<N, T1> then(final FN1<N, R> function) {
             return v1 -> function.apply(apply(v1));
         }
+
+        default <NT1> FN1<R, NT1> before(final FN1<T1, NT1> function) {
+            return v1 -> apply(function.apply(v1));
+        }
     }
 
     @FunctionalInterface
