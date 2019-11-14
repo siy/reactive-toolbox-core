@@ -26,23 +26,29 @@ import java.util.stream.Stream;
  * Immutable Set
  */
 //TODO: experimental, requires more considerations and, most likely, more efficient implementation
-public interface Set<E> {
+public interface Set<E> extends Collection<E> {
     Option<E> any();
 
     Set<E> any(final int n);
 
     Set<E> merge(final Set<E> other);
 
+    @Override
     <R> Set<R> map(final FN1<R, E> mapper);
 
+    @Override
     Set<E> apply(final Consumer<E> consumer);
 
+    @Override
     Stream<E> stream();
 
+    @Override
     int size();
 
+    @Override
     Set<E> filter(final Predicate<E> predicate);
 
+    @Override
     Pair<Set<E>, Set<E>> splitBy(final Predicate<E> predicate);
 
     //TODO: is it necessary?

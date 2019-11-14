@@ -2,10 +2,9 @@ package org.reactivetoolbox.core.examples.async.services;
 
 import org.reactivetoolbox.core.async.Promise;
 import org.reactivetoolbox.core.examples.async.domain.Order;
-import org.reactivetoolbox.core.examples.async.domain.Topic;
 import org.reactivetoolbox.core.examples.async.domain.User;
-import org.reactivetoolbox.core.lang.List;
+import org.reactivetoolbox.core.lang.Collection;
 
 public interface TopicService {
-    Promise<List<Topic>> topicsByUser(final User.Id userId, final Order order);
+    Promise<Collection<org.reactivetoolbox.core.examples.async.domain.Topic>> topicsByUser(final User.Id userId, final Order order);
 }

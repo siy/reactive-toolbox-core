@@ -41,7 +41,7 @@ import static java.lang.Math.min;
  * Immutable List
  */
 //TODO: experimental, requires more considerations and, most likely, more efficient implementation
-public interface List<E> {
+public interface List<E> extends Collection<E> {
     /**
      * Return first element from list.
      *
@@ -57,7 +57,7 @@ public interface List<E> {
      *
      * @return New list with at most requested number of elements
      */
-    List<E> first(final int n);
+    Collection<E> first(final int n);
 
     /**
      * Return last element from list.
@@ -74,7 +74,7 @@ public interface List<E> {
      *
      * @return List with elements from current list followed by elements from {@code other} list
      */
-    List<E> append(final List<E> other);
+    Collection<E> append(final List<E> other);
 
     /**
      * Return list which contains elements from list provided as parameter followed by elements of current list.
@@ -84,20 +84,12 @@ public interface List<E> {
      *
      * @return List with elements from {@code other} list followed by elements from current list
      */
-    default List<E> prepend(final List<E> other) {
+    default Collection<E> prepend(final List<E> other) {
         return other.append(this);
     }
 
-    /**
-     * Return list consisting of elements obtained from elements of current list with applied
-     * transformation function.
-     *
-     * @param mapper
-     *        Transformation function
-     *
-     * @return New list with transformed elements
-     */
-    default <R> List<R> map(final FN1<R, E> mapper) {
+    @Override
+    default <R> Collection<R> map(final FN1<R, E> mapper) {
         return mapN((n, e) -> mapper.apply(e));
     }
 
@@ -111,17 +103,10 @@ public interface List<E> {
      *
      * @return New list with transformed elements
      */
-    <R> List<R> mapN(final FN2<R, Integer, E> mapper);
+    <R> Collection<R> mapN(final FN2<R, Integer, E> mapper);
 
-    /**
-     * Applies specified consumer to elements of current list.
-     *
-     * @param consumer
-     *        Consumer for elements
-     *
-     * @return Current list
-     */
-    default List<E> apply(final Consumer<E> consumer) {
+    @Override
+    default Collection<E> apply(final Consumer<E> consumer) {
         return applyN((n, e) -> consumer.accept(e));
     }
 
@@ -134,21 +119,7 @@ public interface List<E> {
      *
      * @return Current list
      */
-    List<E> applyN(final BiConsumer<Integer, E> consumer);
-
-    /**
-     * Create {@link Stream} from list elements.
-     *
-     * @return Created stream
-     */
-    Stream<E> stream();
-
-    /**
-     * Return list size.
-     *
-     * @return number of elements in list
-     */
-    int size();
+    Collection<E> applyN(final BiConsumer<Integer, E> consumer);
 
     /**
      * Create new list which will hold the same elements but sorted according to
@@ -159,7 +130,7 @@ public interface List<E> {
      *
      * @return Sorted list
      */
-    List<E> sort(final Comparator<E> comparator);
+    Collection<E> sort(final Comparator<E> comparator);
 
     /**
      * Create new list which contains same elements reordered using given source of random numbers.
@@ -169,33 +140,17 @@ public interface List<E> {
      *
      * @return Shuffled list
      */
-    List<E> shuffle(final Random random);
+    Collection<E> shuffle(final Random random);
 
-    /**
-     * Create new list which will hold only elements which satisfy provided predicate.
-     *
-     * @param predicate
-     *        Predicate to apply to elements
-     *
-     * @return List of elements for which predicate returned {@code true}
-     */
-    default List<E> filter(final Predicate<E> predicate) {
+    @Override
+    default Collection<E> filter(final Predicate<E> predicate) {
         return ListBuilder.<E>builder(size())
                 .then(builder -> mapN((n, e) -> predicate.test(e) ? builder.append(e) : null))
                 .toList();
     }
 
-    /**
-     * Split current list into two using provided predicate. Result is a pair of lists. Left element of pair
-     * contains list with elements evaluated to {@code false} by predicate. Right element of pair contains
-     * list with elements evaluated to {@code true} by predicate.
-     *
-     * @param predicate
-     *        Predicate to apply to elements
-     *
-     * @return Pair of lists with results
-     */
-    default Pair<List<E>, List<E>> splitBy(final Predicate<E> predicate) {
+    @Override
+    default Pair<Collection<E>, Collection<E>> splitBy(final Predicate<E> predicate) {
         final var listFalse = ListBuilder.<E>builder(size());
         final var listTrue = ListBuilder.<E>builder(size());
 
@@ -220,7 +175,7 @@ public interface List<E> {
     static <T> List<T> list(final T... elements) {
         return new List<T>() {
             @Override
-            public <R> List<R> mapN(final FN2<R, Integer, T> mapper) {
+            public <R> Collection<R> mapN(final FN2<R, Integer, T> mapper) {
                 return ListBuilder.<R>builder(size()).then(builder -> {
                     for (int i = 0; i < elements.length; i++) {
                         builder.append(mapper.apply(i, elements[i]));
@@ -229,7 +184,7 @@ public interface List<E> {
             }
 
             @Override
-            public List<T> applyN(final BiConsumer<Integer, T> consumer) {
+            public Collection<T> applyN(final BiConsumer<Integer, T> consumer) {
                 for (int i = 0; i < elements.length; i++) {
                     consumer.accept(i, elements[i]);
                 }
@@ -247,12 +202,12 @@ public interface List<E> {
             }
 
             @Override
-            public List<T> first(final int n) {
+            public Collection<T> first(final int n) {
                 return list(Arrays.copyOf(elements, max(0, min(elements.length, n))));
             }
 
             @Override
-            public List<T> append(final List<T> other) {
+            public Collection<T> append(final List<T> other) {
                 return ListBuilder.<T>builder(other.size(), elements)
                         .append(other)
                         .toList();
@@ -274,14 +229,14 @@ public interface List<E> {
             }
 
             @Override
-            public List<T> sort(final Comparator<T> comparator) {
+            public Collection<T> sort(final Comparator<T> comparator) {
                 final var nelements = Arrays.copyOf(elements, elements.length);
                 Arrays.sort(nelements, comparator);
                 return list(nelements);
             }
 
             @Override
-            public List<T> shuffle(final Random random) {
+            public Collection<T> shuffle(final Random random) {
                 final var nelements = Arrays.copyOf(elements, elements.length);
 
                 for(int i = 0; i < nelements.length; i++) {
@@ -306,7 +261,7 @@ public interface List<E> {
                 }
 
                 if(obj instanceof List) {
-                    final var list = (List) obj;
+                    final var list = (Collection) obj;
                     return list.size() == size() && list.equals(elements);
                 }
 
@@ -362,14 +317,14 @@ public interface List<E> {
         }
     }
 
-    List EMPTY_LIST = new List() {
+    Collection EMPTY_LIST = new List() {
         @Override
-        public List mapN(final FN2 mapper) {
+        public Collection mapN(final FN2 mapper) {
             return this;
         }
 
         @Override
-        public List applyN(final BiConsumer consumer) {
+        public Collection applyN(final BiConsumer consumer) {
             return this;
         }
 
@@ -384,12 +339,12 @@ public interface List<E> {
         }
 
         @Override
-        public List first(final int n) {
+        public Collection first(final int n) {
             return this;
         }
 
         @Override
-        public List append(final List other) {
+        public Collection append(final List other) {
             return other;
         }
 
@@ -409,12 +364,12 @@ public interface List<E> {
         }
 
         @Override
-        public List sort(final Comparator comparator) {
+        public Collection sort(final Comparator comparator) {
             return this;
         }
 
         @Override
-        public List shuffle(final Random random) {
+        public Collection shuffle(final Random random) {
             return this;
         }
 
@@ -429,7 +384,7 @@ public interface List<E> {
                 return true;
             }
 
-            if (obj instanceof List && ((List) obj).size() == 0) {
+            if (obj instanceof List && ((Collection) obj).size() == 0) {
                 return true;
             }
 
@@ -442,7 +397,7 @@ public interface List<E> {
         }
     };
 
-    static <T> Collector<T, ListBuilder<T>, List<T>> toList() {
+    static <T> Collector<T, ListBuilder<T>, Collection<T>> toList() {
         return new Collector<>() {
             @Override
             public Supplier<ListBuilder<T>> supplier() {
@@ -463,7 +418,7 @@ public interface List<E> {
             }
 
             @Override
-            public Function<ListBuilder<T>, List<T>> finisher() {
+            public Function<ListBuilder<T>, Collection<T>> finisher() {
                 return ListBuilder::toList;
             }
 
