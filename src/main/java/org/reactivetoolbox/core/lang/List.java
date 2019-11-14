@@ -159,7 +159,7 @@ public interface List<E> extends Collection<E> {
         return Pair.pair(listFalse.toList(), listTrue.toList());
     }
 
-    boolean equals(final E ... elements);
+    boolean elementEquals(final E ... elements);
 
     @SuppressWarnings("unchecked")
     static <T> List<T> from(final java.util.Collection<T> source) {
@@ -224,7 +224,7 @@ public interface List<E> extends Collection<E> {
             }
 
             @Override
-            public boolean equals(final T... other) {
+            public boolean elementEquals(final T... other) {
                 return Arrays.equals(elements, other);
             }
 
@@ -253,7 +253,6 @@ public interface List<E> extends Collection<E> {
                 return Arrays.hashCode(elements);
             }
 
-            @SuppressWarnings("unchecked")
             @Override
             public boolean equals(final Object obj) {
                 if (obj == this) {
@@ -261,8 +260,8 @@ public interface List<E> extends Collection<E> {
                 }
 
                 if(obj instanceof List) {
-                    final var list = (Collection) obj;
-                    return list.size() == size() && list.equals(elements);
+                    final var list = (List) obj;
+                    return list.size() == size() && list.elementEquals(elements);
                 }
 
                 return false;
@@ -359,7 +358,7 @@ public interface List<E> extends Collection<E> {
         }
 
         @Override
-        public boolean equals(final Object[] elements) {
+        public boolean elementEquals(final Object[] elements) {
             return elements.length == 0;
         }
 
