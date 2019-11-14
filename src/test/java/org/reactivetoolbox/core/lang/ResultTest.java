@@ -14,7 +14,7 @@ import static org.reactivetoolbox.core.lang.Result.success;
 import static org.reactivetoolbox.core.lang.support.WebFailureTypes.INTERNAL_SERVER_ERROR;
 
 class ResultTest {
-    static final Failure TEST_FAILURE = Failure.of(INTERNAL_SERVER_ERROR, "Test error");
+    static final Failure TEST_FAILURE = Failure.failure(INTERNAL_SERVER_ERROR, "Test error");
 
     @Test
     void equalsFollowsContract() {
@@ -68,12 +68,12 @@ class ResultTest {
     }
 
     private Result<Integer> validateGE(final int value, final int min) {
-        return value < min ? failure(Failure.with(WebFailureTypes.UNPROCESSABLE_ENTITY, "Input value below %d", min))
+        return value < min ? failure(Failure.failure(WebFailureTypes.UNPROCESSABLE_ENTITY, "Input value below %d", min))
                            : success(value);
     }
 
     private Result<Integer> validateLE(final int value, final int max) {
-        return value > max ? failure(Failure.with(WebFailureTypes.UNPROCESSABLE_ENTITY, "Input value above %d", max))
+        return value > max ? failure(Failure.failure(WebFailureTypes.UNPROCESSABLE_ENTITY, "Input value above %d", max))
                            : success(value);
     }
 }

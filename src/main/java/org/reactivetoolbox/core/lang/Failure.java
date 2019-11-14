@@ -36,18 +36,18 @@ public interface Failure {
     }
 
     static <T> Supplier<Result<T>> lazyFailure(final FailureType type, final String format, final Object ... params) {
-        return () -> with(type, format, params).asFailure();
+        return () -> failure(type, format, params).asFailure();
     }
 
     static Supplier<Failure> lazy(final FailureType type, final String format, final Object ... params) {
-        return () -> with(type, format, params);
+        return () -> failure(type, format, params);
     }
 
-    static Failure with(final FailureType type, final String format, final Object ... params) {
-        return of(type, MessageFormat.format(format, params));
+    static Failure failure(final FailureType type, final String format, final Object ... params) {
+        return failure(type, MessageFormat.format(format, params));
     }
 
-    static Failure of(final FailureType type, final String message) {
+    static Failure failure(final FailureType type, final String message) {
         return new Failure() {
             @Override
             public FailureType type() {

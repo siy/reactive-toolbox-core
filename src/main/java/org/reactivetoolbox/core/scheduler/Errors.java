@@ -22,6 +22,6 @@ import org.reactivetoolbox.core.lang.support.WebFailureTypes;
  * Scheduler errors
  */
 public interface Errors {
-    Failure TIMEOUT = Failure.of(WebFailureTypes.REQUEST_TIMEOUT, "Processing timeout error");
-    Failure CANCELLED = Failure.of(WebFailureTypes.NO_RESPONSE, "Request cancelled");
+    Failure TIMEOUT = Failure.failure(WebFailureTypes.REQUEST_TIMEOUT, "Processing timeout error");
+    Failure CANCELLED = Failure.failure(WebFailureTypes.NO_RESPONSE, "Request cancelled");
 }

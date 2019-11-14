@@ -32,9 +32,9 @@ import java.util.NoSuchElementException;
  */
 public class DefaultExceptionTranslator {
     public static Failure translate(final Throwable throwable) {
-        return Failure.with(convertType(throwable), "%s\n%s",
-                            throwable.toString(),
-                            formatStackTrace(throwable));
+        return Failure.failure(convertType(throwable), "%s\n%s",
+                               throwable.toString(),
+                               formatStackTrace(throwable));
     }
 
     private static String formatStackTrace(final Throwable throwable) {

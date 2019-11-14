@@ -44,6 +44,6 @@ public abstract class TypeToken<T> {
             return Result.success(((ParameterizedType) type).getActualTypeArguments()[0]);
         }
 
-        return Failure.with(WebFailureTypes.INTERNAL_SERVER_ERROR, "Unable to recognize type $1", type).asFailure();
+        return Failure.failure(WebFailureTypes.INTERNAL_SERVER_ERROR, "Unable to recognize type $1", type).asFailure();
     }
 }
