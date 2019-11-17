@@ -67,7 +67,7 @@ public abstract class Option<T> implements Either<Void, T>{
     };
 
     /**
-     * Create a present or empty instance depending on the passed value.
+     * Create a present instance depending on the passed value.
      *
      * @param value
      *        Value to be stored in the created instance

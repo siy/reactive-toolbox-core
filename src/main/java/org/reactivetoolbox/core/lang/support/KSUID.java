@@ -42,11 +42,6 @@ public final class KSUID implements Comparable<KSUID> {
         return new KSUID(generate());
     }
 
-    @Override
-    public String toString() {
-        return "KSUID(" + representation + ")";
-    }
-
     public String encoded() {
         return representation;
     }
@@ -61,6 +56,29 @@ public final class KSUID implements Comparable<KSUID> {
 
     public byte[] payload() {
         return decoded.get().payload;
+    }
+
+    @Override
+    public String toString() {
+        return "KSUID(" + representation + ")";
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o instanceof KSUID) {
+            return representation.equals(((KSUID) o).representation);
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return representation.hashCode();
     }
 
     private static Result<String> validate(final String input) {
