@@ -18,6 +18,7 @@ package org.reactivetoolbox.core.lang;
 
 import org.reactivetoolbox.core.lang.Functions.FN1;
 import org.reactivetoolbox.core.lang.Functions.FN2;
+import org.reactivetoolbox.core.lang.support.CollectionBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -152,8 +153,7 @@ public interface List<E> extends Collection<E> {
     @Override
     default List<E> filter(final Predicate<E> predicate) {
         return ListBuilder.<E>builder(size())
-                .then(builder -> mapN((n, e) -> predicate.test(e) ? builder.append(e) : null))
-                .toList();
+                       .then(builder -> mapN((n, e) -> predicate.test(e) ? builder.append(e) : null)).build();
     }
 
     @Override
@@ -163,7 +163,7 @@ public interface List<E> extends Collection<E> {
 
         mapN((n, e) -> (predicate.test(e) ? listTrue.append(e) : listFalse.append(e)));
 
-        return Pair.pair(listFalse.toList(), listTrue.toList());
+        return Pair.pair(listFalse.build(), listTrue.build());
     }
 
     boolean elementEquals(final E ... elements);
@@ -178,16 +178,20 @@ public interface List<E> extends Collection<E> {
         return (List<T>) EMPTY_LIST;
     }
 
+    static <E> CollectionBuilder<List<E>, E> builder() {
+        return ListBuilder.builder(1);
+    }
+
     //TODO: more efficient implementation
     static <T> List<T> list(final T... elements) {
         return new List<T>() {
             @Override
             public <R> List<R> mapN(final FN2<R, Integer, T> mapper) {
                 return ListBuilder.<R>builder(size()).then(builder -> {
-                    for (int i = 0; i < elements.length; i++) {
-                        builder.append(mapper.apply(i, elements[i]));
-                    }
-                }).toList();
+                        for (int i = 0; i < elements.length; i++) {
+                            builder.append(mapper.apply(i, elements[i]));
+                        }
+                    }).build();
             }
 
             @Override
@@ -216,8 +220,7 @@ public interface List<E> extends Collection<E> {
             @Override
             public List<T> append(final List<T> other) {
                 return ListBuilder.<T>builder(other.size(), elements)
-                        .append(other)
-                        .toList();
+                               .append(other).build();
             }
 
             @Override
@@ -290,7 +293,7 @@ public interface List<E> extends Collection<E> {
         };
     }
 
-    final class ListBuilder<T> {
+    final class ListBuilder<T> implements CollectionBuilder<List<T>, T> {
         private final ArrayList<T> values;
 
         private ListBuilder(final int capacity) {
@@ -310,8 +313,15 @@ public interface List<E> extends Collection<E> {
             return new ListBuilder<>(capacity);
         }
 
-        ListBuilder<T> append(final T e) {
+        @Override
+        public ListBuilder<T> append(final T e) {
             values.add(e);
+            return this;
+        }
+
+        @Override
+        public ListBuilder<T> append(final T... elements) {
+            values.addAll(Arrays.asList(elements));
             return this;
         }
 
@@ -320,13 +330,14 @@ public interface List<E> extends Collection<E> {
             return this;
         }
 
-        List<T> toList() {
-            return from(values);
-        }
-
         ListBuilder<T> append(final List<T> other) {
             other.apply(values::add);
             return this;
+        }
+
+        @Override
+        public List<T> build() {
+            return from(values);
         }
     }
 
@@ -430,14 +441,14 @@ public interface List<E> extends Collection<E> {
             @Override
             public BinaryOperator<ListBuilder<T>> combiner() {
                 return (left, right) -> {
-                    left.append(right.toList());
+                    left.append(right.build());
                     return left;
                 };
             }
 
             @Override
             public Function<ListBuilder<T>, List<T>> finisher() {
-                return ListBuilder::toList;
+                return tListBuilder -> tListBuilder.build();
             }
 
             @Override

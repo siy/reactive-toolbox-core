@@ -82,6 +82,11 @@ public abstract class Option<T> implements Either<Void, T>{
         };
     }
 
+    //TODO: add docs
+    public boolean present() {
+        return map((v) -> false, (v) -> true);
+    }
+
     /**
      * Transform instance according to results of testing of contained value with provided predicate.
      * If instance is empty, it remains empty. If instance contains value, this value is passed to predicate.
