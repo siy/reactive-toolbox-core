@@ -39,7 +39,7 @@ class TimeoutSchedulerTest {
                     counters[n] = new AtomicLong();
                     range(0, N_ITEMS_PER_TASK).forEach((k) -> {
                         Promise.promise()
-                               .when(Timeout.timeout(nextTaskDelay()).millis(), TIMEOUT.asFailure())
+                               .when(Timeout.timeout(nextTaskDelay()).millis(), TIMEOUT.asResult())
                                .onResult(v -> counters[n].incrementAndGet());
                     });
                 }));

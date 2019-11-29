@@ -28,6 +28,6 @@ class SequenceTest {
     }
 
     private Result<Option<Object>> newError(final String message) {
-        return Result.failure(Failure.failure(WebFailureTypes.INTERNAL_SERVER_ERROR, message));
+        return Result.fail(Failure.failure(WebFailureTypes.INTERNAL_SERVER_ERROR, message));
     }
 }

@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.reactivetoolbox.core.lang.Result.success;
+import static org.reactivetoolbox.core.lang.Result.ok;
 import static org.reactivetoolbox.core.scheduler.Errors.TIMEOUT;
 import static org.reactivetoolbox.core.scheduler.Timeout.timeout;
 
@@ -175,7 +175,7 @@ class PromiseTest {
         final var holder = new AtomicInteger(-1);
         final var promise = Promise.<Integer>promise()
                 .onSuccess(holder::set)
-                .when(timeout(100).millis(), success(123));
+                .when(timeout(100).millis(), ok(123));
 
         assertEquals(-1, holder.get());
 

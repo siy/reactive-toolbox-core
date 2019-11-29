@@ -11,7 +11,7 @@ import org.reactivetoolbox.core.lang.Collection;
 import org.reactivetoolbox.core.scheduler.Errors;
 
 import static org.reactivetoolbox.core.async.Promise.all;
-import static org.reactivetoolbox.core.lang.Result.failure;
+import static org.reactivetoolbox.core.lang.Result.fail;
 import static org.reactivetoolbox.core.scheduler.Timeout.timeout;
 
 public class UserFeedHandler_Test {
@@ -23,6 +23,6 @@ public class UserFeedHandler_Test {
         return all(topicService.topicsByUser(userId, Order.ANY),
                    userService.followers(userId))
                 .chainMap(tuple -> tuple.map((topics, users) -> articleService.userFeed(topics.map(Topic::id), users.map(User::id))))
-                .when(timeout(30).seconds(), failure(Errors.TIMEOUT));
+                .when(timeout(30).seconds(), fail(Errors.TIMEOUT));
     }
 }

@@ -41,9 +41,9 @@ public abstract class TypeToken<T> {
         final Type type = getClass().getGenericSuperclass();
 
         if (type instanceof ParameterizedType) {
-            return Result.success(((ParameterizedType) type).getActualTypeArguments()[0]);
+            return Result.ok(((ParameterizedType) type).getActualTypeArguments()[0]);
         }
 
-        return Failure.failure(WebFailureTypes.INTERNAL_SERVER_ERROR, "Unable to recognize type $1", type).asFailure();
+        return Failure.failure(WebFailureTypes.INTERNAL_SERVER_ERROR, "Unable to recognize type $1", type).asResult();
     }
 }

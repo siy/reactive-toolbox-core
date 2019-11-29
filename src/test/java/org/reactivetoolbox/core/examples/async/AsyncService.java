@@ -40,11 +40,11 @@ public class AsyncService {
     }
 
     private static <T> Promise<T> slowRetrieve(final Class<T> clazz, final Timeout delay, final T value) {
-        return Promise.<T>promise().when(delay, Result.success(value));
+        return Promise.<T>promise().when(delay, Result.ok(value));
     }
 
     private static final class TaskSchedulerHolder {
-        private static final TaskScheduler taskScheduler = AppMetaRepository.instance().seal().get(TaskScheduler.class);
+        private static final TaskScheduler taskScheduler = AppMetaRepository.instance().get(TaskScheduler.class);
 
         static TaskScheduler instance() {
             return taskScheduler;

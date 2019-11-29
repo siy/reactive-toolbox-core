@@ -78,7 +78,7 @@ public class DoubleQueueTaskScheduler implements TaskScheduler {
     }
 
     private static final class SingletonHolder {
-        private static final CoreLogger LOGGER = AppMetaRepository.instance().seal().get(CoreLogger.class);
+        private static final CoreLogger LOGGER = AppMetaRepository.instance().get(CoreLogger.class);
 
         static CoreLogger logger() {
             return LOGGER;

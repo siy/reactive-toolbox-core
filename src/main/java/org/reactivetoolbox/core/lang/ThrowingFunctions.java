@@ -28,8 +28,8 @@ import org.reactivetoolbox.core.lang.Functions.FN8;
 import org.reactivetoolbox.core.lang.Functions.FN9;
 import org.reactivetoolbox.core.lang.support.DefaultExceptionTranslator;
 
-import static org.reactivetoolbox.core.lang.Result.failure;
-import static org.reactivetoolbox.core.lang.Result.success;
+import static org.reactivetoolbox.core.lang.Result.fail;
+import static org.reactivetoolbox.core.lang.Result.ok;
 
 /**
  * This set of interfaces represents functions which accept different number of arguments and can throw exceptions.
@@ -128,14 +128,18 @@ public interface ThrowingFunctions {
      * @param function
      * @param translator
      *
-     * @return Function return value wrapped into {@link Result#success(Object)} or {@link Result#failure(Failure)} if function throws an exception.
+     * @return Function return value wrapped into {@link Result#ok(Object)} or {@link Result#fail(Failure)} if function throws an exception.
      */
     static <R> Result<R> wrap(final TFN0<R> function, final FN1<Failure, Throwable> translator) {
         try {
-            return success(function.apply());
+            return ok(function.apply());
         } catch (final Throwable t) {
-            return failure(translator.apply(t));
+            return fail(translator.apply(t));
         }
+    }
+
+    static <R> Result<R> wrap(final TFN0<R> function) {
+        return wrap(function, DefaultExceptionTranslator::translate);
     }
 
     /**

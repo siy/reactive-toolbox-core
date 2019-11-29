@@ -31,12 +31,12 @@ public interface Failure {
     FailureType type();
     String message();
 
-    default <T> Result<T> asFailure() {
-        return Result.failure(this);
+    default <T> Result<T> asResult() {
+        return Result.fail(this);
     }
 
     static <T> Supplier<Result<T>> lazyFailure(final FailureType type, final String format, final Object ... params) {
-        return () -> failure(type, format, params).asFailure();
+        return () -> failure(type, format, params).asResult();
     }
 
     static Supplier<Failure> lazy(final FailureType type, final String format, final Object ... params) {

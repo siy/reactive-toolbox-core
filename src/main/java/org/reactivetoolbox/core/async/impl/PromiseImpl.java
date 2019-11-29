@@ -29,6 +29,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicMarkableReference;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 /**
@@ -37,8 +38,16 @@ import java.util.function.Consumer;
 public class PromiseImpl<T> implements Promise<T> {
     private final AtomicMarkableReference<Result<T>> value = new AtomicMarkableReference<>(null, false);
     private final BlockingQueue<Consumer<Result<T>>> thenActions = new LinkedBlockingQueue<>();
+    private final CountDownLatch actionsHandled = new CountDownLatch(1);
+    private final AtomicReference<Consumer<Throwable>> exceptionLogger = new AtomicReference<>(e -> logger().debug("Exception while applying handlers", e));
 
     public PromiseImpl() {
+    }
+
+    @Override
+    public Promise<T> exceptionCollector(final Consumer<Throwable> consumer) {
+        exceptionLogger.set(consumer);
+        return this;
     }
 
     /**
@@ -51,9 +60,10 @@ public class PromiseImpl<T> implements Promise<T> {
                 try {
                     action.accept(value.getReference());
                 } catch (final Throwable t) {
-                    logger().debug("Exception in resolve()", t);
+                    exceptionLogger.get().accept(t);
                 }
             });
+            actionsHandled.countDown();
         }
         return this;
     }
@@ -67,7 +77,7 @@ public class PromiseImpl<T> implements Promise<T> {
             try {
                 action.accept(value.getReference());
             } catch (final Throwable t) {
-                logger().debug("Exception in onResult()", t);
+                exceptionLogger.get().accept(t);
             }
         } else {
             thenActions.offer(action);
@@ -80,11 +90,8 @@ public class PromiseImpl<T> implements Promise<T> {
      */
     @Override
     public Promise<T> syncWait() {
-        final var latch = new CountDownLatch(1);
-        onResult(value -> latch.countDown());
-
         try {
-            latch.await();
+            actionsHandled.await();
         } catch (final InterruptedException e) {
             logger().debug("Exception in syncWait()", e);
         }
@@ -96,11 +103,8 @@ public class PromiseImpl<T> implements Promise<T> {
      */
     @Override
     public Promise<T> syncWait(final Timeout timeout) {
-        final var latch = new CountDownLatch(1);
-        onResult(value -> latch.countDown());
-
         try {
-            latch.await(timeout.timeout(), TimeUnit.MILLISECONDS);
+            actionsHandled.await(timeout.timeout(), TimeUnit.MILLISECONDS);
         } catch (final InterruptedException e) {
             logger().debug("Exception in syncWait(timeout)", e);
         }
@@ -135,7 +139,7 @@ public class PromiseImpl<T> implements Promise<T> {
     }
 
     private static final class SingletonHolder {
-        private static final TaskScheduler SCHEDULER = AppMetaRepository.instance().seal().get(TaskScheduler.class);
+        private static final TaskScheduler SCHEDULER = AppMetaRepository.instance().get(TaskScheduler.class);
 
         static TaskScheduler scheduler() {
             return SCHEDULER;

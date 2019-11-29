@@ -13,8 +13,8 @@ import java.time.ZonedDateTime;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
-import static org.reactivetoolbox.core.lang.Result.failure;
-import static org.reactivetoolbox.core.lang.Result.success;
+import static org.reactivetoolbox.core.lang.Result.fail;
+import static org.reactivetoolbox.core.lang.Result.ok;
 import static org.reactivetoolbox.core.lang.support.WebFailureTypes.UNPROCESSABLE_ENTITY;
 
 public final class KSUID implements Comparable<KSUID> {
@@ -83,8 +83,8 @@ public final class KSUID implements Comparable<KSUID> {
 
     private static Result<String> validate(final String input) {
         return (input != null && input.length() > 0 && input.length() <= MAX_ENCODED_LENGTH && validator.matcher(input).find())
-               ? success(input)
-               : failure(Failure.failure(UNPROCESSABLE_ENTITY, "Not a valid KSUID {0}", input == null ? "null" : input));
+               ? ok(input)
+               : fail(Failure.failure(UNPROCESSABLE_ENTITY, "Not a valid KSUID {0}", input == null ? "null" : input));
     }
 
     private static String generate() {

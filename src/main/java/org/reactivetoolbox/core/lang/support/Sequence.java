@@ -9,7 +9,7 @@ import org.reactivetoolbox.core.lang.Result;
 import java.util.Arrays;
 
 import static org.reactivetoolbox.core.lang.Option.option;
-import static org.reactivetoolbox.core.lang.Result.success;
+import static org.reactivetoolbox.core.lang.Result.ok;
 
 public interface Sequence<T> extends FN0<Result<Option<T>>> {
     Result<Option<T>> next();
@@ -49,10 +49,10 @@ public interface Sequence<T> extends FN0<Result<Option<T>>> {
 
     static <T> Sequence<T> sequence(final T... elements) {
         final var iterator = Arrays.asList(elements).iterator();
-        return () -> success(option(iterator.hasNext() ? iterator.next() : null));
+        return () -> ok(option(iterator.hasNext() ? iterator.next() : null));
     }
 
     static <T> Sequence<T> empty() {
-        return () -> success(Option.empty());
+        return () -> ok(Option.empty());
     }
 }

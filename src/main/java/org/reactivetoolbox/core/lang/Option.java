@@ -236,7 +236,7 @@ public abstract class Option<T> implements Either<Void, T>{
      * @return either value stored in current instance or value returned by provided supplier if current instance
      * is empty
      */
-    public T otherwise(final Supplier<T> supplier) {
+    public T otherwiseGet(final Supplier<T> supplier) {
         return map(v -> supplier.get(), v -> v);
     }
 
