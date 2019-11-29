@@ -6,11 +6,11 @@
 This library contains core classes for writing Java apps in FP-style along with __Promise__-based asynchronous processing.
 
 ### Description
-[Consistent null values handling in Java](https://dev.to/siy/consistent-null-values-handling-in-java-3c5e)
-[Consistent error propagation and handling in Java](https://dev.to/siy/consistent-error-propagation-and-handling-in-java-158j)
-[Monads for Java programmers in simple terms](https://dev.to/siy/monads-for-java-programmers-in-simple-terms-1959)
-[The power of Tuples](https://dev.to/siy/the-power-of-tuples-2cf4)
-[Asynchronous Processing in Java with Promises](https://dev.to/siy/asynchronous-processing-in-java-with-promises-2oj0)
+ - [Consistent null values handling in Java](https://dev.to/siy/consistent-null-values-handling-in-java-3c5e)
+ - [Consistent error propagation and handling in Java](https://dev.to/siy/consistent-error-propagation-and-handling-in-java-158j)
+ - [Monads for Java programmers in simple terms](https://dev.to/siy/monads-for-java-programmers-in-simple-terms-1959)
+ - [The power of Tuples](https://dev.to/siy/the-power-of-tuples-2cf4)
+ - [Asynchronous Processing in Java with Promises](https://dev.to/siy/asynchronous-processing-in-java-with-promises-2oj0)
 
 ### Prerequisites
 Build is configured to use Java 11, although any version since Java 9 should suffice
