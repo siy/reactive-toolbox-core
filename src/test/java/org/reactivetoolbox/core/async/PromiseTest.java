@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.reactivetoolbox.core.lang.Result.ok;
-import static org.reactivetoolbox.core.scheduler.Errors.TIMEOUT;
+import static org.reactivetoolbox.core.Errors.TIMEOUT;
 import static org.reactivetoolbox.core.scheduler.Timeout.timeout;
 
 

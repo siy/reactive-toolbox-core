@@ -2,7 +2,7 @@ package org.reactivetoolbox.core.lang;
 
 import org.junit.jupiter.api.Test;
 import org.reactivetoolbox.core.lang.support.WebFailureTypes;
-import org.reactivetoolbox.core.scheduler.Errors;
+import org.reactivetoolbox.core.Errors;
 
 import java.util.Objects;
 

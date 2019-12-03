@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.reactivetoolbox.core.async.Promise.all;
 import static org.reactivetoolbox.core.lang.Result.fail;
-import static org.reactivetoolbox.core.scheduler.Errors.TIMEOUT;
+import static org.reactivetoolbox.core.Errors.TIMEOUT;
 import static org.reactivetoolbox.core.scheduler.Timeout.timeout;
 
 public class PromiseAllExample_Test {

@@ -1,4 +1,4 @@
-package org.reactivetoolbox.core.scheduler;
+package org.reactivetoolbox.core;
 /*
  * Copyright (c) 2019 Sergiy Yevtushenko
  *
@@ -18,10 +18,27 @@ package org.reactivetoolbox.core.scheduler;
 import org.reactivetoolbox.core.lang.Failure;
 import org.reactivetoolbox.core.lang.support.WebFailureTypes;
 
+import java.lang.reflect.Type;
+
 /**
- * Scheduler errors
+ * Common errors which can be returned from various core API's.
  */
 public interface Errors {
+    // Scheduler
     Failure TIMEOUT = Failure.failure(WebFailureTypes.REQUEST_TIMEOUT, "Processing timeout error");
     Failure CANCELLED = Failure.failure(WebFailureTypes.NO_RESPONSE, "Request cancelled");
+
+    //TypeToken
+    static Failure TYPE_ERROR(final Type type) {
+        return Failure.failure(WebFailureTypes.INTERNAL_SERVER_ERROR, "Unable to recognize type {0}", type);
+    }
+
+    //Various validations - KSUID and others
+    static Failure NOT_VALID(final String message) {
+        return Failure.failure(WebFailureTypes.UNPROCESSABLE_ENTITY, message);
+    }
+
+    static Failure NOT_VALID(final String format, final Object... params) {
+        return Failure.failure(WebFailureTypes.UNPROCESSABLE_ENTITY, format, params);
+    }
 }

@@ -1,6 +1,6 @@
 package org.reactivetoolbox.core.lang.support;
 
-import org.reactivetoolbox.core.lang.Failure;
+import org.reactivetoolbox.core.Errors;
 import org.reactivetoolbox.core.lang.Result;
 import org.reactivetoolbox.core.lang.Suppliers;
 
@@ -13,9 +13,7 @@ import java.time.ZonedDateTime;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
-import static org.reactivetoolbox.core.lang.Result.fail;
 import static org.reactivetoolbox.core.lang.Result.ok;
-import static org.reactivetoolbox.core.lang.support.WebFailureTypes.UNPROCESSABLE_ENTITY;
 
 public final class KSUID implements Comparable<KSUID> {
     private static final ZoneId UTC = ZoneId.of("UTC");
@@ -82,9 +80,15 @@ public final class KSUID implements Comparable<KSUID> {
     }
 
     private static Result<String> validate(final String input) {
-        return (input != null && input.length() > 0 && input.length() <= MAX_ENCODED_LENGTH && validator.matcher(input).find())
+        return (lengthValid(input) && validator.matcher(input).find())
                ? ok(input)
-               : fail(Failure.failure(UNPROCESSABLE_ENTITY, "Not a valid KSUID {0}", input == null ? "null" : input));
+               : Errors.NOT_VALID("Not a valid KSUID {0}", input == null ? "null" : input).asResult();
+    }
+
+    private static boolean lengthValid(final String input) {
+        return input != null &&
+               input.length() > 0 &&
+               input.length() <= MAX_ENCODED_LENGTH;
     }
 
     private static String generate() {

@@ -16,6 +16,7 @@ package org.reactivetoolbox.core.lang;
  * limitations under the License.
  */
 
+import org.reactivetoolbox.core.Errors;
 import org.reactivetoolbox.core.lang.support.WebFailureTypes;
 
 import java.lang.reflect.ParameterizedType;
@@ -44,6 +45,6 @@ public abstract class TypeToken<T> {
             return Result.ok(((ParameterizedType) type).getActualTypeArguments()[0]);
         }
 
-        return Failure.failure(WebFailureTypes.INTERNAL_SERVER_ERROR, "Unable to recognize type $1", type).asResult();
+        return Errors.TYPE_ERROR(type).asResult();
     }
 }

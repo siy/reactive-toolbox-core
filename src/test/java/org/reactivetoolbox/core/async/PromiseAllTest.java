@@ -8,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.reactivetoolbox.core.async.Promise.all;
 import static org.reactivetoolbox.core.lang.Result.ok;
-import static org.reactivetoolbox.core.scheduler.Errors.CANCELLED;
-import static org.reactivetoolbox.core.scheduler.Errors.TIMEOUT;
+import static org.reactivetoolbox.core.Errors.CANCELLED;
+import static org.reactivetoolbox.core.Errors.TIMEOUT;
 import static org.reactivetoolbox.core.scheduler.Timeout.timeout;
 
 class PromiseAllTest {
