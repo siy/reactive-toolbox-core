@@ -19,7 +19,6 @@ package org.reactivetoolbox.core.lang;
 import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.StringJoiner;
-import java.util.function.Supplier;
 
 /**
  * Basic interface for failure types.

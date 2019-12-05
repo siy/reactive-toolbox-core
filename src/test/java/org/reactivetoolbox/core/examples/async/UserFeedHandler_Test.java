@@ -1,5 +1,6 @@
 package org.reactivetoolbox.core.examples.async;
 
+import org.reactivetoolbox.core.Errors;
 import org.reactivetoolbox.core.async.Promise;
 import org.reactivetoolbox.core.examples.async.domain.Order;
 import org.reactivetoolbox.core.examples.async.domain.Topic;
@@ -8,7 +9,6 @@ import org.reactivetoolbox.core.examples.async.services.ArticleService;
 import org.reactivetoolbox.core.examples.async.services.TopicService;
 import org.reactivetoolbox.core.examples.async.services.UserService;
 import org.reactivetoolbox.core.lang.Collection;
-import org.reactivetoolbox.core.Errors;
 
 import static org.reactivetoolbox.core.async.Promise.all;
 import static org.reactivetoolbox.core.lang.Result.fail;

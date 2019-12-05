@@ -16,6 +16,7 @@ package org.reactivetoolbox.core.async;
  * limitations under the License.
  */
 
+import org.reactivetoolbox.core.Errors;
 import org.reactivetoolbox.core.async.impl.PromiseImpl;
 import org.reactivetoolbox.core.lang.Failure;
 import org.reactivetoolbox.core.lang.Functions.FN1;
@@ -28,7 +29,6 @@ import org.reactivetoolbox.core.lang.Tuple.Tuple7;
 import org.reactivetoolbox.core.lang.Tuple.Tuple8;
 import org.reactivetoolbox.core.lang.Tuple.Tuple9;
 import org.reactivetoolbox.core.log.CoreLogger;
-import org.reactivetoolbox.core.Errors;
 import org.reactivetoolbox.core.scheduler.Timeout;
 
 import java.util.Queue;

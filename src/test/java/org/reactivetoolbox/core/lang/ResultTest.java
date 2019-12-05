@@ -1,8 +1,8 @@
 package org.reactivetoolbox.core.lang;
 
 import org.junit.jupiter.api.Test;
-import org.reactivetoolbox.core.lang.support.WebFailureTypes;
 import org.reactivetoolbox.core.Errors;
+import org.reactivetoolbox.core.lang.support.WebFailureTypes;
 
 import java.util.Objects;
 

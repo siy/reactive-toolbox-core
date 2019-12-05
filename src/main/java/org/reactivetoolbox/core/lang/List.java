@@ -18,7 +18,6 @@ package org.reactivetoolbox.core.lang;
 
 import org.reactivetoolbox.core.lang.Functions.FN1;
 import org.reactivetoolbox.core.lang.Functions.FN2;
-import org.reactivetoolbox.core.lang.support.CollectionBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;

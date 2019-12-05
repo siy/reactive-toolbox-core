@@ -17,7 +17,6 @@ package org.reactivetoolbox.core.lang;
  */
 
 import org.reactivetoolbox.core.Errors;
-import org.reactivetoolbox.core.lang.support.WebFailureTypes;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
