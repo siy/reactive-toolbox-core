@@ -29,7 +29,7 @@ public final class KSUID implements Comparable<KSUID> {
 
     private KSUID(final String representation) {
         this.representation = representation;
-        decoded = Suppliers.lazy(this::parse);
+        decoded = Suppliers.memoize(this::parse);
     }
 
     public static Result<KSUID> fromString(final String input) {

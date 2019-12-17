@@ -24,7 +24,7 @@ class PairTest {
     @Test
     void pairCanBeMapped() {
         final var pair = pair("key", 10);
-        assertEquals("key10", pair.map((l, r) -> l + r));
+        assertEquals("key10", pair.fold((l, r) -> l + r));
         assertEquals(pair("-key-", 11), pair.map( l -> "-" + l + "-", r -> r + 1));
         assertEquals(pair("-key-", 10), pair.mapLeft( l -> "-" + l + "-"));
         assertEquals(pair("key", 11), pair.mapRight(r -> r + 1));

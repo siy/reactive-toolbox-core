@@ -55,7 +55,7 @@ public interface Result<T> extends Either<Failure, T> {
      */
     @SuppressWarnings("unchecked")
     default <R> Result<R> flatMap(final FN1<Result<R>, T> mapper) {
-        return map(t -> (Result<R>) this, mapper);
+        return fold(t -> (Result<R>) this, mapper);
     }
 
     /**
@@ -71,7 +71,7 @@ public interface Result<T> extends Either<Failure, T> {
      */
     @SuppressWarnings("unchecked")
     default <R> Result<R> map(final FN1<R, T> mapper) {
-        return map(l -> (Result<R>) this, r -> ok(mapper.apply(r)));
+        return fold(l -> (Result<R>) this, r -> ok(mapper.apply(r)));
     }
 
     /**
@@ -86,7 +86,7 @@ public interface Result<T> extends Either<Failure, T> {
      * @return current instance
      */
     default Result<T> apply(final Consumer<? super Failure> failureConsumer, final Consumer<? super T> successConsumer) {
-        return map(t -> {failureConsumer.accept(t); return this;}, t -> {successConsumer.accept(t); return this;});
+        return fold(t -> {failureConsumer.accept(t); return this;}, t -> {successConsumer.accept(t); return this;});
     }
 
     /**
@@ -100,7 +100,7 @@ public interface Result<T> extends Either<Failure, T> {
      * @return current instance in case of success or replacement instance in case of failure.
      */
     default Result<T> or(final Result<T> replacement) {
-        return map(t -> replacement, t -> this);
+        return fold(t -> replacement, t -> this);
     }
 
     /**
@@ -114,7 +114,7 @@ public interface Result<T> extends Either<Failure, T> {
      * @return current instance in case of success or result returned by supplier in case of failure.
      */
     default Result<T> or(final Supplier<Result<T>> supplier) {
-        return map(t -> supplier.get(), t -> this);
+        return fold(t -> supplier.get(), t -> this);
     }
 
     /**
@@ -126,7 +126,7 @@ public interface Result<T> extends Either<Failure, T> {
      * @return current instance for fluent call chaining
      */
     default Result<T> onSuccess(final Consumer<T> consumer) {
-        return map(t1 -> this, t1 -> { consumer.accept(t1); return this; });
+        return fold(t1 -> this, t1 -> { consumer.accept(t1); return this; });
     }
 
     /**
@@ -138,7 +138,19 @@ public interface Result<T> extends Either<Failure, T> {
      * @return current instance for fluent call chaining
      */
     default Result<T> onFailure(final Consumer<? super Failure> consumer) {
-        return map(t1 -> { consumer.accept(t1); return this; }, t1 -> this);
+        return fold(t1 -> { consumer.accept(t1); return this; }, t1 -> this);
+    }
+
+    /**
+     * Convert instance into {@link Option} of the same type. Successful instance
+     * is converted into present {@link Option} and failure - into empty {@link Option}.
+     * Note that during such a conversion error information may get lost.
+     *
+     * @return {@link Option} instance which is present in case of success and missing
+     *         in case of failure.
+     */
+    default Option<T> asOption() {
+        return fold(t1 -> Option.empty(), Option::option);
     }
 
     /**
@@ -152,8 +164,8 @@ public interface Result<T> extends Either<Failure, T> {
     static <R> Result<R> ok(final R value) {
         return new Result<>() {
             @Override
-            public <T> T map(final FN1<? extends T, ? super Failure> leftMapper,
-                             final FN1<? extends T, ? super R> rightMapper) {
+            public <T> T fold(final FN1<? extends T, ? super Failure> leftMapper,
+                              final FN1<? extends T, ? super R> rightMapper) {
                 return rightMapper.apply(value);
             }
 
@@ -168,7 +180,7 @@ public interface Result<T> extends Either<Failure, T> {
                     return true;
                 }
 
-                return (obj instanceof Result) ? ((Result<?>) obj).map($ -> false, val -> Objects.equals(val, value)) : false;
+                return (obj instanceof Result) ? ((Result<?>) obj).fold($ -> false, val -> Objects.equals(val, value)) : false;
             }
 
             @Override
@@ -190,8 +202,8 @@ public interface Result<T> extends Either<Failure, T> {
     static <R> Result<R> fail(final Failure value) {
         return new Result<>() {
             @Override
-            public <T> T map(final FN1<? extends T, ? super Failure> leftMapper,
-                             final FN1<? extends T, ? super R> rightMapper) {
+            public <T> T fold(final FN1<? extends T, ? super Failure> leftMapper,
+                              final FN1<? extends T, ? super R> rightMapper) {
                 return leftMapper.apply(value);
             }
 
@@ -206,7 +218,7 @@ public interface Result<T> extends Either<Failure, T> {
                     return true;
                 }
 
-                return (obj instanceof Result) ? ((Result<?>) obj).map(val -> Objects.equals(val, value), $ -> false) : false;
+                return (obj instanceof Result) ? ((Result<?>) obj).fold(val -> Objects.equals(val, value), $ -> false) : false;
             }
 
             @Override
@@ -218,35 +230,35 @@ public interface Result<T> extends Either<Failure, T> {
         };
     }
 
-    static <T1> Result<Tuple1<T1>> zip(final Result<T1> value) {
+    static <T1> Result<Tuple1<T1>> flatten(final Result<T1> value) {
         return value.flatMap(vv1 -> ok(Tuple.tuple(vv1)));
     }
 
-    static <T1, T2> Result<Tuple2<T1, T2>> zip(final Result<T1> value1, final Result<T2> value2) {
+    static <T1, T2> Result<Tuple2<T1, T2>> flatten(final Result<T1> value1, final Result<T2> value2) {
         return value1.flatMap(vv1 -> value2.flatMap(vv2 -> ok(Tuple.tuple(vv1, vv2))));
     }
 
-    static <T1, T2, T3> Result<Tuple3<T1, T2, T3>> zip(final Result<T1> value1, final Result<T2> value2, final Result<T3> value3) {
+    static <T1, T2, T3> Result<Tuple3<T1, T2, T3>> flatten(final Result<T1> value1, final Result<T2> value2, final Result<T3> value3) {
         return value1.flatMap(vv1 ->
                  value2.flatMap(vv2 ->
                    value3.flatMap(vv3 -> ok(Tuple.tuple(vv1, vv2, vv3)))));
     }
 
-    static <T1, T2, T3, T4> Result<Tuple4<T1, T2, T3, T4>> zip(final Result<T1> value1,
-                                                               final Result<T2> value2,
-                                                               final Result<T3> value3,
-                                                               final Result<T4> value4) {
+    static <T1, T2, T3, T4> Result<Tuple4<T1, T2, T3, T4>> flatten(final Result<T1> value1,
+                                                                   final Result<T2> value2,
+                                                                   final Result<T3> value3,
+                                                                   final Result<T4> value4) {
         return value1.flatMap(vv1 ->
                  value2.flatMap(vv2 ->
                    value3.flatMap(vv3 ->
                      value4.flatMap(vv4 -> ok(Tuple.tuple(vv1, vv2, vv3, vv4))))));
     }
 
-    static <T1, T2, T3, T4, T5> Result<Tuple5<T1, T2, T3, T4, T5>> zip(final Result<T1> value1,
-                                                                       final Result<T2> value2,
-                                                                       final Result<T3> value3,
-                                                                       final Result<T4> value4,
-                                                                       final Result<T5> value5) {
+    static <T1, T2, T3, T4, T5> Result<Tuple5<T1, T2, T3, T4, T5>> flatten(final Result<T1> value1,
+                                                                           final Result<T2> value2,
+                                                                           final Result<T3> value3,
+                                                                           final Result<T4> value4,
+                                                                           final Result<T5> value5) {
         return value1.flatMap(vv1 ->
                  value2.flatMap(vv2 ->
                    value3.flatMap(vv3 ->
@@ -254,12 +266,12 @@ public interface Result<T> extends Either<Failure, T> {
                        value5.flatMap(vv5 -> ok(Tuple.tuple(vv1, vv2, vv3, vv4, vv5)))))));
     }
 
-    static <T1, T2, T3, T4, T5, T6> Result<Tuple6<T1, T2, T3, T4, T5, T6>> zip(final Result<T1> value1,
-                                                                               final Result<T2> value2,
-                                                                               final Result<T3> value3,
-                                                                               final Result<T4> value4,
-                                                                               final Result<T5> value5,
-                                                                               final Result<T6> value6) {
+    static <T1, T2, T3, T4, T5, T6> Result<Tuple6<T1, T2, T3, T4, T5, T6>> flatten(final Result<T1> value1,
+                                                                                   final Result<T2> value2,
+                                                                                   final Result<T3> value3,
+                                                                                   final Result<T4> value4,
+                                                                                   final Result<T5> value5,
+                                                                                   final Result<T6> value6) {
         return value1.flatMap(vv1 ->
                  value2.flatMap(vv2 ->
                    value3.flatMap(vv3 ->
@@ -268,13 +280,13 @@ public interface Result<T> extends Either<Failure, T> {
                          value6.flatMap(vv6 -> ok(Tuple.tuple(vv1, vv2, vv3, vv4, vv5, vv6))))))));
     }
 
-    static <T1, T2, T3, T4, T5, T6, T7> Result<Tuple7<T1, T2, T3, T4, T5, T6, T7>> zip(final Result<T1> value1,
-                                                                                       final Result<T2> value2,
-                                                                                       final Result<T3> value3,
-                                                                                       final Result<T4> value4,
-                                                                                       final Result<T5> value5,
-                                                                                       final Result<T6> value6,
-                                                                                       final Result<T7> value7) {
+    static <T1, T2, T3, T4, T5, T6, T7> Result<Tuple7<T1, T2, T3, T4, T5, T6, T7>> flatten(final Result<T1> value1,
+                                                                                           final Result<T2> value2,
+                                                                                           final Result<T3> value3,
+                                                                                           final Result<T4> value4,
+                                                                                           final Result<T5> value5,
+                                                                                           final Result<T6> value6,
+                                                                                           final Result<T7> value7) {
         return value1.flatMap(vv1 ->
                  value2.flatMap(vv2 ->
                    value3.flatMap(vv3 ->
@@ -284,14 +296,14 @@ public interface Result<T> extends Either<Failure, T> {
                            value7.flatMap(vv7 -> ok(Tuple.tuple(vv1, vv2, vv3, vv4, vv5, vv6, vv7)))))))));
     }
 
-    static <T1, T2, T3, T4, T5, T6, T7, T8> Result<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> zip(final Result<T1> value1,
-                                                                                               final Result<T2> value2,
-                                                                                               final Result<T3> value3,
-                                                                                               final Result<T4> value4,
-                                                                                               final Result<T5> value5,
-                                                                                               final Result<T6> value6,
-                                                                                               final Result<T7> value7,
-                                                                                               final Result<T8> value8) {
+    static <T1, T2, T3, T4, T5, T6, T7, T8> Result<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> flatten(final Result<T1> value1,
+                                                                                                   final Result<T2> value2,
+                                                                                                   final Result<T3> value3,
+                                                                                                   final Result<T4> value4,
+                                                                                                   final Result<T5> value5,
+                                                                                                   final Result<T6> value6,
+                                                                                                   final Result<T7> value7,
+                                                                                                   final Result<T8> value8) {
         return value1.flatMap(vv1 ->
                  value2.flatMap(vv2 ->
                    value3.flatMap(vv3 ->
@@ -302,15 +314,15 @@ public interface Result<T> extends Either<Failure, T> {
                              value8.flatMap(vv8 -> ok(Tuple.tuple(vv1, vv2, vv3, vv4, vv5, vv6, vv7, vv8))))))))));
     }
 
-    static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Result<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> zip(final Result<T1> value1,
-                                                                                                       final Result<T2> value2,
-                                                                                                       final Result<T3> value3,
-                                                                                                       final Result<T4> value4,
-                                                                                                       final Result<T5> value5,
-                                                                                                       final Result<T6> value6,
-                                                                                                       final Result<T7> value7,
-                                                                                                       final Result<T8> value8,
-                                                                                                       final Result<T9> value9) {
+    static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Result<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> flatten(final Result<T1> value1,
+                                                                                                           final Result<T2> value2,
+                                                                                                           final Result<T3> value3,
+                                                                                                           final Result<T4> value4,
+                                                                                                           final Result<T5> value5,
+                                                                                                           final Result<T6> value6,
+                                                                                                           final Result<T7> value7,
+                                                                                                           final Result<T8> value8,
+                                                                                                           final Result<T9> value9) {
         return value1.flatMap(vv1 ->
                  value2.flatMap(vv2 ->
                    value3.flatMap(vv3 ->

@@ -43,7 +43,7 @@ public interface Pair<L, R> {
      *
      * @return Result of transformation
      */
-    <V> V map(final FN2<V, L, R> mapper);
+    <V> V fold(final FN2<V, L, R> mapper);
 
     /**
      * Transform pair into another pair by applying functions to each element of pair.
@@ -56,7 +56,7 @@ public interface Pair<L, R> {
      * @return Transformed instance
      */
     default <NL, NR> Pair<NL, NR> map(final FN1<? extends NL, ? super L> leftMapper, final FN1<? extends NR, ? super R> rightMapper) {
-        return map((l, r) -> pair(leftMapper.apply(l), rightMapper.apply(r)));
+        return fold((l, r) -> pair(leftMapper.apply(l), rightMapper.apply(r)));
     }
 
     /**
@@ -68,7 +68,7 @@ public interface Pair<L, R> {
      * @return Transformed instance
      */
     default <NL> Pair<NL, R> mapLeft(final FN1<? extends NL, ? super L> leftMapper) {
-        return map((l, r) -> pair(leftMapper.apply(l),r));
+        return fold((l, r) -> pair(leftMapper.apply(l), r));
     }
 
     /**
@@ -80,7 +80,7 @@ public interface Pair<L, R> {
      * @return Transformed instance
      */
     default <NR> Pair<L, NR> mapRight(final FN1<? extends NR, ? super R> rightMapper) {
-        return map((l, r) -> pair(l, rightMapper.apply(r)));
+        return fold((l, r) -> pair(l, rightMapper.apply(r)));
     }
 
     /**
@@ -96,7 +96,7 @@ public interface Pair<L, R> {
     static <L, R> Pair<L, R> pair(final L left, final R right) {
         return new Pair<L, R>() {
             @Override
-            public <V> V map(final FN2<V, L, R> mapper) {
+            public <V> V fold(final FN2<V, L, R> mapper) {
                 return mapper.apply(left, right);
             }
 
@@ -110,18 +110,18 @@ public interface Pair<L, R> {
                     return false;
                 }
 
-                return map((l, r) -> ((Pair<?, ?>) o).map((ol, or) -> Objects.equals(l, ol)
-                                                                      && Objects.equals(r, or)));
+                return fold((l, r) -> ((Pair<?, ?>) o).fold((ol, or) -> Objects.equals(l, ol)
+                                                                        && Objects.equals(r, or)));
             }
 
             @Override
             public int hashCode() {
-                return map((l, r) -> Objects.hash(left, right));
+                return fold((l, r) -> Objects.hash(left, right));
             }
 
             @Override
             public String toString() {
-                return map((l, r) -> new StringJoiner(", ", "Pair(", ")")
+                return fold((l, r) -> new StringJoiner(", ", "Pair(", ")")
                             .add(Objects.toString(l))
                             .add(Objects.toString(r))
                             .toString());
@@ -135,7 +135,7 @@ public interface Pair<L, R> {
      * @return Transformed pair
      */
     default Pair<R, L> swap() {
-        return map((l, r) -> pair(r, l));
+        return fold((l, r) -> pair(r, l));
     }
 
     /**
@@ -147,7 +147,7 @@ public interface Pair<L, R> {
      * @return current instance
      */
     default Pair<L, R> apply(final BiConsumer<L, R> biconsumer) {
-        map((l, r) -> { biconsumer.accept(l, r); return null; });
+        fold((l, r) -> { biconsumer.accept(l, r); return null; });
         return this;
     }
 

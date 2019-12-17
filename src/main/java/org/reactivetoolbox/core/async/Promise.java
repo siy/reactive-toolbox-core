@@ -218,7 +218,7 @@ public interface Promise<T> {
      * waiting for resolving by provided mapping function.
      */
     default <R> Promise<R> chainMap(final FN1<Promise<R>, T> mapper) {
-        return promise(promise -> onResult(result -> result.map(error -> promise.resolve(Result.fail(error)),
+        return promise(promise -> onResult(result -> result.fold(error -> promise.resolve(Result.fail(error)),
                                                                 success -> mapper.apply(success)
                                                                                  .onResult(promise::resolve))));
     }
@@ -403,7 +403,7 @@ public interface Promise<T> {
     static <T1> Promise<Tuple1<T1>> all(final Promise<T1> promise1) {
         return promise(promise -> threshold(Tuple1.size(),
                                             (at) -> promise1.onResult($ -> at.registerEvent()),
-                                            () -> promise1.onResult(v1 -> promise.resolve(Tuple.tuple(v1).map(Result::zip)))));
+                                            () -> promise1.onResult(v1 -> promise.resolve(Tuple.tuple(v1).map(Result::flatten)))));
     }
 
     static <T1, T2> Promise<Tuple2<T1, T2>> all(final Promise<T1> promise1,
@@ -415,7 +415,7 @@ public interface Promise<T> {
                                             },
                                             () -> promise1.onResult(v1 ->
                                                                             promise2.onResult(v2 -> promise.resolve(Tuple.tuple(v1, v2)
-                                                                                                                         .map(Result::zip))))));
+                                                                                                                         .map(Result::flatten))))));
     }
 
     static <T1, T2, T3> Promise<Tuple3<T1, T2, T3>> all(final Promise<T1> promise1,
@@ -432,7 +432,7 @@ public interface Promise<T> {
                                                                                                       promise3.onResult(v3 -> promise.resolve(Tuple.tuple(
                                                                                                               v1,
                                                                                                               v2,
-                                                                                                              v3).map(Result::zip)))))));
+                                                                                                              v3).map(Result::flatten)))))));
     }
 
     static <T1, T2, T3, T4> Promise<Tuple4<T1, T2, T3, T4>> all(final Promise<T1> promise1,
@@ -454,7 +454,7 @@ public interface Promise<T> {
                                                                                                                                                     v2,
                                                                                                                                                     v3,
                                                                                                                                                     v4)
-                                                                                                                                             .map(Result::zip))))))));
+                                                                                                                                             .map(Result::flatten))))))));
     }
 
     static <T1, T2, T3, T4, T5> Promise<Tuple5<T1, T2, T3, T4, T5>> all(final Promise<T1> promise1,
@@ -482,7 +482,7 @@ public interface Promise<T> {
                                                                                                                                                                                   v3,
                                                                                                                                                                                   v4,
                                                                                                                                                                                   v5)
-                                                                                                                                                                               .map(Result::zip)))))))));
+                                                                                                                                                                               .map(Result::flatten)))))))));
     }
 
     static <T1, T2, T3, T4, T5, T6> Promise<Tuple6<T1, T2, T3, T4, T5, T6>> all(final Promise<T1> promise1,
@@ -515,7 +515,7 @@ public interface Promise<T> {
                                                                                                                                                                                                   v4,
                                                                                                                                                                                                   v5,
                                                                                                                                                                                                   v6)
-                                                                                                                                                                                               .map(Result::zip))))))))));
+                                                                                                                                                                                               .map(Result::flatten))))))))));
     }
 
     static <T1, T2, T3, T4, T5, T6, T7> Promise<Tuple7<T1, T2, T3, T4, T5, T6, T7>> all(final Promise<T1> promise1,
@@ -553,7 +553,7 @@ public interface Promise<T> {
                                                                                                                                                                                                                   v5,
                                                                                                                                                                                                                   v6,
                                                                                                                                                                                                                   v7)
-                                                                                                                                                                                                               .map(Result::zip)))))))))));
+                                                                                                                                                                                                               .map(Result::flatten)))))))))));
     }
 
     static <T1, T2, T3, T4, T5, T6, T7, T8> Promise<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> all(final Promise<T1> promise1,
@@ -596,7 +596,7 @@ public interface Promise<T> {
                                                                                                                                                                                                                                   v6,
                                                                                                                                                                                                                                   v7,
                                                                                                                                                                                                                                   v8)
-                                                                                                                                                                                                                               .map(Result::zip))))))))))));
+                                                                                                                                                                                                                               .map(Result::flatten))))))))))));
     }
 
     static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Promise<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> all(final Promise<T1> promise1,
@@ -643,6 +643,6 @@ public interface Promise<T> {
                                                                                                                                                                                                                                                 v7,
                                                                                                                                                                                                                                                 v8,
                                                                                                                                                                                                                                                 v9)
-                                                                                                                                                                                                                                                  .map(Result::zip)))))))))))));
+                                                                                                                                                                                                                                                  .map(Result::flatten)))))))))))));
     }
 }

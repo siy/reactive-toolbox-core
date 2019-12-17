@@ -25,5 +25,5 @@ import org.reactivetoolbox.core.lang.Functions.FN1;
  * @param <R>
  */
 public interface Either<L, R> {
-    <T> T map(FN1<? extends T, ? super L> leftMapper, FN1<? extends T, ? super R> rightMapper);
+    <T> T fold(FN1<? extends T, ? super L> leftMapper, FN1<? extends T, ? super R> rightMapper);
 }
