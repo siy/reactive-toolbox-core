@@ -1,6 +1,8 @@
 [![Build Status](https://travis-ci.org/siy/reactive-toolbox-core.svg?branch=master)](https://travis-ci.org/siy/reactive-toolbox-core)
 [![Latest Release](https://jitpack.io/v/siy/reactive-toolbox-core.svg)](https://jitpack.io/#siy/reactive-toolbox-core)
 
+# Project is closed, all development is moved to [Recative Toolbox](https://github.com/siy/reactive-toolbox)
+
 ## Reactive Toolbox Core
 
 This library contains core classes for writing Java apps in FP-style along with __Promise__-based asynchronous processing.
