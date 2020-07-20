@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/siy/reactive-toolbox-core.svg?branch=master)](https://travis-ci.org/siy/reactive-toolbox-core)
 [![Latest Release](https://jitpack.io/v/siy/reactive-toolbox-core.svg)](https://jitpack.io/#siy/reactive-toolbox-core)
 
-# Project is closed, all development is moved to [Recative Toolbox](https://github.com/siy/reactive-toolbox)
+# Project is closed, all development is moved to [Reactive Toolbox](https://github.com/siy/reactive-toolbox)
 
 ## Reactive Toolbox Core
 
